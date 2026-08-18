@@ -1,0 +1,17 @@
+{
+  "type": "module",
+  "devDependencies": {
+    "terser": "^5.50.0",
+    "vite": "^8.2.1"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "pnpm run squash && pnpm run bundle && pnpm run archive && pnpm run measure",
+    "pngquant": "pngquant --verbose --speed 1 --quality=90-100 --force --output sprites.png sprites.png",
+    "oxipng": "oxipng -o max --strip all --alpha sprites.png",
+    "squash": "pnpm run pngquant && pnpm run oxipng",
+    "bundle": "vite build && cp sprites.png dist",
+    "archive": "rm -f dist.zip && cd dist && zip -9 ../dist.zip -r * && advzip -z -4 -i ../dist.zip",
+    "measure": "wc -c < dist.zip"
+  }
+}
