@@ -1,7 +1,7 @@
 // @ts-check
 
 import { defineConfig } from "vite";
-import assert from "node:assert";
+import { ok as assert } from "node:assert";
 
 export default defineConfig({
   base: "./",
@@ -35,11 +35,8 @@ export default defineConfig({
       },
       mangle: {
         toplevel: true,
-        properties: {
-          builtins: false,
-        },
+        properties: true,
       },
-      format: {},
     },
   },
 });
