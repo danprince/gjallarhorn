@@ -68,6 +68,7 @@ const UI_CARD_SIZE = 18;
 const UI_CELL_SIZE = 20;
 const UI_GAP = 10;
 const UI_CARD_ANIMATION_MS = 250;
+const UI_BG = "#11151c";
 
 const UI_BOARD_COLS = 4;
 const UI_BOARD_ROWS = 4;
@@ -338,6 +339,42 @@ function draw(s, x, y, tint) {
   ctx.drawImage(source, sx, sy, sw, sh, x | 0, y | 0, sw, sh);
 }
 
+/**
+ * @param {string} text
+ * @param {number} x
+ * @param {number} y
+ * @param {string} [color]
+ */
+function write(text, x, y, color) {
+  let src = spritesheet.font;
+  let cols = 16; // cols in glyph atlas
+  let start = 32; // starting glyph
+  let gw = 3; // glyph width
+  let gh = 5; // glyph height
+  let lh = 6; // line height
+  let ls = 4; // letter spacing
+  let dx = x; // destination x
+  let dy = y; // destination y
+  let g = Rect(0, 0, gw, gh);
+
+  for (let i = 0; i < text.length; i++) {
+    let c = text.charCodeAt(i) - start;
+    let newline = c < 0; // c === (10-start)
+
+    if (newline) {
+      dx = x;
+      dy += lh;
+    } else {
+      g.x = src.x + (c % cols) * gw;
+      g.y = src.y + ((c / cols) | 0) * gh;
+      draw(g, dx + 1, dy, UI_BG);
+      draw(g, dx, dy + 1, UI_BG);
+      draw(g, dx, dy, color);
+      dx += ls;
+    }
+  }
+}
+
 function resize() {
   let s = Math.min(innerWidth / UI_W, innerHeight / UI_H);
   canvas.style.cssText = `position:fixed;inset:0;image-rendering:pixelated;width:${UI_W * s}px;height:${UI_H * s}px`;
@@ -455,8 +492,9 @@ function renderZone(zone) {
  * @param {Card} card
  */
 function renderCard(card) {
-  draw(card.sprite, card.hb.x, card.hb.y);
-  // TODO: hp
+  let { x, y } = card.hb;
+  draw(card.sprite, x, y);
+  write(`${card.hp}`, x + 8, y + 13);
 }
 
 function render() {
@@ -541,7 +579,7 @@ function init() {
   onresize = resize;
 
   document.title = "Gjallarhorn";
-  document.body.style.cssText = `background:#11151c`;
+  document.body.style.cssText = `background:${UI_BG}`;
   document.body.append(canvas);
 
   resize();

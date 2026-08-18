@@ -18,12 +18,12 @@
  * @typedef {Sprite & { pivot: { x: number, y: number } }} PivotSprite
  */
 export const spritesheet = {
-  "btn": { center: { h: 8, w: 1, x: 5, y: 2, }, h: 12, w: 11, x: 0, y: 43, },
-  "btn_active": { center: { h: 8, w: 1, x: 5, y: 2, }, h: 12, w: 11, x: 11, y: 43, },
-  "card_slot": { h: 18, w: 18, x: 72, y: 0, },
-  "cards": { h: 54, w: 72, x: 72, y: 0, },
-  "font": { h: 43, w: 68, x: 0, y: 0, },
-  "icon_heart": { h: 7, w: 7, x: 22, y: 43, },
-  "particles": { h: 5, w: 20, x: 22, y: 50, },
-  "tooltip": { center: { h: 1, w: 1, x: 1, y: 1, }, h: 3, w: 3, x: 29, y: 43, },
+  "btn": { center: { h: 8, w: 1, x: 5, y: 2, }, h: 12, w: 11, x: 0, y: 42, },
+  "btn_active": { center: { h: 8, w: 1, x: 5, y: 2, }, h: 12, w: 11, x: 11, y: 42, },
+  "card_slot": { h: 18, w: 18, x: 54, y: 0, },
+  "cards": { h: 54, w: 72, x: 54, y: 0, },
+  "font": { h: 30, w: 48, x: 0, y: 0, },
+  "icon_heart": { h: 7, w: 7, x: 22, y: 42, },
+  "particles": { h: 5, w: 20, x: 22, y: 49, },
+  "tooltip": { center: { h: 1, w: 1, x: 1, y: 1, }, h: 3, w: 3, x: 29, y: 42, },
 };
