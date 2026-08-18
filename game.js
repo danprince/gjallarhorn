@@ -41,10 +41,13 @@ import { spritesheet } from "./sprites.js";
  * @prop {string} name
  * @prop {string} description
  * @prop {Sprite} sprite
- * @prop {Animation} move
- * @prop {Animation} bump
  * @prop {Rectangle} hb
  * @prop {Slot} slot
+ *
+ * @typedef {object} Timer
+ * @prop {number} duration
+ * @prop {number} elapsed
+ * @prop {(t: number) => void} callback
  *
  * @typedef {object} Animation
  * @prop {Point} start
@@ -64,6 +67,7 @@ const UI_CENTER_Y = UI_H / 2;
 const UI_CARD_SIZE = 18;
 const UI_CELL_SIZE = 20;
 const UI_GAP = 10;
+const UI_CARD_ANIMATION_MS = 250;
 
 const UI_BOARD_COLS = 4;
 const UI_BOARD_ROWS = 4;
@@ -236,6 +240,33 @@ function remove(array, item) {
 }
 
 /**
+ * Linear interpolation between two values.
+ * @param {number} a The start value.
+ * @param {number} b The end value.
+ * @param {number} k The control value.
+ * @returns {number} The interpolated value.
+ */
+function lerp(a, b, k) {
+  return a + (b - a) * k;
+}
+
+/**
+ * @param {number} t
+ * @returns {number}
+ */
+function smoothstep(t) {
+  return t * t * (3 - 2 * t);
+}
+
+/**
+ * @param {number} t
+ * @returns {number}
+ */
+function smootherstep(t) {
+  return t * t * t * (t * (t * 6 - 15) + 10);
+}
+
+/**
  * Slice a rectangle into a strip of sub-rectangles. Useful for creating
  * sprites from a parent sprite.
  * @param {Rectangle} rect
@@ -253,6 +284,19 @@ function strip(rect, w = rect.h, h = rect.h) {
   }
 
   return slices;
+}
+
+/**
+ * @type {Set<Timer>}
+ */
+let timers = new Set();
+
+/**
+ * @param {number} ms
+ * @param {(t: number) => void} callback
+ */
+function timer(ms, callback) {
+  timers.add({ elapsed: 0, duration: ms, callback });
 }
 
 /**
@@ -339,18 +383,6 @@ function Zone(x, y, cols, rows) {
 }
 
 /**
- * @returns {Animation}
- */
-function Anim() {
-  return {
-    start: { x: 0, y: 0 },
-    end: { x: 0, y: 0 },
-    elapsed: 0,
-    duration: 0,
-  };
-}
-
-/**
  * @param {CardType} type
  * @param {Slot} slot
  * @param {number} [hp]
@@ -365,8 +397,6 @@ function spawn(type, slot, hp) {
     name: def[2],
     description: def[3],
     sprite: UI_CARD_SPRITES[type],
-    move: Anim(),
-    bump: Anim(),
     hb: Rect(slot.hb.x, slot.hb.y, sprite.w, sprite.h),
     slot,
   });
@@ -386,10 +416,27 @@ function despawn(card) {
  * @param {Slot} slot
  */
 function play(card, slot) {
+  card.slot.card = undefined;
   card.slot = slot;
   slot.card = card;
   card.hb.x = slot.hb.x;
   card.hb.y = slot.hb.y;
+}
+
+/**
+ * Animate a card to
+ * @param {Card} card
+ * @param {Slot} slot
+ */
+function tween(card, slot) {
+  let { x: x0, y: y0 } = card.hb;
+  let { x: x1, y: y1 } = slot.hb;
+
+  timer(UI_CARD_ANIMATION_MS, (t) => {
+    let k = smoothstep(t);
+    card.hb.x = lerp(x0, x1, k);
+    card.hb.y = lerp(y0, y1, k);
+  });
 }
 
 /**
@@ -420,18 +467,25 @@ function render() {
   if (drag) renderCard(drag.card);
 }
 
-function update() {
-  let slot = board.slots.find((s) => hover(s.hb));
+function updateTimers() {
+  for (let timer of timers) {
+    timer.elapsed += dt;
+    let t = Math.min(1, timer.elapsed / timer.duration);
+    timer.callback(t);
+    if (t === 1) timers.delete(timer);
+    refresh = true;
+  }
+}
 
+function updateDrag() {
   if (drag) {
     let { card, offset } = drag;
+    let slot = board.slots.find((s) => hover(s.hb));
 
     if (released && slot && !slot.card) {
       play(card, slot);
     } else if (released) {
-      // TODO: animate move home
-      card.hb.x = card.slot.hb.x;
-      card.hb.y = card.slot.hb.y;
+      tween(card, card.slot);
     } else if (slot && !slot.card) {
       // Snap to slot
       card.hb.x = slot.hb.x;
@@ -439,10 +493,6 @@ function update() {
     } else {
       card.hb.x = pointer.x - offset.x;
       card.hb.y = pointer.y - offset.y;
-    }
-
-    if (released) {
-      drag = undefined;
     }
   } else if (pressed) {
     for (let { card } of hand.slots) {
@@ -452,6 +502,15 @@ function update() {
       }
     }
   }
+
+  if (released) {
+    drag = undefined;
+  }
+}
+
+function update() {
+  updateTimers();
+  updateDrag();
 }
 
 function loop(now = pt) {
@@ -472,6 +531,7 @@ function loop(now = pt) {
 }
 
 function init() {
+  spawn(HEIMDALL, hand.slots[0]);
   spawn(THOR, hand.slots[1]);
 
   canvas.width = UI_W;
