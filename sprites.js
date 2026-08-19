@@ -23,7 +23,4 @@ export const spritesheet = {
   "card_slot": { h: 18, w: 18, x: 54, y: 0, },
   "cards": { h: 54, w: 72, x: 54, y: 0, },
   "font": { h: 30, w: 48, x: 0, y: 0, },
-  "icon_heart": { h: 7, w: 7, x: 22, y: 42, },
-  "particles": { h: 5, w: 20, x: 22, y: 49, },
-  "tooltip": { center: { h: 1, w: 1, x: 1, y: 1, }, h: 3, w: 3, x: 29, y: 42, },
 };
