@@ -58,6 +58,15 @@ import { spritesheet } from "./sprites.js";
  * @typedef {object} Drag
  * @prop {Card} card
  * @prop {Vector} offset
+ *
+ * @typedef {object} Button
+ * @prop {string} label
+ * @prop {number} x
+ * @prop {number} y
+ * @prop {number} w
+ * @prop {number} h
+ * @prop {boolean} active
+ * @prop {boolean} pressed
  */
 
 const UI_W = 320;
@@ -92,7 +101,7 @@ const UI_HAND_X = UI_CENTER_X - UI_HAND_W / 2;
 const UI_HAND_Y = UI_BOARD_Y + UI_BOARD_H + UI_GAP;
 
 const UI_BUTTON_ANCHOR_X = UI_CENTER_X;
-const UI_BUTTON_ANCHOR_Y = UI_GRAVE_Y + UI_GRAVE_H + UI_GAP;
+const UI_BUTTON_ANCHOR_Y = UI_HAND_Y + UI_HAND_H + UI_GAP;
 const UI_CARD_SPRITES = strip(spritesheet.cards, UI_CARD_SIZE, UI_CARD_SIZE);
 
 let sprites = new Image();
@@ -171,9 +180,16 @@ let cards = new Set();
  */
 let drag;
 
+/**
+ * @type {Button[]}
+ */
+let buttons = [];
+
 let hand = Zone(UI_HAND_X, UI_HAND_Y, UI_HAND_COLS, UI_HAND_ROWS);
 let board = Zone(UI_BOARD_X, UI_BOARD_Y, UI_BOARD_COLS, UI_BOARD_ROWS);
 let grave = Zone(UI_GRAVE_X, UI_GRAVE_Y, UI_GRAVE_COLS, UI_GRAVE_ROWS);
+
+let resetButton = Button(UI_BUTTON_ANCHOR_X, UI_BUTTON_ANCHOR_Y, "RESET");
 
 /**
  * Creates a rectangle.
@@ -396,6 +412,22 @@ function onPointerEvent({ buttons, clientX: x, clientY: y }) {
 /**
  * @param {number} x
  * @param {number} y
+ * @param {string} label
+ * @returns {Button}
+ */
+function Button(x, y, label) {
+  let cap = spritesheet.btn.center.x;
+  let w = cap + label.length * 4 + 1 + cap;
+  let h = spritesheet.btn.h;
+  let btn = { x, y, w, h, label, active: false, pressed: false };
+  btn.x -= (w / 2) | 0;
+  buttons.push(btn);
+  return btn;
+}
+
+/**
+ * @param {number} x
+ * @param {number} y
  * @param {number} cols
  * @param {number} rows
  * @returns {Zone}
@@ -417,6 +449,26 @@ function Zone(x, y, cols, rows) {
   }
 
   return zone;
+}
+
+/**
+ * @param {Slot} slot
+ * @returns {boolean}
+ */
+function isEmpty(slot) {
+  return slot.card === undefined;
+}
+
+/**
+ * Reset the board.
+ */
+function reset() {
+  for (let card of cards) {
+    if (card.slot.zone !== hand) {
+      let slot = hand.slots.find(isEmpty);
+      if (slot) move(card, slot);
+    }
+  }
 }
 
 /**
@@ -453,11 +505,18 @@ function despawn(card) {
  * @param {Slot} slot
  */
 function play(card, slot) {
+  move(card, slot);
+}
+
+/**
+ * @param {Card} card
+ * @param {Slot} slot
+ */
+function move(card, slot) {
   card.slot.card = undefined;
   card.slot = slot;
   slot.card = card;
-  card.hb.x = slot.hb.x;
-  card.hb.y = slot.hb.y;
+  tween(card, slot);
 }
 
 /**
@@ -497,8 +556,24 @@ function renderCard(card) {
   write(`${card.hp}`, x + 8, y + 13);
 }
 
+/**
+ * @param {Button} button
+ */
+function renderButton(button) {
+  let { x, y, w, h, active } = button;
+  let sprite = active ? spritesheet.btn_active : spritesheet.btn;
+  let { x: sx, y: sy, center } = sprite;
+  let { x: cap, w: cw } = center;
+  if (down && active) y += 1;
+  ctx.drawImage(sprites, sx, sy, cap, h, x, y, cap, h);
+  ctx.drawImage(sprites, sx + cap + cw, sy, cap, h, x + w, y, -cap, h);
+  ctx.drawImage(sprites, sx + cap, sy, cw, h, x + cap, y, w - cap * 2, h);
+  write(button.label, x + sprite.center.x + 1, y + 3);
+}
+
 function render() {
   ctx.clearRect(0, 0, UI_W, UI_H);
+  renderButton(resetButton);
   renderZone(grave);
   renderZone(board);
   renderZone(hand);
@@ -512,6 +587,13 @@ function updateTimers() {
     timer.callback(t);
     if (t === 1) timers.delete(timer);
     refresh = true;
+  }
+}
+
+function updateButtons() {
+  for (let b of buttons) {
+    b.active = !drag && hover(b);
+    b.pressed = pressed && b.active;
   }
 }
 
@@ -549,6 +631,8 @@ function updateDrag() {
 function update() {
   updateTimers();
   updateDrag();
+  updateButtons();
+  if (resetButton.pressed) reset();
 }
 
 function loop(now = pt) {
@@ -574,6 +658,7 @@ function init() {
 
   canvas.width = UI_W;
   canvas.height = UI_H;
+  ctx.imageSmoothingEnabled = false;
 
   onpointerdown = onpointermove = onpointerup = onPointerEvent;
   onresize = resize;
