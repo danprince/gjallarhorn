@@ -2,7 +2,7 @@
 // https://github.com/danprince/aseprite-config
 
 /**
- * @typedef {"#000000" | "#0c0c0c" | "#ffffff" | "#4c1c1c" | "#ac3232" | "#b34f44" | "#663931" | "#3c221d" | "#6c3a22" | "#8f563b" | "#382b21" | "#eec39a" | "#d9a066" | "#bfad9b" | "#dbcdbf" | "#f3b35d" | "#543f17" | "#97690c" | "#876727" | "#ffc44d" | "#c79b0d" | "#f3ecd4" | "#5c7446" | "#40582b" | "#133024" | "#37946e" | "#111e2c" | "#232d38" | "#162c50" | "#274474" | "#265197" | "#5d84c3" | "#5b8ee1" | "#93b3e7" | "#2f4c93" | "#121220" | "#d95763"} PaletteColor
+ * @typedef {"#000000" | "#202020" | "#404040" | "#606060" | "#808080" | "#a0a0a0" | "#c0c0c0" | "#e0e0e0" | "#2c1414" | "#4c1c1c" | "#663931" | "#8f563b" | "#d9a066" | "#f3ecd4" | "#3c221d" | "#121220" | "#111e2c" | "#133024" | "#232d38" | "#543f17" | "#40582b" | "#162c50" | "#274474" | "#5c7446" | "#ac3232" | "#97690c" | "#876727" | "#b34f44" | "#d95763" | "#37946e" | "#c79b0d" | "#f3b35d" | "#ffc44d" | "#2f4c93" | "#265197" | "#5d84c3" | "#5b8ee1" | "#bfad9b" | "#eec39a" | "#dbcdbf" | "#93b3e7" | "#ffffff"} PaletteColor
  * The colors from the sprite's palette.
  *
  * @typedef {object} Sprite An Aseprite slice.
@@ -18,9 +18,11 @@
  * @typedef {Sprite & { pivot: { x: number, y: number } }} PivotSprite
  */
 export const spritesheet = {
-  "btn": { center: { h: 8, w: 1, x: 5, y: 2, }, h: 12, w: 11, x: 0, y: 42, },
-  "btn_active": { center: { h: 8, w: 1, x: 5, y: 2, }, h: 12, w: 11, x: 11, y: 42, },
-  "card_slot": { h: 18, w: 18, x: 54, y: 0, },
-  "cards": { h: 54, w: 72, x: 54, y: 0, },
-  "font": { h: 30, w: 48, x: 0, y: 0, },
+  "btn": { center: { h: 8, w: 1, x: 5, y: 2, }, h: 12, w: 11, x: 80, y: 42, },
+  "btn_active": { center: { h: 8, w: 1, x: 5, y: 2, }, h: 12, w: 11, x: 80, y: 42, },
+  "card": { h: 18, w: 18, x: 62, y: 36, },
+  "card_slot": { h: 18, w: 18, x: 8, y: 0, },
+  "cards": { h: 54, w: 72, x: 8, y: 0, },
+  "font": { h: 30, w: 48, x: 80, y: 0, },
+  "swaps": { h: 19, w: 8, x: 0, y: 0, },
 };

@@ -7,7 +7,6 @@
   "scripts": {
     "dev": "vite",
     "build": "pnpm run squash && pnpm run bundle && pnpm run archive && pnpm run measure",
-    "pngquant": "pngquant --verbose --speed 1 --quality=90-100 --force --output sprites.png sprites.png",
     "oxipng": "oxipng -o max --strip all --alpha sprites.png",
     "squash": "pnpm run oxipng",
     "bundle": "vite build && cp sprites.png dist",

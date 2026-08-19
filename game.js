@@ -31,6 +31,7 @@ import { spritesheet } from "./sprites.js";
  * @prop {Zone} zone
  * @prop {number} x
  * @prop {number} y
+ * @prop {number} palette
  * @prop {Rectangle} hb
  * @prop {Card} [card]
  *
@@ -41,6 +42,7 @@ import { spritesheet } from "./sprites.js";
  * @prop {string} name
  * @prop {string} description
  * @prop {Sprite} sprite
+ * @prop {number} palette
  * @prop {Rectangle} hb
  * @prop {Slot} slot
  *
@@ -154,11 +156,11 @@ const FROST_GIANT = 9;
  */
 
 /**
- * @type {Record<CardType, [hp: number, tags: number, name: string, description: string]>}
+ * @type {Record<CardType, [hp: number, tags: number, name: string, description: string, sprite?: number]>}
  */
 // prettier-ignore
 const CARDS = {
-  //             hp  tags   name        description
+  //             hp  tags   name        description   [sprite]
   [HEIMDALL]:    [1, GOD,   "Heimdall", ""],
   [ODIN]:        [2, GOD,   "Odin",     ""],
   [THOR]:        [2, GOD,   "Thor",     ""],
@@ -246,17 +248,6 @@ function hover(r) {
 }
 
 /**
- * Remove the first instance of an item from an array.
- * @template Value
- * @param {Value[]} array
- * @param {Value} item
- */
-function remove(array, item) {
-  let index = array.indexOf(item);
-  if (index >= 0) array.splice(index, 1);
-}
-
-/**
  * Linear interpolation between two values.
  * @param {number} a The start value.
  * @param {number} b The end value.
@@ -276,11 +267,12 @@ function smoothstep(t) {
 }
 
 /**
- * @param {number} t
- * @returns {number}
+ * Generate the sequence of integers between two numbers.
+ * @param {number} min (inclusive)
+ * @param {number} max (exclusive)
  */
-function smootherstep(t) {
-  return t * t * t * (t * (t * 6 - 15) + 10);
+function range(min, max) {
+  return Array.from({ length: max - min }).map((_, i) => min + i);
 }
 
 /**
@@ -316,30 +308,47 @@ function timer(ms, callback) {
   timers.add({ elapsed: 0, duration: ms, callback });
 }
 
-/**
- * @type {Record<string, HTMLCanvasElement>}
- */
-let _recolors = {};
+let palettes = buildPalettes();
+
+function buildPalettes() {
+  let { width: w, height: h } = sprites;
+  let { w: sw, h: sh } = spritesheet.swaps;
+  let src = getImageData({ x: 0, y: 0, w, h });
+  let swaps = getImageData(spritesheet.swaps);
+
+  /**
+   * @param {Rectangle} sprite
+   */
+  function getImageData({ x, y, w, h }) {
+    let c = new OffscreenCanvas(sprites.width, sprites.height);
+    let ctx = required(c.getContext("2d"));
+    ctx.drawImage(sprites, 0, 0);
+    return ctx.getImageData(x, y, w, h);
+  }
+
+  return range(0, sh).map((row) => {
+    let out = new ImageData(w, h);
+
+    for (let i = 0; i < w * h * 4; i += 4) {
+      let j = (row * sw + (src.data[i] >> 5)) * 4;
+      out.data[i] = swaps.data[j];
+      out.data[i + 1] = swaps.data[j + 1];
+      out.data[i + 2] = swaps.data[j + 2];
+      out.data[i + 3] = src.data[i + 3];
+    }
+
+    let c = new OffscreenCanvas(w, h);
+    required(c.getContext("2d")).putImageData(out, 0, 0);
+    return c;
+  });
+}
 
 /**
- * @param {string} color
- * @returns {HTMLCanvasElement}
+ * Get the palette swapped canvas for a specific palette index.
+ * @param {number} index
  */
-function recolor(color) {
-  let c = _recolors[color];
-  if (c) return c;
-
-  c = _recolors[color] = document.createElement("canvas");
-  c.width = sprites.width;
-  c.height = sprites.height;
-
-  let ctx = required(c.getContext("2d"));
-  ctx.drawImage(sprites, 0, 0);
-  ctx.globalCompositeOperation = "source-atop";
-  ctx.fillStyle = color;
-  ctx.fillRect(0, 0, c.width, c.height);
-
-  return c;
+function pswap(index) {
+  return palettes[index % palettes.length];
 }
 
 /**
@@ -347,11 +356,11 @@ function recolor(color) {
  * @param {Sprite} s
  * @param {number} x
  * @param {number} y
- * @param {string} [tint]
+ * @param {number} [palette]
  */
-function draw(s, x, y, tint) {
+function draw(s, x, y, palette) {
   let { x: sx, y: sy, w: sw, h: sh } = s;
-  let source = tint ? recolor(tint) : sprites;
+  let source = palette != null ? pswap(palette) : sprites;
   ctx.drawImage(source, sx, sy, sw, sh, x | 0, y | 0, sw, sh);
 }
 
@@ -359,9 +368,9 @@ function draw(s, x, y, tint) {
  * @param {string} text
  * @param {number} x
  * @param {number} y
- * @param {string} [color]
+ * @param {number} [palette]
  */
-function write(text, x, y, color) {
+function write(text, x, y, palette = 17) {
   let src = spritesheet.font;
   let cols = 16; // cols in glyph atlas
   let start = 32; // starting glyph
@@ -383,9 +392,9 @@ function write(text, x, y, color) {
     } else {
       g.x = src.x + (c % cols) * gw;
       g.y = src.y + ((c / cols) | 0) * gh;
-      draw(g, dx + 1, dy, UI_BG);
-      draw(g, dx, dy + 1, UI_BG);
-      draw(g, dx, dy, color);
+      draw(g, dx + 1, dy, 18);
+      draw(g, dx, dy + 1, 18);
+      draw(g, dx, dy, palette);
       dx += ls;
     }
   }
@@ -430,9 +439,10 @@ function Button(x, y, label) {
  * @param {number} y
  * @param {number} cols
  * @param {number} rows
+ * @param {number} palette
  * @returns {Zone}
  */
-function Zone(x, y, cols, rows) {
+function Zone(x, y, cols, rows, palette = 0) {
   let s = UI_CELL_SIZE;
   let hb = Rect(x, y, cols * s, rows * s);
 
@@ -444,7 +454,7 @@ function Zone(x, y, cols, rows) {
   for (let row = 0; row < rows; row++) {
     for (let col = 0; col < cols; col++) {
       let hb = Rect(x + col * s, y + row * s, s, s);
-      zone.slots.push({ zone, x: col, y: row, hb });
+      zone.slots.push({ zone, x: col, y: row, hb, palette });
     }
   }
 
@@ -478,16 +488,17 @@ function reset() {
  */
 function spawn(type, slot, hp) {
   let def = CARDS[type];
-  let sprite = UI_CARD_SPRITES[type];
+  let sprite = UI_CARD_SPRITES[def[4] ?? type];
   let card = (slot.card = {
     type,
     hp: hp ?? def[0],
     tags: def[1],
     name: def[2],
     description: def[3],
-    sprite: UI_CARD_SPRITES[type],
-    hb: Rect(slot.hb.x, slot.hb.y, sprite.w, sprite.h),
+    sprite,
+    palette: type,
     slot,
+    hb: Rect(slot.hb.x, slot.hb.y, sprite.w, sprite.h),
   });
   cards.add(card);
 }
@@ -540,7 +551,7 @@ function tween(card, slot) {
  */
 function renderZone(zone) {
   for (let slot of zone.slots) {
-    draw(spritesheet.card_slot, slot.hb.x, slot.hb.y);
+    draw(spritesheet.card_slot, slot.hb.x, slot.hb.y, slot.palette);
     if (slot.card && slot.card !== drag?.card) {
       renderCard(slot.card);
     }
@@ -552,7 +563,8 @@ function renderZone(zone) {
  */
 function renderCard(card) {
   let { x, y } = card.hb;
-  draw(card.sprite, x, y);
+  draw(spritesheet.card, x, y, card.palette);
+  draw(card.sprite, x, y, card.palette);
   write(`${card.hp}`, x + 8, y + 13);
 }
 
@@ -561,13 +573,15 @@ function renderCard(card) {
  */
 function renderButton(button) {
   let { x, y, w, h, active } = button;
-  let sprite = active ? spritesheet.btn_active : spritesheet.btn;
+  let palette = active ? 1 : 0;
+  let sprite = spritesheet.btn;
+  let source = pswap(palette);
   let { x: sx, y: sy, center } = sprite;
   let { x: cap, w: cw } = center;
   if (down && active) y += 1;
-  ctx.drawImage(sprites, sx, sy, cap, h, x, y, cap, h);
-  ctx.drawImage(sprites, sx + cap + cw, sy, cap, h, x + w, y, -cap, h);
-  ctx.drawImage(sprites, sx + cap, sy, cw, h, x + cap, y, w - cap * 2, h);
+  ctx.drawImage(source, sx, sy, cap, h, x, y, cap, h);
+  ctx.drawImage(source, sx + cap + cw, sy, cap, h, x + w, y, -cap, h);
+  ctx.drawImage(source, sx + cap, sy, cw, h, x + cap, y, w - cap * 2, h);
   write(button.label, x + sprite.center.x + 1, y + 3);
 }
 
