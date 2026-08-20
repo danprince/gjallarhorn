@@ -25,6 +25,7 @@ export default defineConfig({
       },
     },
     terserOptions: {
+      ecma: 2025,
       compress: {
         passes: 3,
         unsafe: true,
