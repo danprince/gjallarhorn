@@ -105,14 +105,14 @@ const UI_BOARD_H = UI_BOARD_ROWS * UI_CELL_SIZE;
 const UI_BOARD_X = UI_CENTER_X - UI_BOARD_W / 2;
 const UI_BOARD_Y = UI_CENTER_Y - UI_BOARD_H / 2;
 
-const UI_GRAVE_COLS = 4;
+const UI_GRAVE_COLS = 5;
 const UI_GRAVE_ROWS = 1;
 const UI_GRAVE_W = UI_GRAVE_COLS * UI_CELL_SIZE;
 const UI_GRAVE_H = UI_GRAVE_ROWS * UI_CELL_SIZE;
 const UI_GRAVE_X = UI_CENTER_X - UI_GRAVE_W / 2;
 const UI_GRAVE_Y = UI_BOARD_Y - UI_GAP - UI_GRAVE_H;
 
-const UI_HAND_COLS = 6;
+const UI_HAND_COLS = 7;
 const UI_HAND_ROWS = 1;
 const UI_HAND_W = UI_HAND_COLS * UI_CELL_SIZE;
 const UI_HAND_H = UI_HAND_ROWS * UI_CELL_SIZE;
@@ -719,10 +719,17 @@ function init() {
   spawn(FRIGG, hand.slots[3], 2);
   spawn(LOKI, hand.slots[4]);
   spawn(HEL, hand.slots[5]);
+  spawn(ODIN, hand.slots[6]);
 
-  spawn(FROST_GIANT, board.slots[4], 2);
+  spawn(FROST_GIANT, board.slots[4], 3);
   spawn(FROST_GIANT, board.slots[6], 3);
   spawn(FROST_CRYSTAL, board.slots[5]);
+  spawn(FROST_CRYSTAL, board.slots[0]);
+  spawn(FROST_CRYSTAL, board.slots[1]);
+  spawn(FROST_CRYSTAL, board.slots[2]);
+  spawn(FROST_CRYSTAL, board.slots[3]);
+  //spawn(FROST_CRYSTAL, board.slots[7]);
+  spawn(FROST_CRYSTAL, board.slots[9]);
 
   canvas.width = UI_W;
   canvas.height = UI_H;
