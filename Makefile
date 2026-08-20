@@ -1,8 +1,12 @@
+.PHONY: measure
+
+measure: dist.zip
+	@wc -c < dist.zip
+
 dist.zip: dist/index.html dist/sprites.png
 	rm -f dist.zip
 	cd dist && zip -9 ../dist.zip -r *
 	advzip -z -4 -i dist.zip
-	wc -c < dist.zip
 
 dist/index.html: *.js *.html
 	pnpm vite build
