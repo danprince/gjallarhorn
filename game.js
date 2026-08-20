@@ -46,6 +46,14 @@ import { spritesheet } from "./sprites.js";
  * @prop {Rectangle} hb
  * @prop {Slot} slot
  *
+ * @typedef {object} CardDefinition
+ * @prop {number} hp
+ * @prop {number} [tags]
+ * @prop {string} name
+ * @prop {string} [description]
+ * @prop {number} [sprite]
+ * @prop {number} [palette]
+ *
  * @typedef {object} Timer
  * @prop {number} duration
  * @prop {number} elapsed
@@ -156,20 +164,18 @@ const FROST_GIANT = 9;
  */
 
 /**
- * @type {Record<CardType, [hp: number, tags: number, name: string, description: string, sprite?: number]>}
+ * @type {Record<CardType, CardDefinition>}
  */
-// prettier-ignore
 const CARDS = {
-  //             hp  tags   name        description   [sprite]
-  [HEIMDALL]:    [1, GOD,   "Heimdall", ""],
-  [ODIN]:        [2, GOD,   "Odin",     ""],
-  [THOR]:        [2, GOD,   "Thor",     ""],
-  [HEL]:         [1, GOD,   "Hel",      ""],
-  [TYR]:         [3, GOD,   "Tyr",      ""],
-  [FRIGG]:       [1, GOD,   "Frigg",    ""],
-  [LOKI]:        [1, GOD,   "Loki",     ""],
-  [CRYSTAL]:     [0, NONE,  "Crystal",  ""],
-  [FROST_GIANT]: [1, GIANT, "Giant",    ""],
+  [HEIMDALL]: { hp: 1, tags: GOD, name: "Heimdall" },
+  [ODIN]: { hp: 2, tags: GOD, name: "Odin" },
+  [THOR]: { hp: 2, tags: GOD, name: "Thor" },
+  [HEL]: { hp: 1, tags: GOD, name: "Hel" },
+  [TYR]: { hp: 3, tags: GOD, name: "Tyr" },
+  [FRIGG]: { hp: 1, tags: GOD, name: "Frigg" },
+  [LOKI]: { hp: 1, tags: GOD, name: "Loki" },
+  [CRYSTAL]: { hp: 0, name: "Crystal" },
+  [FROST_GIANT]: { hp: 1, tags: GIANT, name: "Giant" },
 };
 
 /**
@@ -488,13 +494,13 @@ function reset() {
  */
 function spawn(type, slot, hp) {
   let def = CARDS[type];
-  let sprite = UI_CARD_SPRITES[def[4] ?? type];
+  let sprite = UI_CARD_SPRITES[def.sprite ?? type];
   let card = (slot.card = {
     type,
-    hp: hp ?? def[0],
-    tags: def[1],
-    name: def[2],
-    description: def[3],
+    hp: hp ?? def.hp,
+    tags: def.tags ?? NONE,
+    name: def.name,
+    description: def.description ?? "",
     sprite,
     palette: type,
     slot,
