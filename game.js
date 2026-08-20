@@ -47,6 +47,7 @@ import {
  * @prop {Slot} slot
  * @prop {number} targets
  * @prop {Vector[]} adjacency
+ * @prop {number} flashTimer
  * @prop {(card: Card, targets: Card[]) => void} effect
  *
  * @typedef {object} CardDefinition
@@ -239,6 +240,7 @@ async function perform(action) {
     let { card, target } = action;
     if (card.hp <= 0) return;
     await tween(card, target.slot, UI_ATTACK_MS);
+    target.flashTimer = UI_ATTACK_MS;
     let dead = --target.hp <= 0;
     if (dead) queue({ type: DIE, card: target });
     if (dead && card.type === LOKI) queue({ type: SUMMON, card });
@@ -441,6 +443,7 @@ function spawn(type, slot, hp) {
     palette: type,
     slot,
     hb: Rect(slot.hb.x, slot.hb.y, sprite.w, sprite.h),
+    flashTimer: 0,
 
     hp: hp ?? def.hp ?? 1,
     tags: def.tags ?? GOD,
@@ -550,8 +553,9 @@ function renderZone(zone) {
  */
 function renderCard(card) {
   let { x, y } = card.hb;
+  let palette = card.flashTimer > 0 ? 10 : card.palette;
   draw(spritesheet.card, x, y, card.palette);
-  draw(card.sprite, x, y, card.palette);
+  draw(card.sprite, x, y, palette);
   if (card.hp > 0) write(`${card.hp}`, x + 8, y + 13);
 }
 
@@ -646,12 +650,22 @@ function updateDrag() {
   if (drag) cursor = CURSOR_GRABBING;
 }
 
+function updateCards() {
+  for (let card of cards) {
+    if (card.flashTimer > 0) {
+      card.flashTimer -= dt;
+      refresh = true;
+    }
+  }
+}
+
 function update() {
   cursor = CURSOR_DEFAULT;
   updateActions();
   updateTimers();
   updateDrag();
   updateButtons();
+  updateCards();
   if (resetButton.pressed) reset();
 }
 
