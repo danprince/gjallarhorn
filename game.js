@@ -1,6 +1,10 @@
 import { blit, canvas, ctx, draw, pswap, write } from "./graphics.js";
 import { spritesheet } from "./sprites.js";
 import {
+  add,
+  cardinals,
+  diagonals,
+  exists,
   inside,
   lerp,
   range,
@@ -41,19 +45,26 @@ import {
  * @prop {number} palette
  * @prop {Rectangle} hb
  * @prop {Slot} slot
+ * @prop {number} targets
+ * @prop {Vector[]} adjacency
+ * @prop {(card: Card, targets: Card[]) => void} effect
  *
  * @typedef {object} CardDefinition
- * @prop {number} hp
+ * @prop {number} [hp]
  * @prop {number} [tags]
  * @prop {string} name
  * @prop {string} [description]
  * @prop {number} [sprite]
  * @prop {number} [palette]
+ * @prop {number} [targets]
+ * @prop {Vector[]} [adjacency]
+ * @prop {(card: Card, targets: Card[]) => void} [effect]
  *
  * @typedef {object} Timer
  * @prop {number} duration
  * @prop {number} elapsed
  * @prop {(t: number) => void} callback
+ * @prop {() => void} done
  *
  * @typedef {object} Animation
  * @prop {Point} start
@@ -83,6 +94,7 @@ const UI_CARD_SIZE = 18;
 const UI_CELL_SIZE = 20;
 const UI_GAP = 10;
 const UI_CARD_ANIMATION_MS = 250;
+const UI_ATTACK_MS = 150;
 const UI_BG = "#11151c";
 
 const UI_BOARD_COLS = 4;
@@ -99,7 +111,7 @@ const UI_GRAVE_H = UI_GRAVE_ROWS * UI_CELL_SIZE;
 const UI_GRAVE_X = UI_CENTER_X - UI_GRAVE_W / 2;
 const UI_GRAVE_Y = UI_BOARD_Y - UI_GAP - UI_GRAVE_H;
 
-const UI_HAND_COLS = 4;
+const UI_HAND_COLS = 6;
 const UI_HAND_ROWS = 1;
 const UI_HAND_W = UI_HAND_COLS * UI_CELL_SIZE;
 const UI_HAND_H = UI_HAND_ROWS * UI_CELL_SIZE;
@@ -135,6 +147,7 @@ const NONE = 0;
 const ALL = ~0;
 const GOD = 1;
 const GIANT = 2;
+const CRYSTAL = 4;
 
 // [Cards]
 const HEIMDALL = 1;
@@ -144,7 +157,7 @@ const HEL = 4;
 const TYR = 5;
 const FRIGG = 6;
 const LOKI = 7;
-const CRYSTAL = 8;
+const FROST_CRYSTAL = 8;
 const FROST_GIANT = 9;
 
 /**
@@ -156,7 +169,7 @@ const FROST_GIANT = 9;
  *   | typeof TYR
  *   | typeof FRIGG
  *   | typeof LOKI
- *   | typeof CRYSTAL
+ *   | typeof FROST_CRYSTAL
  *   | typeof FROST_GIANT
  * )} CardType
  */
@@ -165,16 +178,93 @@ const FROST_GIANT = 9;
  * @type {Record<CardType, CardDefinition>}
  */
 const CARDS = {
-  [HEIMDALL]: { hp: 1, tags: GOD, name: "Heimdall" },
-  [ODIN]: { hp: 2, tags: GOD, name: "Odin" },
-  [THOR]: { hp: 2, tags: GOD, name: "Thor" },
-  [HEL]: { hp: 1, tags: GOD, name: "Hel" },
-  [TYR]: { hp: 3, tags: GOD, name: "Tyr" },
-  [FRIGG]: { hp: 1, tags: GOD, name: "Frigg" },
-  [LOKI]: { hp: 1, tags: GOD, name: "Loki" },
-  [CRYSTAL]: { hp: 0, name: "Crystal" },
-  [FROST_GIANT]: { hp: 1, tags: GIANT, name: "Giant" },
+  [HEIMDALL]: {
+    name: "Heimdall",
+    targets: GOD | GIANT,
+    effect(card, targets) {
+      for (let target of targets) {
+        if (is(target, GOD)) queue({ type: SUMMON, card: target });
+        if (is(target, GIANT)) queue({ type: ATTACK, card, target });
+      }
+    },
+  },
+  [ODIN]: { name: "Odin", hp: 2 },
+  [THOR]: {
+    name: "Thor",
+    targets: GIANT | CRYSTAL,
+  },
+  [HEL]: { name: "Hel" },
+  [TYR]: {
+    name: "Tyr",
+    hp: 3,
+    targets: GOD | GIANT,
+    effect(card, targets) {
+      for (let target of targets) {
+        if (is(target, GIANT)) queue({ type: ATTACK, card, target });
+        queue({ type: PUSH, card, target });
+      }
+    },
+  },
+  [FRIGG]: { name: "Frigg", adjacency: diagonals },
+  [LOKI]: { name: "Loki" },
+  [FROST_CRYSTAL]: {
+    hp: 0,
+    name: "Crystal",
+    tags: CRYSTAL,
+    targets: NONE,
+  },
+  [FROST_GIANT]: { hp: 1, tags: GIANT, name: "Giant", targets: GOD },
 };
+
+const ATTACK = 0;
+const SUMMON = 1;
+const DIE = 2;
+const PUSH = 3;
+const TRIGGER = 4;
+
+/**
+ * @typedef {{ type: typeof ATTACK, card: Card, target: Card }} Attack
+ * @typedef {{ type: typeof SUMMON, card: Card }} Summon
+ * @typedef {{ type: typeof DIE, card: Card }} Die
+ * @typedef {{ type: typeof PUSH, card: Card, target: Card }} Push
+ * @typedef {{ type: typeof TRIGGER, card: Card }} Trigger
+ * @typedef {Attack | Summon | Die | Push | Trigger} Action
+ */
+
+/**
+ * @param {Action} action
+ */
+async function perform(action) {
+  if (action.type === ATTACK) {
+    let { card, target } = action;
+    if (card.hp <= 0) return;
+    await tween(card, target.slot, UI_ATTACK_MS);
+    let dead = --target.hp <= 0;
+    if (dead) queue({ type: DIE, card: target });
+    if (dead && card.type === LOKI) queue({ type: SUMMON, card });
+    await tween(card, card.slot, UI_ATTACK_MS);
+  } else if (action.type === SUMMON) {
+    let slot = hand.slots.find(isEmpty);
+    if (slot) return move(action.card, slot);
+  } else if (action.type === DIE) {
+    let slot = grave.slots.find(isEmpty);
+    return slot ? move(action.card, slot) : despawn(action.card);
+  } else if (action.type === PUSH) {
+    let { card, target } = action;
+    let dir = sub(target.slot, card.slot);
+    let slot = at(board, add(target.slot, dir));
+    if (slot) return is(target, GOD) ? play(target, slot) : move(target, slot);
+  } else if (action.type === TRIGGER) {
+    return trigger(action.card);
+  }
+}
+
+/**
+ * @param {Action} action
+ */
+function queue(action) {
+  actions.push(action);
+}
 
 /**
  * @type {number}
@@ -201,6 +291,16 @@ let cards = new Set();
  */
 let drag;
 
+/**
+ * @type {Action[]}
+ */
+let actions = [];
+
+/**
+ * @type {boolean}
+ */
+let busy = false;
+
 let hand = Zone(UI_HAND_X, UI_HAND_Y, UI_HAND_COLS, UI_HAND_ROWS);
 let board = Zone(UI_BOARD_X, UI_BOARD_Y, UI_BOARD_COLS, UI_BOARD_ROWS);
 let grave = Zone(UI_GRAVE_X, UI_GRAVE_Y, UI_GRAVE_COLS, UI_GRAVE_ROWS);
@@ -215,11 +315,23 @@ function hover(r) {
 }
 
 /**
+ * @param {Card} card
+ * @param {number} tags
+ * @returns {boolean}
+ */
+function is(card, tags) {
+  return (card.tags & tags) > 0;
+}
+
+/**
  * @param {number} ms
  * @param {(t: number) => void} callback
+ * @returns {Promise<void>}
  */
 function timer(ms, callback) {
-  timers.add({ elapsed: 0, duration: ms, callback });
+  return new Promise((done) => {
+    timers.add({ elapsed: 0, duration: ms, callback, done });
+  });
 }
 
 function resize() {
@@ -304,6 +416,16 @@ function reset() {
 }
 
 /**
+ * @param {Card} card
+ * @param {Card[]} targets
+ */
+function defaultAttackEffect(card, targets) {
+  for (let target of targets) {
+    queue({ type: ATTACK, card, target });
+  }
+}
+
+/**
  * @param {CardType} type
  * @param {Slot} slot
  * @param {number} [hp]
@@ -313,14 +435,18 @@ function spawn(type, slot, hp) {
   let sprite = UI_CARD_SPRITES[def.sprite ?? type];
   let card = (slot.card = {
     type,
-    hp: hp ?? def.hp,
-    tags: def.tags ?? NONE,
     name: def.name,
     description: def.description ?? "",
     sprite,
     palette: type,
     slot,
     hb: Rect(slot.hb.x, slot.hb.y, sprite.w, sprite.h),
+
+    hp: hp ?? def.hp ?? 1,
+    tags: def.tags ?? GOD,
+    targets: def.targets ?? GIANT,
+    effect: def.effect ?? defaultAttackEffect,
+    adjacency: def.adjacency ?? cardinals,
   });
   cards.add(card);
 }
@@ -339,6 +465,45 @@ function despawn(card) {
  */
 function play(card, slot) {
   move(card, slot);
+  trigger(card);
+
+  for (let target of adjacent(card)) {
+    if (is(target, GIANT)) {
+      queue({ type: TRIGGER, card: target });
+    }
+  }
+}
+
+/**
+ * @param {Card} card
+ */
+function trigger(card) {
+  card.effect(card, adjacent(card, card.targets));
+}
+
+/**
+ * @param {Card} card
+ * @param {number} tags
+ * @returns {Card[]}
+ */
+function adjacent(card, tags = ALL) {
+  let { slot } = card;
+  return card.adjacency
+    .map((d) => add(slot, d))
+    .map((p) => at(slot.zone, p)?.card)
+    .filter(exists)
+    .filter((c) => is(c, tags));
+}
+
+/**
+ * @param {Zone} zone
+ * @param {Point} p
+ * @returns {Slot | undefined}
+ */
+function at({ slots, cols, rows }, { x, y }) {
+  if (x >= 0 && y >= 0 && x < cols && y < rows) {
+    return slots[x + y * cols];
+  }
 }
 
 /**
@@ -349,7 +514,7 @@ function move(card, slot) {
   card.slot.card = undefined;
   card.slot = slot;
   slot.card = card;
-  tween(card, slot);
+  return tween(card, slot);
 }
 
 /**
@@ -357,11 +522,11 @@ function move(card, slot) {
  * @param {Card} card
  * @param {Slot} slot
  */
-function tween(card, slot) {
+function tween(card, slot, ms = UI_CARD_ANIMATION_MS) {
   let { x: x0, y: y0 } = card.hb;
   let { x: x1, y: y1 } = slot.hb;
 
-  timer(UI_CARD_ANIMATION_MS, (t) => {
+  return timer(ms, (t) => {
     let k = smoothstep(t);
     card.hb.x = lerp(x0, x1, k);
     card.hb.y = lerp(y0, y1, k);
@@ -387,7 +552,7 @@ function renderCard(card) {
   let { x, y } = card.hb;
   draw(spritesheet.card, x, y, card.palette);
   draw(card.sprite, x, y, card.palette);
-  write(`${card.hp}`, x + 8, y + 13);
+  if (card.hp > 0) write(`${card.hp}`, x + 8, y + 13);
 }
 
 /**
@@ -417,12 +582,24 @@ function render() {
   draw(sprite, pointer.x - UI_CURSOR_PIVOT_X, pointer.y - UI_CURSOR_PIVOT_Y);
 }
 
+async function updateActions() {
+  if (busy) return;
+  let action = actions.shift();
+  if (!action) return;
+  busy = true;
+  await perform(action);
+  busy = false;
+}
+
 function updateTimers() {
   for (let timer of timers) {
     timer.elapsed += dt;
     let t = Math.min(1, timer.elapsed / timer.duration);
     timer.callback(t);
-    if (t === 1) timers.delete(timer);
+    if (t === 1) {
+      timer.done();
+      timers.delete(timer);
+    }
     refresh = true;
   }
 }
@@ -471,6 +648,7 @@ function updateDrag() {
 
 function update() {
   cursor = CURSOR_DEFAULT;
+  updateActions();
   updateTimers();
   updateDrag();
   updateButtons();
@@ -497,6 +675,14 @@ function loop(now = pt) {
 function init() {
   spawn(HEIMDALL, hand.slots[0]);
   spawn(THOR, hand.slots[1]);
+  spawn(TYR, hand.slots[2]);
+  spawn(FRIGG, hand.slots[3], 2);
+  spawn(LOKI, hand.slots[4]);
+  spawn(HEL, hand.slots[5]);
+
+  spawn(FROST_GIANT, board.slots[4], 2);
+  spawn(FROST_GIANT, board.slots[6], 3);
+  spawn(FROST_CRYSTAL, board.slots[5]);
 
   canvas.width = UI_W;
   canvas.height = UI_H;

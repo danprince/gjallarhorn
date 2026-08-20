@@ -27,13 +27,44 @@ export function Rect(x, y, w, h) {
 }
 
 /**
+ * Creates a vector.
+ * @param {number} x
+ * @param {number} y
+ * @returns {Vector}
+ */
+export function Vec(x, y) {
+  return { x, y };
+}
+
+export const north = Vec(0, -1);
+export const south = Vec(0, 1);
+export const east = Vec(1, 0);
+export const west = Vec(-1, 0);
+export const northeast = Vec(1, -1);
+export const southeast = Vec(1, 1);
+export const southwest = Vec(-1, 1);
+export const northwest = Vec(-1, -1);
+export const cardinals = [north, south, east, west];
+export const diagonals = [northeast, southeast, southwest, northwest];
+
+/**
+ * Add `a` to `b` and return the resulting vector.
+ * @param {Vector} a
+ * @param {Vector} b
+ * @returns {Vector}
+ */
+export function add(a, b) {
+  return Vec(a.x + b.x, a.y + b.y);
+}
+
+/**
  * Subtract `b` from `a` and return the resulting vector.
  * @param {Vector} a
  * @param {Vector} b
  * @returns {Vector}
  */
 export function sub(a, b) {
-  return { x: a.x - b.x, y: a.y - b.y };
+  return Vec(a.x - b.x, a.y - b.y);
 }
 
 /**
@@ -49,6 +80,15 @@ export function sub(a, b) {
 export function required(value) {
   if (value == null) throw required;
   return value;
+}
+
+/**
+ * @template Value
+ * @param {Value} value
+ * @returns {value is NonNullable<Value>}
+ */
+export function exists(value) {
+  return value != null;
 }
 
 /**
