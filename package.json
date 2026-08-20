@@ -5,12 +5,7 @@
     "vite": "^8.2.1"
   },
   "scripts": {
-    "dev": "vite",
-    "build": "pnpm run squash && pnpm run bundle && pnpm run archive && pnpm run measure",
-    "oxipng": "oxipng -o max --strip all --alpha sprites.png",
-    "squash": "pnpm run oxipng",
-    "bundle": "vite build && cp sprites.png dist",
-    "archive": "rm -f dist.zip && cd dist && zip -9 ../dist.zip -r * && advzip -z -4 -i ../dist.zip",
-    "measure": "wc -c < dist.zip"
+    "postinstall": "git config core.hooksPath .githooks",
+    "dev": "vite"
   }
 }

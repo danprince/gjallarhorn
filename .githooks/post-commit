@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+# Builds the version of the game at HEAD then attaches the size to the commit
+# as a git note.
+
+set -euo pipefail
+
+# Stash untracked/unstaged files for a clean build.
+git stash -u -m note
+trap 'git stash pop' EXIT
+
+make
+size=$(wc -c < dist.zip | xargs)
+git notes add -fm "size: $size"
