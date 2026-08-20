@@ -252,6 +252,7 @@ async function perform(action) {
     let { card } = action;
     if (card.type === HEL) return resurrect(card);
     if (card.slot.zone !== board) return;
+    if (is(card, CRYSTAL)) return;
     let slot = grave.slots.find(isEmpty);
     return slot ? move(card, slot) : despawn(card);
   } else if (action.type === PUSH) {
