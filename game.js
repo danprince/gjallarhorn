@@ -272,10 +272,15 @@ async function resurrect(card) {
   let graveSlot = grave.slots.find(isNotEmpty) ?? grave.slots.find(isEmpty);
   let boardSlot = card.slot;
   let target = graveSlot?.card;
-  if (graveSlot) await move(card, graveSlot);
+
+  if (graveSlot) {
+    card.slot = graveSlot;
+    await move(card, graveSlot);
+  }
 
   if (target) {
     target.hp = 1;
+    target.slot = boardSlot;
     await play(target, boardSlot);
   }
 }
