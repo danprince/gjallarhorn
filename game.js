@@ -492,8 +492,8 @@ function despawn(card) {
  * @param {Card} card
  * @param {Slot} slot
  */
-function play(card, slot) {
-  move(card, slot);
+async function play(card, slot) {
+  await move(card, slot);
   trigger(card);
 
   for (let target of adjacent(card)) {
