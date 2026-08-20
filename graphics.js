@@ -121,3 +121,17 @@ export function write(text, x, y, palette = 17) {
     }
   }
 }
+
+/**
+ * @param {Sprite} sprite
+ * @param {number} palette
+ * @returns {string}
+ */
+export function spriteToDataUrl({ x, y, w, h }, palette = 1) {
+  let c = document.createElement("canvas");
+  c.width = w;
+  c.height = h;
+  let ctx = required(c.getContext("2d"));
+  ctx.drawImage(palettes[palette], -x, -y);
+  return c.toDataURL();
+}

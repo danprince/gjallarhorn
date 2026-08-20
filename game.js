@@ -1,4 +1,12 @@
-import { blit, canvas, ctx, draw, pswap, write } from "./graphics.js";
+import {
+  blit,
+  canvas,
+  ctx,
+  draw,
+  pswap,
+  spriteToDataUrl,
+  write,
+} from "./graphics.js";
 import { spritesheet } from "./sprites.js";
 import {
   add,
@@ -744,9 +752,11 @@ function init() {
   onpointerdown = onpointermove = onpointerup = onPointerEvent;
   onresize = resize;
 
-  document.title = "Gjallarhorn";
+  document.title = "Heimdall's Horn";
   document.body.style.cssText = `background:${UI_BG};cursor:none`;
   document.body.append(canvas);
+
+  document.head.innerHTML += `<link rel="icon" href="${spriteToDataUrl(UI_CARD_SPRITES[1])}" />`;
 
   resize();
   loop();
