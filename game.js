@@ -249,8 +249,11 @@ async function perform(action) {
     let slot = hand.slots.find(isEmpty);
     if (slot) return move(action.card, slot);
   } else if (action.type === DIE) {
+    let { card } = action;
+    if (card.type === HEL) return resurrect(card);
+    if (card.slot.zone !== board) return;
     let slot = grave.slots.find(isEmpty);
-    return slot ? move(action.card, slot) : despawn(action.card);
+    return slot ? move(card, slot) : despawn(card);
   } else if (action.type === PUSH) {
     let { card, target } = action;
     let dir = sub(target.slot, card.slot);
@@ -258,6 +261,21 @@ async function perform(action) {
     if (slot) return is(target, GOD) ? play(target, slot) : move(target, slot);
   } else if (action.type === TRIGGER) {
     return trigger(action.card);
+  }
+}
+
+/**
+ * @param {Card} card
+ */
+async function resurrect(card) {
+  let graveSlot = grave.slots.find(isNotEmpty) ?? grave.slots.find(isEmpty);
+  let boardSlot = card.slot;
+  let target = graveSlot?.card;
+  if (graveSlot) await move(card, graveSlot);
+
+  if (target) {
+    target.hp = 1;
+    await play(target, boardSlot);
   }
 }
 
@@ -403,6 +421,14 @@ function Zone(x, y, cols, rows, palette = 0) {
  */
 function isEmpty(slot) {
   return slot.card === undefined;
+}
+
+/**
+ * @param {Slot} slot
+ * @returns {boolean}
+ */
+function isNotEmpty(slot) {
+  return slot.card !== undefined;
 }
 
 /**
