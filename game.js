@@ -1,26 +1,22 @@
-// @ts-check
-
+import { blit, canvas, ctx, draw, pswap, write } from "./graphics.js";
 import { spritesheet } from "./sprites.js";
+import {
+  inside,
+  lerp,
+  range,
+  Rect,
+  required,
+  smoothstep,
+  strip,
+  sub,
+} from "./utils.js";
 
 /**
- * @import { Sprite, PivotSprite } from "./sprites.js";
+ * @import { Sprite } from "./sprites.js";
+ * @import { Point, Rectangle, Vector } from "./utils.js";
  */
 
 /**
- * @typedef {object} Point
- * @prop {number} x
- * @prop {number} y
- *
- * @typedef {object} Vector
- * @prop {number} x
- * @prop {number} y
- *
- * @typedef {object} Rectangle
- * @prop {number} x
- * @prop {number} y
- * @prop {number} w
- * @prop {number} h
- *
  * @typedef {object} Zone
  * @prop {Slot[]} slots
  * @prop {Rectangle} hb
@@ -122,12 +118,6 @@ const CURSOR_POINTER = 1;
 const CURSOR_GRAB = 2;
 const CURSOR_GRABBING = 3;
 
-let sprites = new Image();
-sprites.src = "sprites.png";
-await sprites.decode();
-
-let canvas = document.createElement("canvas");
-let ctx = required(canvas.getContext("2d"));
 let pointer = { x: UI_W, y: UI_H }; // pointer position in canvas coords
 let down = false; // pointer is down
 let _down = false; // pointer was down
@@ -187,16 +177,6 @@ const CARDS = {
 };
 
 /**
- * @type {Set<Card>}
- */
-let cards = new Set();
-
-/**
- * @type {Drag | undefined}
- */
-let drag;
-
-/**
  * @type {number}
  */
 let cursor = CURSOR_DEFAULT;
@@ -206,58 +186,26 @@ let cursor = CURSOR_DEFAULT;
  */
 let buttons = [];
 
+/**
+ * @type {Set<Timer>}
+ */
+let timers = new Set();
+
+/**
+ * @type {Set<Card>}
+ */
+let cards = new Set();
+
+/**
+ * @type {Drag | undefined}
+ */
+let drag;
+
 let hand = Zone(UI_HAND_X, UI_HAND_Y, UI_HAND_COLS, UI_HAND_ROWS);
 let board = Zone(UI_BOARD_X, UI_BOARD_Y, UI_BOARD_COLS, UI_BOARD_ROWS);
 let grave = Zone(UI_GRAVE_X, UI_GRAVE_Y, UI_GRAVE_COLS, UI_GRAVE_ROWS);
 
 let resetButton = Button(UI_BUTTON_ANCHOR_X, UI_BUTTON_ANCHOR_Y, "RESET");
-
-/**
- * Creates a rectangle.
- * @param {number} x
- * @param {number} y
- * @param {number} w
- * @param {number} h
- * @returns {Rectangle}
- */
-function Rect(x, y, w, h) {
-  return { x, y, w, h };
-}
-
-/**
- * Subtract `b` from `a` and return the resulting vector.
- * @param {Vector} a
- * @param {Vector} b
- * @returns {Vector}
- */
-function sub(a, b) {
-  return { x: a.x - b.x, y: a.y - b.y };
-}
-
-/**
- * Returns `value` if it is non-nullable, otherwise throws an error.
- *
- * Useful as an alternative to the non-null assertion operator (!) which
- * actually throws instead of just failing silently.
- *
- * @template Value
- * @param {Value} value
- * @returns {NonNullable<Value>}
- */
-function required(value) {
-  if (value == null) throw required;
-  return value;
-}
-
-/**
- * Check whether a rectangle contains a specific point.
- * @param {Rectangle} r
- * @param {Point} p
- * @returns {boolean}
- */
-function inside(r, p) {
-  return p.x >= r.x && p.y >= r.y && p.x < r.x + r.w && p.y < r.y + r.h;
-}
 
 /**
  * @param {Rectangle} r
@@ -267,156 +215,11 @@ function hover(r) {
 }
 
 /**
- * Linear interpolation between two values.
- * @param {number} a The start value.
- * @param {number} b The end value.
- * @param {number} k The control value.
- * @returns {number} The interpolated value.
- */
-function lerp(a, b, k) {
-  return a + (b - a) * k;
-}
-
-/**
- * @param {number} t
- * @returns {number}
- */
-function smoothstep(t) {
-  return t * t * (3 - 2 * t);
-}
-
-/**
- * Generate the sequence of integers between two numbers.
- * @param {number} min (inclusive)
- * @param {number} max (exclusive)
- */
-function range(min, max) {
-  return Array.from({ length: max - min }).map((_, i) => min + i);
-}
-
-/**
- * Slice a rectangle into a strip of sub-rectangles. Useful for creating
- * sprites from a parent sprite.
- * @param {Rectangle} rect
- * @param {number} w
- * @param {number} h
- */
-function strip(rect, w = rect.h, h = rect.h) {
-  /** @type {Rectangle[]} */
-  let slices = [];
-
-  for (let y = 0; y < rect.h; y += h) {
-    for (let x = 0; x < rect.w; x += w) {
-      slices.push({ x: rect.x + x, y: rect.y + y, w, h });
-    }
-  }
-
-  return slices;
-}
-
-/**
- * @type {Set<Timer>}
- */
-let timers = new Set();
-
-/**
  * @param {number} ms
  * @param {(t: number) => void} callback
  */
 function timer(ms, callback) {
   timers.add({ elapsed: 0, duration: ms, callback });
-}
-
-let palettes = buildPalettes();
-
-function buildPalettes() {
-  let { width: w, height: h } = sprites;
-  let { w: sw, h: sh } = spritesheet.swaps;
-  let src = getImageData({ x: 0, y: 0, w, h });
-  let swaps = getImageData(spritesheet.swaps);
-
-  /**
-   * @param {Rectangle} sprite
-   */
-  function getImageData({ x, y, w, h }) {
-    let c = new OffscreenCanvas(sprites.width, sprites.height);
-    let ctx = required(c.getContext("2d"));
-    ctx.drawImage(sprites, 0, 0);
-    return ctx.getImageData(x, y, w, h);
-  }
-
-  return range(0, sh).map((row) => {
-    let out = new ImageData(w, h);
-
-    for (let i = 0; i < w * h * 4; i += 4) {
-      let j = (row * sw + (src.data[i] >> 5)) * 4;
-      out.data[i] = swaps.data[j];
-      out.data[i + 1] = swaps.data[j + 1];
-      out.data[i + 2] = swaps.data[j + 2];
-      out.data[i + 3] = src.data[i + 3];
-    }
-
-    let c = new OffscreenCanvas(w, h);
-    required(c.getContext("2d")).putImageData(out, 0, 0);
-    return c;
-  });
-}
-
-/**
- * Get the palette swapped canvas for a specific palette index.
- * @param {number} index
- */
-function pswap(index) {
-  return palettes[index % palettes.length];
-}
-
-/**
- * Render a sprite.
- * @param {Sprite} s
- * @param {number} x
- * @param {number} y
- * @param {number} [palette]
- */
-function draw(s, x, y, palette) {
-  let { x: sx, y: sy, w: sw, h: sh } = s;
-  let source = palette != null ? pswap(palette) : sprites;
-  ctx.drawImage(source, sx, sy, sw, sh, x | 0, y | 0, sw, sh);
-}
-
-/**
- * @param {string} text
- * @param {number} x
- * @param {number} y
- * @param {number} [palette]
- */
-function write(text, x, y, palette = 17) {
-  let src = spritesheet.font;
-  let cols = 16; // cols in glyph atlas
-  let start = 32; // starting glyph
-  let gw = 3; // glyph width
-  let gh = 5; // glyph height
-  let lh = 6; // line height
-  let ls = 4; // letter spacing
-  let dx = x; // destination x
-  let dy = y; // destination y
-  let g = Rect(0, 0, gw, gh);
-
-  for (let i = 0; i < text.length; i++) {
-    let c = text.charCodeAt(i) - start;
-    let newline = c < 0; // c === (10-start)
-
-    if (newline) {
-      dx = x;
-      dy += lh;
-    } else {
-      g.x = src.x + (c % cols) * gw;
-      g.y = src.y + ((c / cols) | 0) * gh;
-      draw(g, dx + 1, dy, 18);
-      draw(g, dx, dy + 1, 18);
-      draw(g, dx, dy, palette);
-      dx += ls;
-    }
-  }
 }
 
 function resize() {
@@ -594,13 +397,12 @@ function renderButton(button) {
   let { x, y, w, h, active } = button;
   let palette = active ? 1 : 0;
   let sprite = spritesheet.btn;
-  let source = pswap(palette);
   let { x: sx, y: sy, center } = sprite;
   let { x: cap, w: cw } = center;
   if (down && active) y += 1;
-  ctx.drawImage(source, sx, sy, cap, h, x, y, cap, h);
-  ctx.drawImage(source, sx + cap + cw, sy, cap, h, x + w, y, -cap, h);
-  ctx.drawImage(source, sx + cap, sy, cw, h, x + cap, y, w - cap * 2, h);
+  blit(sx, sy, cap, h, x, y, cap, h, palette);
+  blit(sx + cap + cw, sy, cap, h, x + w, y, -cap, h, palette);
+  blit(sx + cap, sy, cw, h, x + cap, y, w - cap * 2, h, palette);
   write(button.label, x + sprite.center.x + 1, y + 3);
 }
 
