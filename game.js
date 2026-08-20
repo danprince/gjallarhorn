@@ -3,7 +3,7 @@
 import { spritesheet } from "./sprites.js";
 
 /**
- * @import { Sprite } from "./sprites.js";
+ * @import { Sprite, PivotSprite } from "./sprites.js";
  */
 
 /**
@@ -113,6 +113,14 @@ const UI_HAND_Y = UI_BOARD_Y + UI_BOARD_H + UI_GAP;
 const UI_BUTTON_ANCHOR_X = UI_CENTER_X;
 const UI_BUTTON_ANCHOR_Y = UI_HAND_Y + UI_HAND_H + UI_GAP;
 const UI_CARD_SPRITES = strip(spritesheet.cards, UI_CARD_SIZE, UI_CARD_SIZE);
+const UI_CURSOR_SPRITES = strip(spritesheet.cursors, 9);
+const UI_CURSOR_PIVOT_X = spritesheet.cursors.pivot.x;
+const UI_CURSOR_PIVOT_Y = spritesheet.cursors.pivot.y;
+
+const CURSOR_DEFAULT = 0;
+const CURSOR_POINTER = 1;
+const CURSOR_GRAB = 2;
+const CURSOR_GRABBING = 3;
 
 let sprites = new Image();
 sprites.src = "sprites.png";
@@ -120,7 +128,7 @@ await sprites.decode();
 
 let canvas = document.createElement("canvas");
 let ctx = required(canvas.getContext("2d"));
-let pointer = { x: 0, y: 0 }; // pointer position in canvas coords
+let pointer = { x: UI_W, y: UI_H }; // pointer position in canvas coords
 let down = false; // pointer is down
 let _down = false; // pointer was down
 let pressed = false; // pointer was pressed this frame
@@ -187,6 +195,11 @@ let cards = new Set();
  * @type {Drag | undefined}
  */
 let drag;
+
+/**
+ * @type {number}
+ */
+let cursor = CURSOR_DEFAULT;
 
 /**
  * @type {Button[]}
@@ -598,6 +611,8 @@ function render() {
   renderZone(board);
   renderZone(hand);
   if (drag) renderCard(drag.card);
+  let sprite = UI_CURSOR_SPRITES[cursor];
+  draw(sprite, pointer.x - UI_CURSOR_PIVOT_X, pointer.y - UI_CURSOR_PIVOT_Y);
 }
 
 function updateTimers() {
@@ -614,6 +629,7 @@ function updateButtons() {
   for (let b of buttons) {
     b.active = !drag && hover(b);
     b.pressed = pressed && b.active;
+    if (b.active) cursor = CURSOR_POINTER;
   }
 }
 
@@ -634,21 +650,25 @@ function updateDrag() {
       card.hb.x = pointer.x - offset.x;
       card.hb.y = pointer.y - offset.y;
     }
-  } else if (pressed) {
+  } else {
     for (let { card } of hand.slots) {
       if (card && hover(card.hb)) {
-        let offset = sub(pointer, card.hb);
-        drag = { card, offset };
+        if (pressed) {
+          let offset = sub(pointer, card.hb);
+          drag = { card, offset };
+        } else {
+          cursor = CURSOR_GRAB;
+        }
       }
     }
   }
 
-  if (released) {
-    drag = undefined;
-  }
+  if (released) drag = undefined;
+  if (drag) cursor = CURSOR_GRABBING;
 }
 
 function update() {
+  cursor = CURSOR_DEFAULT;
   updateTimers();
   updateDrag();
   updateButtons();
@@ -684,7 +704,7 @@ function init() {
   onresize = resize;
 
   document.title = "Gjallarhorn";
-  document.body.style.cssText = `background:${UI_BG}`;
+  document.body.style.cssText = `background:${UI_BG};cursor:none`;
   document.body.append(canvas);
 
   resize();
