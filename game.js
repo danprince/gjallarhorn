@@ -56,6 +56,8 @@ import {
  * @prop {number} targets
  * @prop {Vector[]} adjacency
  * @prop {number} flashTimer
+ * @prop {Slot} [startingSlot]
+ * @prop {number} startingHp
  * @prop {(card: Card, targets: Card[]) => void} effect
  *
  * @typedef {object} CardDefinition
@@ -450,9 +452,9 @@ function isNotEmpty(slot) {
  */
 function reset() {
   for (let card of cards) {
-    if (card.slot.zone !== hand) {
-      let slot = hand.slots.find(isEmpty);
-      if (slot) move(card, slot);
+    if (card.startingSlot) {
+      card.hp = card.startingHp;
+      move(card, card.startingSlot);
     }
   }
 }
@@ -475,6 +477,8 @@ function defaultAttackEffect(card, targets) {
 function spawn(type, slot, hp) {
   let def = CARDS[type];
   let sprite = UI_CARD_SPRITES[def.sprite ?? type];
+  hp ||= def.hp ?? 1;
+
   let card = (slot.card = {
     type,
     name: def.name,
@@ -484,12 +488,13 @@ function spawn(type, slot, hp) {
     slot,
     hb: Rect(slot.hb.x, slot.hb.y, sprite.w, sprite.h),
     flashTimer: 0,
-
-    hp: hp ?? def.hp ?? 1,
+    hp,
     tags: def.tags ?? GOD,
     targets: def.targets ?? GIANT,
     effect: def.effect ?? defaultAttackEffect,
     adjacency: def.adjacency ?? cardinals,
+    startingSlot: slot,
+    startingHp: hp,
   });
   cards.add(card);
 }
@@ -499,7 +504,6 @@ function spawn(type, slot, hp) {
  */
 function despawn(card) {
   card.slot.card = undefined;
-  cards.delete(card);
 }
 
 /**
