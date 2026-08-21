@@ -225,7 +225,7 @@ const CARDS = {
   },
   [FROST_CRYSTAL]: {
     hp: 0,
-    name: "Crystal",
+    name: "CRYSTAL",
     tags: CRYSTAL,
     targets: NONE,
   },
