@@ -249,6 +249,7 @@ async function perform(action) {
   if (action.type === ATTACK) {
     let { card, target } = action;
     if (card.hp <= 0) return;
+    if (target.slot.zone !== board) return;
     await tween(card, target.slot, UI_ATTACK_MS);
     target.flashTimer = UI_ATTACK_MS;
     let dead = --target.hp <= 0;
