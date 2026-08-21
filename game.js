@@ -300,6 +300,15 @@ function isShielded(card) {
 
 /**
  * @param {Card} card
+ * @returns {boolean}
+ */
+function isLocked(card) {
+  if (!is(card, GOD)) return false;
+  return (unlocks & (1 << (card.type - 1))) === 0;
+}
+
+/**
+ * @param {Card} card
  */
 async function resurrect(card) {
   let graveSlot = grave.slots.find(isNotEmpty) ?? grave.slots.find(isEmpty);
@@ -365,6 +374,15 @@ let actions = [];
  * @type {boolean}
  */
 let busy = false;
+
+//                   HEIMDALL
+//                     ODIN |
+//                   THOR | |
+//                  HEL | | |
+//                TYR | | | |
+//            FRIGG | | | | |
+//           LOKI | | | | | |
+let unlocks = 0b1_1_1_1_1_1_1;
 
 let hand = Zone(UI_HAND_X, UI_HAND_Y, UI_HAND_COLS, UI_HAND_ROWS);
 let board = Zone(UI_BOARD_X, UI_BOARD_Y, UI_BOARD_COLS, UI_BOARD_ROWS);
@@ -663,8 +681,9 @@ function renderZone(zone) {
  */
 function renderCard(card) {
   let { x, y } = card.hb;
-  let palette = card.flashTimer > 0 ? 10 : card.palette;
   draw(spritesheet.card, x, y, card.palette);
+  if (isLocked(card)) return draw(card.sprite, x, y, 14);
+  let palette = card.flashTimer > 0 ? 10 : card.palette;
   draw(card.sprite, x, y, palette);
 
   if (card.hp > 0) {
@@ -759,7 +778,7 @@ function updateDrag() {
     }
   } else {
     for (let { card } of hand.slots) {
-      if (card && hover(card.hb)) {
+      if (card && hover(card.hb) && !isLocked(card)) {
         if (pressed) {
           let offset = sub(pointer, card.hb);
           drag = { card, offset };
@@ -783,7 +802,7 @@ function updateCards() {
       refresh = true;
     }
 
-    if (hover(card.hb)) {
+    if (hover(card.hb) && !isLocked(card)) {
       preview = card;
     }
   }
