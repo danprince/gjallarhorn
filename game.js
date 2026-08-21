@@ -1,12 +1,4 @@
-import {
-  blit,
-  canvas,
-  ctx,
-  draw,
-  pswap,
-  spriteToDataUrl,
-  write,
-} from "./graphics.js";
+import { blit, canvas, ctx, draw, spriteToDataUrl, write } from "./graphics.js";
 import { spritesheet } from "./sprites.js";
 import {
   add,
@@ -15,7 +7,6 @@ import {
   exists,
   inside,
   lerp,
-  range,
   Rect,
   required,
   smoothstep,
