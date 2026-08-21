@@ -129,6 +129,13 @@ const UI_CURSOR_SPRITES = strip(spritesheet.cursors, 9);
 const UI_CURSOR_PIVOT_X = spritesheet.cursors.pivot.x;
 const UI_CURSOR_PIVOT_Y = spritesheet.cursors.pivot.y;
 
+const UI_DIALOGUE_WIDTH = 160;
+const UI_DIALOGUE_HEIGHT = 180;
+const UI_DIALOGUE_X = UI_CENTER_X - UI_DIALOGUE_WIDTH / 2;
+const UI_DIALOGUE_Y = UI_CENTER_Y - UI_DIALOGUE_HEIGHT / 2;
+const UI_DIALOGUE_ITEM_HEIGHT = 26;
+const UI_DIALOGUE_VISIBLE_ITEMS = 6;
+
 const CURSOR_DEFAULT = 0;
 const CURSOR_POINTER = 1;
 const CURSOR_GRAB = 2;
@@ -240,6 +247,48 @@ const CARDS = {
   },
 };
 
+/**
+ * @type {Record<string, CardType[]>}
+ */
+const LEVELS = {
+  "---J2-J2I0----I0J5-J4I0": [HEIMDALL, FRIGG],
+  "J5J2-I0-I0I0-J0J2I0I0-I0I0-": [HEIMDALL],
+  "I0J1J0I0I0J0I0J1I0J0J0I0-I0I0I0": [HEIMDALL],
+  "J1J0-I0I0J3I0I0J2J2I0J4-I0I0J0": [HEIMDALL],
+  "I0--I0I0-I0J0I0I0I0J0-J2I0J1": [HEIMDALL],
+};
+
+/**
+ * @type {Record<string, (number | string)[] | undefined>}
+ */
+const STORY = {
+  0: [
+    HEIMDALL,
+    "THE GIANTS TOOK THE GJALLARHORN!",
+
+    ODIN,
+    "OH NO...\n" + "HEIMDALL? WHAT IS A GJALLARHORN?",
+
+    HEIMDALL,
+    "IT'S THE *UNIQUE HORN* THAT SUMMONS\n" + "THE GODS BACK TO THE BIFROST.",
+
+    ODIN,
+    "AHH. ERM. WHAT'S A BIFROST?",
+
+    HEIMDALL,
+    "THE *RAINBOW BRIDGE* THAT CONNECTS\n" + "ASGARD TO THE OTHER WORLDS!",
+
+    ODIN,
+    "OH, RIGHT! WELL IF IT'S A UNIQUE HORN\n" + "THEN WE'D BEST GET IT BACK.",
+
+    ODIN,
+    "WHO WILL JOIN HEIMDALL?",
+
+    FRIGG,
+    "OH IT'S GOT TO BE ME!",
+  ],
+};
+
 const ATTACK = 0;
 const SUMMON = 1;
 const DIE = 2;
@@ -304,7 +353,7 @@ function isShielded(card) {
  */
 function isLocked(card) {
   if (!is(card, GOD)) return false;
-  return (unlocks & (1 << (card.type - 1))) === 0;
+  return !unlocks.has(card.type);
 }
 
 /**
@@ -375,20 +424,27 @@ let actions = [];
  */
 let busy = false;
 
-//                   HEIMDALL
-//                     ODIN |
-//                   THOR | |
-//                  HEL | | |
-//                TYR | | | |
-//            FRIGG | | | | |
-//           LOKI | | | | | |
-let unlocks = 0b1_1_1_1_1_1_1;
+/**
+ * @type {number}
+ */
+let level = 0;
+
+/**
+ * @type {number}
+ */
+let step = 0;
+
+/**
+ * @type {Set<CardType>}
+ */
+let unlocks = new Set();
 
 let hand = Zone(UI_HAND_X, UI_HAND_Y, UI_HAND_COLS, UI_HAND_ROWS);
 let board = Zone(UI_BOARD_X, UI_BOARD_Y, UI_BOARD_COLS, UI_BOARD_ROWS);
 let grave = Zone(UI_GRAVE_X, UI_GRAVE_Y, UI_GRAVE_COLS, UI_GRAVE_ROWS);
 
 let resetButton = Button(UI_BUTTON_ANCHOR_X, UI_BUTTON_ANCHOR_Y, "RESET");
+let nextButton = Button(UI_BUTTON_ANCHOR_X, UI_BUTTON_ANCHOR_Y, "NEXT");
 
 /**
  * @param {Rectangle} r
@@ -492,6 +548,10 @@ function isEmpty(slot) {
  */
 function isNotEmpty(slot) {
   return slot.card !== undefined;
+}
+
+function next() {
+  step += 1;
 }
 
 /**
@@ -716,16 +776,52 @@ function renderButton(button) {
   write(button.label, x + sprite.center.x + 1, y + 3);
 }
 
+function renderCursor() {
+  let sprite = UI_CURSOR_SPRITES[cursor];
+  draw(sprite, pointer.x - UI_CURSOR_PIVOT_X, pointer.y - UI_CURSOR_PIVOT_Y);
+}
+
+/**
+ *
+ * @param {(number | string)[]} steps
+ */
+function renderStory(steps) {
+  let x = UI_DIALOGUE_X;
+  let y = UI_DIALOGUE_Y;
+  for (let i = 0; i < steps.length; i += 2) {
+    let char = /** @type {CardType} */ (steps[i]);
+    let text = /** @type {string} */ (steps[i + 1]);
+    let card = CARDS[char];
+    draw(UI_CARD_SPRITES[char], x, y, char);
+    write(card.name, x + UI_CARD_SIZE + 4, y + 2, 1);
+    write(text, x + UI_CARD_SIZE + 4, y + 10);
+    y += UI_DIALOGUE_ITEM_HEIGHT;
+  }
+
+  renderButton(nextButton);
+}
+
 function render() {
   ctx.clearRect(0, 0, UI_W, UI_H);
+
+  let story = STORY[level];
+
+  if (story && step * 2 < story.length) {
+    let end = step;
+    let start = Math.max(0, end - UI_DIALOGUE_VISIBLE_ITEMS + 1);
+    let steps = story.slice(start * 2, (end + 1) * 2);
+    renderStory(steps);
+    renderCursor();
+    return;
+  }
+
   renderButton(resetButton);
   renderZone(grave);
   renderZone(board);
   renderZone(hand);
   if (preview) renderPreview(preview);
   if (drag) renderCard(drag.card);
-  let sprite = UI_CURSOR_SPRITES[cursor];
-  draw(sprite, pointer.x - UI_CURSOR_PIVOT_X, pointer.y - UI_CURSOR_PIVOT_Y);
+  renderCursor();
 }
 
 async function updateActions() {
@@ -809,12 +905,15 @@ function updateCards() {
 }
 
 function update() {
+  let story = STORY[level];
+  if (story && step * 2 < story.length) refresh = true;
   cursor = CURSOR_DEFAULT;
   updateActions();
   updateTimers();
   updateDrag();
   updateButtons();
   updateCards();
+  if (nextButton.pressed) next();
   if (resetButton.pressed) reset();
 }
 
@@ -846,12 +945,11 @@ function generateLevel() {
     .join("");
 }
 
-function init() {
-  let state = location.hash.slice(1);
-  state ||= generateLevel();
-  console.log("LOAD", state);
+/**
+ * @param {string} state
+ */
+function start(state) {
   load(state);
-
   spawn(HEIMDALL, hand.slots[0]);
   spawn(THOR, hand.slots[1]);
   spawn(TYR, hand.slots[2]);
@@ -859,6 +957,25 @@ function init() {
   spawn(LOKI, hand.slots[4]);
   spawn(HEL, hand.slots[5]);
   spawn(ODIN, hand.slots[6]);
+}
+
+function init() {
+  let state = location.hash.slice(1);
+
+  if (state === "random") {
+    state = generateLevel();
+    console.log("RANDOM", state);
+  }
+
+  if (state) {
+    step = Infinity; // skip dialogue
+    unlocks = new Set([HEIMDALL, THOR, TYR, FRIGG, LOKI, HEL, ODIN]);
+    start(state);
+  } else {
+    let [state, chars] = Object.entries(LEVELS)[level];
+    unlocks = new Set(chars);
+    start(state);
+  }
 
   canvas.width = UI_W;
   canvas.height = UI_H;
