@@ -1,7 +1,9 @@
 .PHONY: measure
 
+BUDGET := 13312
+
 measure: dist.zip
-	@wc -c < dist.zip
+	@wc -c < dist.zip | awk -v BUDGET=$(BUDGET) '{SIZE=$$1; printf "%d/%dB (%.1f%%)\n", SIZE, BUDGET, SIZE/BUDGET*100}'
 
 dist.zip: dist/index.html dist/sprites.png
 	rm -f dist.zip
