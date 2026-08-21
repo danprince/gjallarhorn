@@ -699,6 +699,7 @@ function render() {
 }
 
 async function updateActions() {
+  if (busy || actions.length) refresh = true;
   if (busy) return;
   let action = actions.shift();
   if (!action) return;
