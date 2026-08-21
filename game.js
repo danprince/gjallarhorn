@@ -7,6 +7,7 @@ import {
   exists,
   inside,
   lerp,
+  range,
   Rect,
   required,
   smoothstep,
@@ -800,9 +801,22 @@ function loop(now = pt) {
   _down = down;
 }
 
+function generateLevel() {
+  return range(0, 16)
+    .map(() => {
+      if (Math.random() < 0.3) return "-";
+      if (Math.random() < 0.6) return "I0";
+      let hp = Math.floor(Math.random() * Math.random() * 6);
+      return "J" + hp;
+    })
+    .join("");
+}
+
 function init() {
   let state = location.hash.slice(1);
-  if (state) load(state);
+  state ||= generateLevel();
+  console.log("LOAD", state);
+  load(state);
 
   spawn(HEIMDALL, hand.slots[0]);
   spawn(THOR, hand.slots[1]);
