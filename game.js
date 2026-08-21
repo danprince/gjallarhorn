@@ -263,13 +263,14 @@ async function perform(action) {
     let { card } = action;
     if (card.type === HEL) return resurrect(card);
     if (card.slot.zone !== board) return;
-    if (is(card, CRYSTAL)) return;
+    if (is(card, CRYSTAL)) return despawn(card);
     let slot = grave.slots.find(isEmpty);
     return slot ? move(card, slot) : despawn(card);
   } else if (action.type === PUSH) {
     let { card, target } = action;
     let dir = sub(target.slot, card.slot);
     let slot = at(board, add(target.slot, dir));
+    if (slot?.card) return;
     if (slot) return is(target, GOD) ? play(target, slot) : move(target, slot);
   } else if (action.type === TRIGGER) {
     return trigger(action.card);
