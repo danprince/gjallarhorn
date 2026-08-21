@@ -352,6 +352,11 @@ let cards = new Set();
 let drag;
 
 /**
+ * @type {Card | undefined}
+ */
+let preview;
+
+/**
  * @type {Action[]}
  */
 let actions = [];
@@ -665,12 +670,15 @@ function renderCard(card) {
   if (card.hp > 0) {
     write(`${card.hp}`, x + 8, y + 13);
   }
+}
 
-  if (hover(card.hb)) {
-    draw(card.sprite, 2, 2, card.palette);
-    write(card.name, UI_CARD_SIZE + 4, 4, 1);
-    write(card.description, UI_CARD_SIZE + 4, 12);
-  }
+/**
+ * @param {Card} card
+ */
+function renderPreview(card) {
+  draw(card.sprite, 2, 2, card.palette);
+  write(card.name, UI_CARD_SIZE + 4, 4, 1);
+  write(card.description, UI_CARD_SIZE + 4, 12);
 }
 
 /**
@@ -695,6 +703,7 @@ function render() {
   renderZone(grave);
   renderZone(board);
   renderZone(hand);
+  if (preview) renderPreview(preview);
   if (drag) renderCard(drag.card);
   let sprite = UI_CURSOR_SPRITES[cursor];
   draw(sprite, pointer.x - UI_CURSOR_PIVOT_X, pointer.y - UI_CURSOR_PIVOT_Y);
@@ -766,10 +775,16 @@ function updateDrag() {
 }
 
 function updateCards() {
+  preview = undefined;
+
   for (let card of cards) {
     if (card.flashTimer > 0) {
       card.flashTimer -= dt;
       refresh = true;
+    }
+
+    if (hover(card.hb)) {
+      preview = card;
     }
   }
 }
