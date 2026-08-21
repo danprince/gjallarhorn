@@ -88,7 +88,8 @@ import {
  * @prop {boolean} pressed
  */
 
-const UI_W = 320;
+const IS_MOBILE = innerWidth < innerHeight;
+const UI_W = IS_MOBILE ? 180 : 320;
 const UI_H = 200;
 const UI_CENTER_X = UI_W / 2;
 const UI_CENTER_Y = UI_H / 2;
@@ -819,10 +820,13 @@ function init() {
   onresize = resize;
 
   document.title = "Heimdall's Horn";
-  document.body.style.cssText = `background:${UI_BG};cursor:none`;
+  document.body.style.cssText = `background:${UI_BG};cursor:none;touch-action:none`;
   document.body.append(canvas);
 
-  document.head.innerHTML += `<link rel="icon" href="${spriteToDataUrl(UI_CARD_SPRITES[1])}" />`;
+  document.head.innerHTML += `
+    <link rel="icon" href="${spriteToDataUrl(UI_CARD_SPRITES[1])}" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  `;
 
   resize();
   loop();
