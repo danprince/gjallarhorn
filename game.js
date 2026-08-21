@@ -191,7 +191,11 @@ const CARDS = {
       }
     },
   },
-  [ODIN]: { name: "ODIN", hp: 2, description: "[NOT FINISHED YET]" },
+  [ODIN]: {
+    name: "ODIN",
+    hp: 2,
+    description: "GODS NEXT TO ODIN CANNOT DIE",
+  },
   [THOR]: {
     name: "THOR",
     targets: GIANT | CRYSTAL,
@@ -268,6 +272,7 @@ async function perform(action) {
     if (slot) return move(action.card, slot);
   } else if (action.type === DIE) {
     let { card } = action;
+    if (isShielded(card)) return (card.hp = 1);
     if (card.type === HEL) return resurrect(card);
     if (card.slot.zone !== board) return;
     if (is(card, CRYSTAL)) return despawn(card);
@@ -282,6 +287,13 @@ async function perform(action) {
   } else if (action.type === TRIGGER) {
     return trigger(action.card);
   }
+}
+
+/**
+ * @param {Card} card
+ */
+function isShielded(card) {
+  return is(card, GOD) && adjacent(card, GOD).some((c) => c.type === ODIN);
 }
 
 /**
@@ -563,7 +575,7 @@ async function play(card, slot) {
   await move(card, slot);
   trigger(card);
 
-  for (let target of adjacent(card, GIANT, cardinals)) {
+  for (let target of adjacent(card, GIANT)) {
     queue({ type: TRIGGER, card: target });
   }
 }
@@ -572,7 +584,7 @@ async function play(card, slot) {
  * @param {Card} card
  */
 function trigger(card) {
-  card.effect(card, adjacent(card, card.targets));
+  card.effect(card, adjacent(card, card.targets, card.adjacency));
 }
 
 /**
@@ -580,7 +592,7 @@ function trigger(card) {
  * @param {number} tags
  * @returns {Card[]}
  */
-function adjacent(card, tags = ALL, adjacency = card.adjacency) {
+function adjacent(card, tags = ALL, adjacency = cardinals) {
   let { slot } = card;
   return adjacency
     .map((d) => add(slot, d))
