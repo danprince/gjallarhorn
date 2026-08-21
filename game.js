@@ -516,10 +516,8 @@ async function play(card, slot) {
   await move(card, slot);
   trigger(card);
 
-  for (let target of adjacent(card)) {
-    if (is(target, GIANT)) {
-      queue({ type: TRIGGER, card: target });
-    }
+  for (let target of adjacent(card, GIANT, cardinals)) {
+    queue({ type: TRIGGER, card: target });
   }
 }
 
@@ -535,9 +533,9 @@ function trigger(card) {
  * @param {number} tags
  * @returns {Card[]}
  */
-function adjacent(card, tags = ALL) {
+function adjacent(card, tags = ALL, adjacency = card.adjacency) {
   let { slot } = card;
-  return card.adjacency
+  return adjacency
     .map((d) => add(slot, d))
     .map((p) => at(slot.zone, p)?.card)
     .filter(exists)
