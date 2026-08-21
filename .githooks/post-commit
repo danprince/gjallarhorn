@@ -4,11 +4,16 @@
 # as a git note.
 
 set -euo pipefail
+commit=$(git rev-parse HEAD)
+tmp=$(mktemp -d)
 
-# Stash untracked/unstaged files for a clean build.
-git stash -u -m note
-trap 'git stash pop' EXIT
+git archive "$commit" | tar -x -C "$tmp"
+ln -s "$PWD/node_modules" "$tmp/node_modules"
 
+pushd "$tmp"
 make
 size=$(wc -c < dist.zip | xargs)
-git notes add -fm "size: $size"
+popd
+
+git notes add -fm "size: $size" "$commit"
+rm -rf "$tmp"
