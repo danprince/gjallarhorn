@@ -141,6 +141,28 @@ const CURSOR_POINTER = 1;
 const CURSOR_GRAB = 2;
 const CURSOR_GRABBING = 3;
 
+// Each palette index here refers to one row within the "swaps" section of
+// the sprite atlas.
+const PALETTE_GREYSCALE = 0;
+const PALETTE_HEIMDALL = 1;
+const PALETTE_ODIN = 2;
+const PALETTE_THOR = 3;
+const PALETTE_HEL = 4;
+const PALETTE_TYR = 5;
+const PALETTE_FRIGG = 6;
+const PALETTE_LOKI = 7;
+const PALETTE_FROST_CRYSTAL = 8;
+const PALETTE_FROST_GIANT = 9;
+const PALETTE_FIRE_GIANT = 10;
+const PALETTE_11 = 11;
+const PALETTE_12 = 12;
+const PALETTE_13 = 13;
+const PALETTE_14 = 14;
+const PALETTE_DAMAGE = 15;
+const PALETTE_BUTTON = 16;
+const PALETTE_WHITE = 17;
+const PALETTE_BLACK = 18;
+
 let pointer = { x: UI_W, y: UI_H }; // pointer position in canvas coords
 let down = false; // pointer is down
 let _down = false; // pointer was down
@@ -742,7 +764,7 @@ function renderZone(zone) {
 function renderCard(card) {
   let { x, y } = card.hb;
   draw(spritesheet.card, x, y, card.palette);
-  if (isLocked(card)) return draw(card.sprite, x, y, 14);
+  if (isLocked(card)) return draw(card.sprite, x, y, PALETTE_BLACK);
   let palette = card.flashTimer > 0 ? 10 : card.palette;
   draw(card.sprite, x, y, palette);
 
