@@ -454,6 +454,45 @@ function reset() {
 }
 
 /**
+ * Encode the current state of the _board_ into a string.
+ * @returns {string}
+ */
+function save() {
+  return board.slots
+    .map(({ card }) => {
+      if (!card) return "-";
+      let a = String.fromCharCode(65 + card.type);
+      let b = Math.min(card.hp, 9);
+      return a + b;
+    })
+    .join("");
+}
+
+/**
+ * Load a saved state into the board.
+ * @param {string} state
+ */
+function load(state) {
+  let q = [...state];
+
+  for (let slot of board.slots) {
+    let type = required(q.shift()).charCodeAt(0) - 65;
+    if (isCardType(type)) {
+      let hp = parseInt(required(q.shift())) || 0;
+      spawn(type, slot, hp);
+    }
+  }
+}
+
+/**
+ * @param {number} n
+ * @returns {n is CardType}
+ */
+function isCardType(n) {
+  return n in CARDS;
+}
+
+/**
  * @param {Card} card
  * @param {Card[]} targets
  */
@@ -723,6 +762,9 @@ function loop(now = pt) {
 }
 
 function init() {
+  let state = location.hash.slice(1);
+  if (state) load(state);
+
   spawn(HEIMDALL, hand.slots[0]);
   spawn(THOR, hand.slots[1]);
   spawn(TYR, hand.slots[2]);
@@ -730,16 +772,6 @@ function init() {
   spawn(LOKI, hand.slots[4]);
   spawn(HEL, hand.slots[5]);
   spawn(ODIN, hand.slots[6]);
-
-  spawn(FROST_GIANT, board.slots[4], 3);
-  spawn(FROST_GIANT, board.slots[6], 3);
-  spawn(FROST_CRYSTAL, board.slots[5]);
-  spawn(FROST_CRYSTAL, board.slots[0]);
-  spawn(FROST_CRYSTAL, board.slots[1]);
-  spawn(FROST_CRYSTAL, board.slots[2]);
-  spawn(FROST_CRYSTAL, board.slots[3]);
-  //spawn(FROST_CRYSTAL, board.slots[7]);
-  spawn(FROST_CRYSTAL, board.slots[9]);
 
   canvas.width = UI_W;
   canvas.height = UI_H;
