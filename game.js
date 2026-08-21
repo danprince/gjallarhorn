@@ -278,6 +278,7 @@ async function resurrect(card) {
 
   if (graveSlot) {
     card.slot = graveSlot;
+    boardSlot.card = undefined;
     await move(card, graveSlot);
   }
 
