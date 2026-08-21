@@ -181,7 +181,8 @@ const FROST_GIANT = 9;
  */
 const CARDS = {
   [HEIMDALL]: {
-    name: "Heimdall",
+    name: "HEIMDALL",
+    description: "SUMMONS ADJACENT GODS HOME",
     targets: GOD | GIANT,
     effect(card, targets) {
       for (let target of targets) {
@@ -190,16 +191,18 @@ const CARDS = {
       }
     },
   },
-  [ODIN]: { name: "Odin", hp: 2 },
+  [ODIN]: { name: "ODIN", hp: 2, description: "[NOT FINISHED YET]" },
   [THOR]: {
-    name: "Thor",
+    name: "THOR",
     targets: GIANT | CRYSTAL,
+    description: "ATTACKS GIANTS AND CRYSTALS",
   },
-  [HEL]: { name: "Hel" },
+  [HEL]: { name: "HEL", description: "SWITCHES PLACES IN DEATH" },
   [TYR]: {
-    name: "Tyr",
+    name: "TYR",
     hp: 3,
     targets: GOD | GIANT,
+    description: "PUSHES GODS AND GIANTS",
     effect(card, targets) {
       for (let target of targets) {
         if (is(target, GIANT)) queue({ type: ATTACK, card, target });
@@ -207,15 +210,28 @@ const CARDS = {
       }
     },
   },
-  [FRIGG]: { name: "Frigg", adjacency: diagonals },
-  [LOKI]: { name: "Loki" },
+  [FRIGG]: {
+    name: "FRIGG",
+    adjacency: diagonals,
+    description: "ATTACKS ON DIAGONALS",
+  },
+  [LOKI]: {
+    name: "LOKI",
+    description: "RETURNS HOME IF HE SLAYS A GIANT",
+  },
   [FROST_CRYSTAL]: {
     hp: 0,
     name: "Crystal",
     tags: CRYSTAL,
     targets: NONE,
   },
-  [FROST_GIANT]: { hp: 1, tags: GIANT, name: "Giant", targets: GOD },
+  [FROST_GIANT]: {
+    hp: 1,
+    tags: GIANT,
+    name: "GIANT",
+    targets: GOD,
+    description: "ATTACKS IF GODS ARE PLAYED ADJACENT",
+  },
 };
 
 const ATTACK = 0;
@@ -631,7 +647,16 @@ function renderCard(card) {
   let palette = card.flashTimer > 0 ? 10 : card.palette;
   draw(spritesheet.card, x, y, card.palette);
   draw(card.sprite, x, y, palette);
-  if (card.hp > 0) write(`${card.hp}`, x + 8, y + 13);
+
+  if (card.hp > 0) {
+    write(`${card.hp}`, x + 8, y + 13);
+  }
+
+  if (hover(card.hb)) {
+    draw(card.sprite, 2, 2, card.palette);
+    write(card.name, UI_CARD_SIZE + 4, 4, 1);
+    write(card.description, UI_CARD_SIZE + 4, 12);
+  }
 }
 
 /**
