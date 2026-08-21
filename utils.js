@@ -44,7 +44,7 @@ export const northeast = Vec(1, -1);
 export const southeast = Vec(1, 1);
 export const southwest = Vec(-1, 1);
 export const northwest = Vec(-1, -1);
-export const cardinals = [north, south, east, west];
+export const cardinals = [north, east, south, west];
 export const diagonals = [northeast, southeast, southwest, northwest];
 
 /**
