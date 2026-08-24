@@ -36,7 +36,10 @@ export default defineConfig({
       },
       mangle: {
         toplevel: true,
-        properties: true,
+        properties: {
+          // Required for levels that are stored in { [state: string]: characters } form.
+          keep_quoted: true,
+        },
       },
     },
   },
