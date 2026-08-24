@@ -192,6 +192,7 @@ const FRIGG = 6;
 const LOKI = 7;
 const FROST_CRYSTAL = 8;
 const FROST_GIANT = 9;
+const FIRE_GIANT = 10;
 
 /**
  * @typedef {(
@@ -204,6 +205,7 @@ const FROST_GIANT = 9;
  *   | typeof LOKI
  *   | typeof FROST_CRYSTAL
  *   | typeof FROST_GIANT
+ *   | typeof FIRE_GIANT
  * )} CardType
  */
 
@@ -266,6 +268,20 @@ const CARDS = {
     name: "GIANT",
     targets: GOD,
     description: "ATTACKS IF GODS ARE PLAYED ADJACENT",
+  },
+  [FIRE_GIANT]: {
+    sprite: FROST_GIANT,
+    hp: 1,
+    tags: GIANT,
+    name: "GIANT",
+    targets: GOD,
+    description: "ATTACKS AND PUSHES GODS IF PLAYED ADJACENT",
+    effect(card, targets) {
+      for (let target of targets) {
+        queue({ type: ATTACK, card, target });
+        queue({ type: PUSH, card, target });
+      }
+    },
   },
 };
 
@@ -962,7 +978,8 @@ function generateLevel() {
       if (Math.random() < 0.3) return "-";
       if (Math.random() < 0.6) return "I0";
       let hp = Math.floor(Math.random() * Math.random() * 6);
-      return "J" + hp;
+      let char = Math.random() < 0.7 ? "J" : "K";
+      return char + hp;
     })
     .join("");
 }
