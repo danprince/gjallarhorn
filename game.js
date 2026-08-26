@@ -440,6 +440,28 @@ async function perform(action) {
   }
 }
 
+function hasClearedGiants() {
+  for (let card of cards) {
+    if (is(card, GIANT) && card.slot.zone === board) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function advanceToNextLevel() {
+  for (let card of cards) despawn(card);
+  cards.clear();
+
+  // TODO: Would be great to show the gods visually animating back to the hand
+  // and healing back to their base HP instead of just snapping to the new state.
+  // Probably relies on taking a "start snapshot" instead of storing a bit of
+  // starting state on each card.
+  let [state, chars] = Object.entries(LEVELS)[++level];
+  unlocks = new Set(chars);
+  start(state);
+}
+
 /**
  * @param {Card} card
  */
@@ -651,7 +673,11 @@ function isNotEmpty(slot) {
 }
 
 function next() {
-  step += 1;
+  if (hasClearedGiants()) {
+    advanceToNextLevel();
+  } else {
+    step += 1;
+  }
 }
 
 /**
@@ -915,7 +941,12 @@ function render() {
     return;
   }
 
-  renderButton(resetButton);
+  if (hasClearedGiants()) {
+    renderButton(nextButton);
+  } else {
+    renderButton(resetButton);
+  }
+
   renderZone(grave);
   renderZone(board);
   renderZone(hand);
