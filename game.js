@@ -1124,6 +1124,11 @@ function init() {
     state ||= "-".repeat(board.slots.length);
   }
 
+  if (parseInt(state) >= 0) {
+    level = parseInt(state);
+    state = "";
+  }
+
   if (state) {
     step = Infinity; // skip dialogue
     unlocks = new Set([HEIMDALL, THOR, TYR, FRIGG]);
