@@ -1134,8 +1134,8 @@ function init() {
     state ||= "-".repeat(board.slots.length);
   }
 
-  if (parseInt(state) >= 0) {
-    level = parseInt(state);
+  if (parseInt(state) > 0) {
+    level = parseInt(state) - 1;
     state = "";
   }
 
