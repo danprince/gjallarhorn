@@ -670,7 +670,7 @@ function spawn(type, slot, hp) {
     name: def.name,
     description: def.description ?? "",
     sprite,
-    palette: type,
+    palette: def.palette ?? type,
     slot,
     hb: Rect(slot.hb.x, slot.hb.y, sprite.w, sprite.h),
     flashTimer: 0,
