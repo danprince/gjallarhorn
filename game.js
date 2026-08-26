@@ -733,7 +733,7 @@ function load(state) {
   let q = [...state];
 
   for (let slot of board.slots) {
-    let type = required(q.shift()).charCodeAt(0) - 65;
+    let type = (q.shift() || "").charCodeAt(0) - 65;
     if (isCardType(type)) {
       let hp = parseInt(required(q.shift())) || 0;
       spawn(type, slot, hp);
