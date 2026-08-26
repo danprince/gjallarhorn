@@ -569,6 +569,20 @@ let resetButton = Button(UI_BUTTON_ANCHOR_X, UI_BUTTON_ANCHOR_Y, "RESET");
 let nextButton = Button(UI_BUTTON_ANCHOR_X, UI_BUTTON_ANCHOR_Y, "NEXT");
 
 /**
+ * Banished is a special hidden slot that cards can go to when the grave is
+ * full. There can be multiple cards here so don't trust the `card` property
+ * for anything important.
+ * @type {Slot}
+ */
+let banished = {
+  zone: grave,
+  x: -1,
+  y: -1,
+  hb: Rect(0, 0, 0, 0),
+  palette: 0,
+};
+
+/**
  * @param {Rectangle} r
  */
 function hover(r) {
@@ -685,6 +699,10 @@ function next() {
  */
 function reset() {
   for (let card of cards) {
+    despawn(card);
+  }
+
+  for (let card of cards) {
     if (card.startingSlot) {
       card.hp = card.startingHp;
       move(card, card.startingSlot);
@@ -776,6 +794,7 @@ function spawn(type, slot, hp) {
  */
 function despawn(card) {
   card.slot.card = undefined;
+  card.slot = banished;
 }
 
 /**
