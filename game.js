@@ -90,6 +90,8 @@ import {
  */
 
 const IS_MOBILE = innerWidth < innerHeight;
+const IS_EDITOR = location.search === "?edit";
+
 const UI_W = IS_MOBILE ? 180 : 320;
 const UI_H = 200;
 const UI_CENTER_X = UI_W / 2;
@@ -1006,9 +1008,13 @@ function init() {
     console.log("RANDOM", state);
   }
 
+  if (IS_EDITOR) {
+    state ||= "-".repeat(board.slots.length);
+  }
+
   if (state) {
     step = Infinity; // skip dialogue
-    unlocks = new Set([HEIMDALL, THOR, TYR, FRIGG, LOKI, HEL, ODIN]);
+    unlocks = new Set([HEIMDALL, THOR, TYR, FRIGG]);
     start(state);
   } else {
     let [state, chars] = Object.entries(LEVELS)[level];
@@ -1034,6 +1040,27 @@ function init() {
 
   resize();
   loop();
+}
+
+if (IS_EDITOR) {
+  onkeydown = ({ key }) => {
+    let slot = board.slots.find((s) => inside(s.hb, pointer));
+    let card = slot?.card;
+
+    // shift + number keys set health for the card under the cursor.
+    let shifted = ")!@£$%^&*()";
+
+    if (!slot) return;
+    else if (card && shifted.includes(key)) card.hp = shifted.indexOf(key);
+    else if (key === "x" || key === "Escape") slot.card = undefined;
+    else if (key === "1") spawn(FROST_CRYSTAL, slot);
+    else if (key === "2") spawn(FROST_GIANT, slot);
+    else if (key === "3") spawn(FIRE_GIANT, slot);
+    else return;
+
+    location.hash = save();
+    refresh = true;
+  };
 }
 
 init();
