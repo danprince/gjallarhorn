@@ -125,7 +125,7 @@ const UI_HAND_X = UI_CENTER_X - UI_HAND_W / 2;
 const UI_HAND_Y = UI_BOARD_Y + UI_BOARD_H + UI_GAP;
 
 const UI_BUTTON_ANCHOR_X = UI_CENTER_X;
-const UI_BUTTON_ANCHOR_Y = UI_HAND_Y + UI_HAND_H + UI_GAP;
+const UI_BUTTON_ANCHOR_Y = UI_HAND_Y + UI_HAND_H + 4;
 const UI_CARD_SPRITES = strip(spritesheet.cards, UI_CARD_SIZE, UI_CARD_SIZE);
 const UI_CURSOR_SPRITES = strip(spritesheet.cursors, 9);
 const UI_CURSOR_PIVOT_X = spritesheet.cursors.pivot.x;
