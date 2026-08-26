@@ -291,11 +291,71 @@ const CARDS = {
  * @type {Record<string, CardType[]>}
  */
 const LEVELS = {
-  "---J2-J2I0----I0J5-J4I0": [HEIMDALL, FRIGG],
-  "J5J2-I0-I0I0-J0J2I0I0-I0I0-": [HEIMDALL],
-  "I0J1J0I0I0J0I0J1I0J0J0I0-I0I0I0": [HEIMDALL],
-  "J1J0-I0I0J3I0I0J2J2I0J4-I0I0J0": [HEIMDALL],
-  "I0--I0I0-I0J0I0I0I0J0-J2I0J1": [HEIMDALL],
+  // 1. Tutorial 1
+  // There are some diagonal gaps that they might try but the only solution
+  // involves playing in the south slot.
+  "-------I0---I0J1I0--I0-I0------": [HEIMDALL],
+
+  // 2. Tutorial 2
+  // Teach the player that they need to hit twice when giants have more health.
+  "------I0-I0---J2---I0-I0------": [HEIMDALL, THOR],
+
+  // 3. Tutorial 3
+  // Teach the player to hit 3 giants with two characters.
+  "I0---I0--I0--J1-J2-J1--I0--I0I0-I0I0": [HEIMDALL, THOR],
+
+  // 4. Prisoner
+  // Teach the player to use Thor to smash crystals and Heimdall to return him
+  // to the hand.
+  "------I0I0I0--I0J2I0--I0I0I0------": [HEIMDALL, THOR],
+
+  // 5. Prison Break
+  // Teach the player to neutralize a larger pattern of giants.
+  "------J1I0J1-J1I0-I0J1-J1I0J1------": [HEIMDALL, THOR],
+
+  // 6. Opposites
+  // Attack giants at opposite ends of the map.
+  "-I0J1I0---I0--I0---I0--I0---I0J1I0-": [HEIMDALL, THOR],
+
+  // 7. Push
+  // Teach the player to push with Tyr, pushing a giant into a spot where
+  // Thor can hit two.
+  "-------I0J1I0-I0-----J2-------": [THOR, TYR],
+
+  // 8. Pushing Thor
+  // Teach the player to push Thor instead of a giant to repeat his effect.
+  "-I0J1I0--J1I0J1--J1-J1--------J1--": [THOR, TYR],
+
+  // 9. Push & Reset
+  // Teach the player to use all three character effects together in a chain.
+  "--J1---I0I0I0-J1I0-I0J1-I0I0I0---J1--": [HEIMDALL, THOR, TYR],
+
+  // 10. Pushing Trap
+  // Teach the player that pushing is sometimes worse than summoning.
+  "-I0J3I0--J2I0J2----------------": [HEIMDALL, THOR, TYR],
+
+  // 11. Fortress
+  // Use Thor to break into a fortress with pushes from Tyr.
+  "I0I0J2I0I0-J2I0J2-I0I0I0I0I0I0---I0-----": [HEIMDALL, THOR, TYR],
+
+  // 12. Thortex
+  // Use Tyr to turn the spiral into a cross.
+  "--I0-----J2-I0J2-J1I0-J3-----I0--": [HEIMDALL, THOR, TYR],
+
+  // 13. Frigg
+  // Use Frigg's ability to hit on diagonals.
+  "J1---I0---I0---J3---I0---I0---J1": [HEIMDALL, FRIGG],
+
+  // 14. Thin Line
+  // Use Frigg and Heimdall to defeat giants in a diagonal line.
+  "J1-----J1-----J3------------": [HEIMDALL, FRIGG],
+
+  // 15. Fortress II
+  // Heimdall helps Thor burrow in, then Frigg finishes the job.
+  "I0J1I0J1I0I0I0I0I0I0I0J2I0J2I0-I0-I0------": [HEIMDALL, THOR, FRIGG],
+
+  // 16. Overwhelming Odds
+  "-I0J2I0I0--I0J1I0-I0J4I0I0--I0-I0J1----": [HEIMDALL, THOR, FRIGG],
 };
 
 /**
