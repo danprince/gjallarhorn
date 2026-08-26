@@ -1086,7 +1086,7 @@ function loop(now = pt) {
 }
 
 function generateLevel() {
-  return range(0, 16)
+  return range(0, board.slots.length)
     .map(() => {
       if (Math.random() < 0.3) return "-";
       if (Math.random() < 0.6) return "I0";
