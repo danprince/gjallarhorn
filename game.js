@@ -932,6 +932,7 @@ async function updateActions() {
   busy = true;
   await perform(action);
   busy = false;
+  refresh = true;
 }
 
 function updateTimers() {
