@@ -101,7 +101,7 @@ const UI_CELL_SIZE = 20;
 const UI_GAP = 10;
 const UI_CARD_ANIMATION_MS = 250;
 const UI_ATTACK_MS = 150;
-const UI_BG = "#11151c";
+const UI_BG = "#000";
 
 const UI_BOARD_COLS = 5;
 const UI_BOARD_ROWS = 5;
@@ -342,19 +342,23 @@ const LEVELS = {
   // Use Tyr to turn the spiral into a cross.
   "--I0-----J2-I0J2-J1I0-J3-----I0--": [HEIMDALL, THOR, TYR],
 
-  // 13. Frigg
+  // 13. Lazarus
+  // Vertical puzzle that requires retriggering Heimdall with a push.
+  "-J1I0----I0J2----J1--------J1--": [HEIMDALL, THOR, TYR],
+
+  // 14. Frigg
   // Use Frigg's ability to hit on diagonals.
   "J1---I0---I0---J3---I0---I0---J1": [HEIMDALL, FRIGG],
 
-  // 14. Thin Line
+  // 15. Thin Line
   // Use Frigg and Heimdall to defeat giants in a diagonal line.
   "J1-----J1-----J3------------": [HEIMDALL, FRIGG],
 
-  // 15. Fortress II
+  // 16. Fortress II
   // Heimdall helps Thor burrow in, then Frigg finishes the job.
   "I0J1I0J1I0I0I0I0I0I0I0J2I0J2I0-I0-I0------": [HEIMDALL, THOR, FRIGG],
 
-  // 16. Overwhelming Odds
+  // 17. Overwhelming Odds
   "-I0J2I0I0--I0J1I0-I0J4I0I0--I0-I0J1----": [HEIMDALL, THOR, FRIGG],
 };
 
@@ -373,19 +377,25 @@ const STORY = {
     "IT'S THE *UNIQUE HORN* THAT SUMMONS\n" + "THE GODS BACK TO THE BIFROST.",
 
     ODIN,
-    "AHH. ERM. WHAT'S A BIFROST?",
+    "AHH. ERM. WHAT'S THE BIFROST?",
 
     HEIMDALL,
     "THE *RAINBOW BRIDGE* THAT CONNECTS\n" + "ASGARD TO THE OTHER WORLDS!",
 
     ODIN,
-    "OH, RIGHT! WELL IF IT'S A UNIQUE HORN\n" + "THEN WE'D BEST GET IT BACK.",
+    "OH, RIGHT. WELL IF IT'S A *UNIQUE HORN*\n" +
+      "THEN YOU'D BEST GET IT BACK!",
 
-    ODIN,
-    "WHO WILL JOIN HEIMDALL?",
+    HEIMDALL,
+    "I'LL RETURN TO THE BIFROST IMMEDIATELY.",
+  ],
 
-    FRIGG,
-    "OH IT'S GOT TO BE ME!",
+  1: [
+    HEIMDALL,
+    "THERE ARE GIANTS ON THE RAINBOW BRIDGE!",
+
+    THOR,
+    "IT'S A SLOW DAY IN ASGARD. I'LL HELP YOU!",
   ],
 };
 
