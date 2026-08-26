@@ -459,6 +459,7 @@ function advanceToNextLevel() {
   // starting state on each card.
   let [state, chars] = Object.entries(LEVELS)[++level];
   unlocks = new Set(chars);
+  step = 0;
   start(state);
 }
 
