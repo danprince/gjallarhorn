@@ -503,7 +503,7 @@ function isLocked(card) {
  * @param {Card} card
  */
 async function resurrect(card) {
-  let graveSlot = grave.slots.find(isNotEmpty) ?? grave.slots.find(isEmpty);
+  let graveSlot = grave.slots.findLast(isNotEmpty) ?? grave.slots.find(isEmpty);
   let boardSlot = card.slot;
   let target = graveSlot?.card;
 
