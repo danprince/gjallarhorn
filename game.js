@@ -235,6 +235,7 @@ const CARDS = {
     name: "THOR",
     targets: GIANT | CRYSTAL,
     description: "ATTACKS GIANTS AND CRYSTALS",
+    hp: 2,
   },
   [HEL]: { name: "HEL", description: "SWITCHES PLACES IN DEATH" },
   [TYR]: {
@@ -273,7 +274,7 @@ const CARDS = {
   },
   [FIRE_GIANT]: {
     sprite: FROST_GIANT,
-    hp: 1,
+    hp: 2,
     tags: GIANT,
     name: "GIANT",
     targets: GOD,
@@ -360,6 +361,14 @@ const LEVELS = {
 
   // 17. Overwhelming Odds
   "-I0J2I0I0--I0J1I0-I0J4I0I0--I0-I0J1----": [HEIMDALL, THOR, FRIGG],
+
+  // 18. Fire Giants Snooker
+  // Learn about using fire giants offensively.
+  "--J1--------------K2-------": [HEIMDALL, THOR, FRIGG],
+
+  // 19. Fire Giants
+  // Learn about using fire giants offensively.
+  "I0J3I0-----J1-I0-K4------------": [HEIMDALL, TYR, FRIGG],
 };
 
 /**
