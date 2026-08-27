@@ -450,6 +450,7 @@ async function perform(action) {
     return slot ? move(card, slot) : despawn(card);
   } else if (action.type === PUSH) {
     let { card, target } = action;
+    if (card.hp <= 0 || target.hp <= 0) return;
     let dir = sub(target.slot, card.slot);
     let slot = at(board, add(target.slot, dir));
     if (slot?.card) return;
