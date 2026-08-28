@@ -761,7 +761,8 @@ function save() {
       let b = Math.min(card.hp, 9);
       return a + b;
     })
-    .join("");
+    .join("")
+    .replace(/-+$/, "");
 }
 
 /**
