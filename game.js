@@ -427,7 +427,7 @@ const TRIGGER = 4;
 /**
  * @typedef {{ type: typeof ATTACK, card: Card, target: Card }} Attack
  * @typedef {{ type: typeof SUMMON, card: Card }} Summon
- * @typedef {{ type: typeof DIE, card: Card }} Die
+ * @typedef {{ type: typeof DIE, card: Card, killer?: Card }} Die
  * @typedef {{ type: typeof PUSH, card: Card, target: Card }} Push
  * @typedef {{ type: typeof TRIGGER, card: Card }} Trigger
  * @typedef {Attack | Summon | Die | Push | Trigger} Action
