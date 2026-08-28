@@ -467,7 +467,7 @@ async function attack(card, target) {
   await tween(card, target.slot, UI_ATTACK_MS);
   target.flashTimer = UI_ATTACK_MS;
   let dead = --target.hp <= 0;
-  if (dead) queue({ type: DIE, card: target, killer: card });
+  if (dead) die(target, card);
   await tween(card, card.slot, UI_ATTACK_MS);
   // Giants retaliate after being attacked.
   if (is(target, GIANT)) queue({ type: TRIGGER, card: target });
