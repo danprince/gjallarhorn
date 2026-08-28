@@ -2,11 +2,14 @@ import { blit, canvas, ctx, draw, spriteToDataUrl, write } from "./graphics.js";
 import { spritesheet } from "./sprites.js";
 import {
   add,
+  anchor,
   cardinals,
   diagonals,
   exists,
   inside,
   lerp,
+  pick,
+  random,
   range,
   Rect,
   required,
@@ -69,11 +72,17 @@ import {
  * @prop {(t: number) => void} callback
  * @prop {() => void} done
  *
- * @typedef {object} Animation
- * @prop {Point} start
- * @prop {Point} end
+ * @typedef {object} Particle
  * @prop {number} duration
  * @prop {number} elapsed
+ * @prop {number} x
+ * @prop {number} y
+ * @prop {number} vx
+ * @prop {number} vy
+ * @prop {number} mass
+ * @prop {number} floor
+ * @prop {Sprite} sprite
+ * @prop {number} palette
  *
  * @typedef {object} Drag
  * @prop {Card} card
@@ -137,6 +146,10 @@ const UI_DIALOGUE_X = UI_CENTER_X - UI_DIALOGUE_WIDTH / 2;
 const UI_DIALOGUE_Y = UI_CENTER_Y - UI_DIALOGUE_HEIGHT / 2;
 const UI_DIALOGUE_ITEM_HEIGHT = 26;
 const UI_DIALOGUE_VISIBLE_ITEMS = 6;
+
+const DEG_90 = Math.PI / 2;
+const DEG_180 = DEG_90 * 2;
+const DEG_270 = DEG_90 * 3;
 
 const CURSOR_DEFAULT = 0;
 const CURSOR_POINTER = 1;
@@ -466,6 +479,7 @@ async function attack(card, target) {
   if (target.slot.zone !== board) return;
   await tween(card, target.slot, UI_ATTACK_MS);
   target.flashTimer = UI_ATTACK_MS;
+  showBloodSplatter(card, target);
   let dead = --target.hp <= 0;
   if (dead) die(target, card);
   await tween(card, card.slot, UI_ATTACK_MS);
@@ -501,6 +515,7 @@ async function die(card, killer) {
   let pos = card.slot;
   if (card.slot.zone !== board) return;
   if (is(card, CRYSTAL)) return despawn(card);
+  showBoneTumble(card.slot);
   let slot = grave.slots.find(isEmpty);
   return slot ? await move(card, slot) : despawn(card);
 }
@@ -579,6 +594,11 @@ let buttons = [];
  * @type {Set<Timer>}
  */
 let timers = new Set();
+
+/**
+ * @type {Set<Particle>}
+ */
+let particles = new Set();
 
 /**
  * @type {Set<Card>}
@@ -926,6 +946,59 @@ function tween(card, slot, ms = UI_CARD_ANIMATION_MS) {
 }
 
 /**
+ * @param {Partial<Particle>} p
+ */
+function emit(p) {
+  particles.add({
+    x: 0,
+    y: 0,
+    vx: random(-10, 10),
+    vy: random(-10, 10),
+    sprite: pick([spritesheet.particle_1, spritesheet.particle_2]),
+    duration: random(300, 800),
+    elapsed: 0,
+    floor: Infinity,
+    mass: random(1, 5),
+    palette: 0,
+    ...p,
+  });
+}
+
+/**
+ * @param {Card} card
+ * @param {Card} target
+ */
+function showBloodSplatter(card, target) {
+  let dir = sub(target.slot.hb, card.slot.hb);
+  let count = random(3, 10);
+  for (let i = 0; i < count; i++) {
+    let { x, y } = anchor(target.slot.hb, random(), random());
+    let angle = Math.atan2(dir.x, dir.y) + random(-0.5, 0.5);
+    let speed = random(10, 60);
+    let vx = Math.sin(angle) * speed;
+    let vy = Math.cos(angle) * speed;
+    emit({ x, y, vx, vy, palette: PALETTE_DAMAGE });
+  }
+}
+
+/**
+ * @param {Slot} slot
+ */
+function showBoneTumble(slot) {
+  let count = random(3, 6);
+  for (let i = 0; i < count; i++) {
+    let { x, y } = anchor(slot.hb, 0.5, 0.5);
+    let angle = random(0, -DEG_180);
+    let speed = random(10, 60);
+    let vx = Math.sin(angle) * speed;
+    let vy = Math.cos(angle) * speed;
+    let floor = y + random(10, 15);
+    let sprite = spritesheet.particle_bone;
+    emit({ x, y, vx, vy, sprite, floor, palette: PALETTE_WHITE });
+  }
+}
+
+/**
  * @param {Zone} zone
  */
 function renderZone(zone) {
@@ -941,7 +1014,7 @@ function renderZone(zone) {
  * @param {Card} card
  */
 function renderCard(card) {
-  let { x, y } = card.hb;
+  let { x, y, w, h } = card.hb;
   draw(spritesheet.card, x, y, card.palette);
   if (isLocked(card)) return draw(card.sprite, x, y, PALETTE_BLACK);
   let palette = card.flashTimer > 0 ? 10 : card.palette;
@@ -980,6 +1053,12 @@ function renderButton(button) {
 function renderCursor() {
   let sprite = UI_CURSOR_SPRITES[cursor];
   draw(sprite, pointer.x - UI_CURSOR_PIVOT_X, pointer.y - UI_CURSOR_PIVOT_Y);
+}
+
+function renderParticles() {
+  for (let p of particles) {
+    draw(p.sprite, p.x, p.y, p.palette);
+  }
 }
 
 /**
@@ -1027,6 +1106,7 @@ function render() {
   renderZone(hand);
   if (preview) renderPreview(preview);
   if (drag) renderCard(drag.card);
+  renderParticles();
   renderCursor();
 }
 
@@ -1051,6 +1131,23 @@ function updateTimers() {
       timers.delete(timer);
     }
     refresh = true;
+  }
+}
+
+function updateParticles() {
+  for (let p of particles) {
+    refresh = true;
+    let step = dt / 1000;
+    p.x += p.vx * step;
+    p.y += p.vy * step;
+    p.vy += p.mass;
+    if (p.y > p.floor) {
+      p.y = p.floor;
+      p.vy *= -1;
+    }
+    if ((p.elapsed += dt) > p.duration) {
+      particles.delete(p);
+    }
   }
 }
 
@@ -1117,6 +1214,7 @@ function update() {
   cursor = CURSOR_DEFAULT;
   updateActions();
   updateTimers();
+  updateParticles();
   updateDrag();
   updateButtons();
   updateCards();

@@ -148,3 +148,32 @@ export function strip(rect, w = rect.h, h = rect.h) {
 
   return slices;
 }
+
+/**
+ * @template Value
+ * @param {Value[]} array
+ * @returns {Value}
+ */
+export function pick(array) {
+  return array[Math.floor(Math.random() * array.length)];
+}
+
+/**
+ * Find an anchor point within a rect given normalized coordinates (0-1).
+ * @param {Rectangle} r
+ * @param {number} x
+ * @param {number} y
+ * @returns {Point}
+ */
+export function anchor(r, x, y) {
+  return { x: r.x + r.w * x, y: r.y + r.h * y };
+}
+
+/**
+ * @param {number} min
+ * @param {number} max
+ * @returns {number}
+ */
+export function random(min = 0, max = 1) {
+  return min + (max - min) * Math.random();
+}

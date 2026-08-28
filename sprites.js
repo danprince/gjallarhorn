@@ -24,6 +24,9 @@ export const spritesheet = {
   "card_slot": { h: 18, w: 18, x: 8, y: 0, },
   "cards": { h: 54, w: 72, x: 8, y: 0, },
   "cursors": { h: 10, pivot: { x: 3, y: 1, }, w: 37, x: 91, y: 44, },
-  "font": { h: 30, w: 48, x: 80, y: 0, },
+  "font": { h: 30, pivot: { x: 0, y: 0, }, w: 48, x: 80, y: 0, },
+  "particle_1": { h: 3, w: 3, x: 80, y: 30, },
+  "particle_2": { h: 4, w: 4, x: 83, y: 30, },
+  "particle_bone": { h: 7, w: 7, x: 87, y: 30, },
   "swaps": { h: 19, w: 8, x: 0, y: 0, },
 };
