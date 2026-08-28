@@ -53,7 +53,7 @@ import {
  * @prop {number} flashTimer
  * @prop {Slot} [startingSlot]
  * @prop {number} startingHp
- * @prop {(card: Card, targets: Card[]) => void} effect
+ * @prop {(card: Card, targets: Card[]) => void | Promise<void>} effect
  *
  * @typedef {object} CardDefinition
  * @prop {number} [hp]
@@ -64,7 +64,7 @@ import {
  * @prop {number} [palette]
  * @prop {number} [targets]
  * @prop {Vector[]} [adjacency]
- * @prop {(card: Card, targets: Card[]) => void} [effect]
+ * @prop {(card: Card, targets: Card[]) => void | Promise<void>} [effect]
  *
  * @typedef {object} Timer
  * @prop {number} duration
@@ -234,10 +234,10 @@ const CARDS = {
     name: "HEIMDALL",
     description: "SUMMONS ADJACENT GODS HOME",
     targets: GOD | GIANT,
-    effect(card, targets) {
+    async effect(card, targets) {
       for (let target of targets) {
-        if (is(target, GOD)) queue({ type: SUMMON, card: target });
-        if (is(target, GIANT)) queue({ type: ATTACK, card, target });
+        if (is(target, GOD)) await summon(target);
+        if (is(target, GIANT)) await attack(card, target);
       }
     },
   },
@@ -257,10 +257,10 @@ const CARDS = {
     hp: 3,
     targets: GOD | GIANT,
     description: "PUSHES GODS AND GIANTS",
-    effect(card, targets) {
+    async effect(card, targets) {
       for (let target of targets) {
-        if (is(target, GIANT)) queue({ type: ATTACK, card, target });
-        queue({ type: PUSH, card, target });
+        if (is(target, GIANT)) await attack(card, target);
+        await push(card, target);
       }
     },
   },
@@ -301,9 +301,9 @@ const CARDS = {
     targets: GOD | GIANT,
     name: "CHAOS GIANT",
     description: "RETALIATES BY PUSHING GODS AND GIANTS AWAY",
-    effect(card, targets) {
+    async effect(card, targets) {
       for (let target of targets) {
-        queue({ type: PUSH, card, target });
+        await push(card, target);
       }
     },
   },
@@ -444,31 +444,9 @@ const STORY = {
   ],
 };
 
-const ATTACK = 0;
-const SUMMON = 1;
-const DIE = 2;
-const PUSH = 3;
-const TRIGGER = 4;
-
 /**
- * @typedef {{ type: typeof ATTACK, card: Card, target: Card }} Attack
- * @typedef {{ type: typeof SUMMON, card: Card }} Summon
- * @typedef {{ type: typeof DIE, card: Card, killer?: Card }} Die
- * @typedef {{ type: typeof PUSH, card: Card, target: Card }} Push
- * @typedef {{ type: typeof TRIGGER, card: Card }} Trigger
- * @typedef {Attack | Summon | Die | Push | Trigger} Action
+ * @typedef {() => void | Promise<void>} Action
  */
-
-/**
- * @param {Action} action
- */
-async function perform(action) {
-  if (action.type === ATTACK) return attack(action.card, action.target);
-  if (action.type === SUMMON) return summon(action.card);
-  if (action.type === DIE) return die(action.card, action.killer);
-  if (action.type === PUSH) return push(action.card, action.target);
-  if (action.type === TRIGGER) return trigger(action.card);
-}
 
 /**
  * @param {Card} card
@@ -484,7 +462,7 @@ async function attack(card, target) {
   if (dead) die(target, card);
   await tween(card, card.slot, UI_ATTACK_MS);
   // Giants retaliate after being attacked.
-  if (is(target, GIANT)) queue({ type: TRIGGER, card: target });
+  if (is(target, GIANT)) queue(() => trigger(target));
 }
 
 /**
@@ -616,7 +594,7 @@ let drag;
 let preview;
 
 /**
- * @type {Action[]}
+ * @type {Array<() => void | Promise<void>>}
  */
 let actions = [];
 
@@ -833,9 +811,9 @@ function isCardType(n) {
  * @param {Card} card
  * @param {Card[]} targets
  */
-function defaultAttackEffect(card, targets) {
+async function defaultAttackEffect(card, targets) {
   for (let target of targets) {
-    queue({ type: ATTACK, card, target });
+    await attack(card, target);
   }
 }
 
@@ -883,7 +861,7 @@ function despawn(card) {
  */
 async function play(card, slot) {
   await move(card, slot);
-  trigger(card);
+  return trigger(card);
 }
 
 /**
@@ -1127,7 +1105,7 @@ async function updateActions() {
   let action = actions.shift();
   if (!action) return;
   busy = true;
-  await perform(action);
+  await action();
   busy = false;
   refresh = true;
 }
@@ -1176,7 +1154,7 @@ function updateDrag() {
     let slot = board.slots.find((s) => hover(s.hb));
 
     if (released && slot && !slot.card) {
-      play(card, slot);
+      queue(() => play(card, slot));
     } else if (released) {
       tween(card, card.slot);
     } else if (slot && !slot.card) {
