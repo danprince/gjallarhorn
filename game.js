@@ -939,7 +939,7 @@ function tween(card, slot, ms = UI_CARD_ANIMATION_MS) {
   let { x: x1, y: y1 } = slot.hb;
 
   return timer(ms, (t) => {
-    let k = smoothstep(t);
+    let k = smoothstep(t * t);
     card.hb.x = lerp(x0, x1, k);
     card.hb.y = lerp(y0, y1, k);
   });
