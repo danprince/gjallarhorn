@@ -379,6 +379,14 @@ const LEVELS = {
   // 19. Fire Giants
   // Learn about using fire giants offensively.
   "I0J3I0-----J1-I0-K4------------": [HEIMDALL, TYR, FRIGG],
+
+  // 20. Welcome to Hel
+  // Use Hel to get Heimdall back
+  "-I0I0I0--I0J3I0-I0---I0I0---I0I0---I0": [HEIMDALL, HEL],
+
+  // 21. Fort Knox
+  // Use everyone to dig into the fort.
+  "-I0K2I0-I0J1I0J1I0I0J1I0J1I0I0I0I0I0I0-J2-J2-": [HEIMDALL, HEL, FRIGG, THOR],
 };
 
 /**
