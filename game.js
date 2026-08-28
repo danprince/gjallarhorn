@@ -195,6 +195,7 @@ const LOKI = 7;
 const FROST_CRYSTAL = 8;
 const FROST_GIANT = 9;
 const FIRE_GIANT = 10;
+const CHAOS_GIANT = 11;
 
 /**
  * @typedef {(
@@ -208,6 +209,7 @@ const FIRE_GIANT = 10;
  *   | typeof FROST_CRYSTAL
  *   | typeof FROST_GIANT
  *   | typeof FIRE_GIANT
+ *   | typeof CHAOS_GIANT
  * )} CardType
  */
 
@@ -285,6 +287,14 @@ const CARDS = {
         queue({ type: PUSH, card, target });
       }
     },
+  },
+  [CHAOS_GIANT]: {
+    sprite: FROST_GIANT,
+    hp: 3,
+    tags: GIANT,
+    targets: GIANT | GOD,
+    name: "Chaos Giant",
+    description: "ATTACKS ADJACENT GODS AND GIANTS",
   },
 };
 
@@ -1199,6 +1209,7 @@ if (IS_EDITOR) {
     else if (key === "1") spawn(FROST_CRYSTAL, slot);
     else if (key === "2") spawn(FROST_GIANT, slot);
     else if (key === "3") spawn(FIRE_GIANT, slot);
+    else if (key === "4") spawn(CHAOS_GIANT, slot);
     else return;
 
     location.hash = save();
