@@ -271,29 +271,28 @@ const CARDS = {
     tags: GIANT,
     name: "GIANT",
     targets: GOD,
-    description: "ATTACKS IF GODS ARE PLAYED ADJACENT",
+    description: "RETALIATES BY ATTACKING ADJACENT GODS",
   },
   [FIRE_GIANT]: {
     sprite: FROST_GIANT,
     hp: 2,
     tags: GIANT,
-    name: "GIANT",
-    targets: GOD,
-    description: "ATTACKS AND PUSHES GODS IF PLAYED ADJACENT",
-    effect(card, targets) {
-      for (let target of targets) {
-        queue({ type: ATTACK, card, target });
-        queue({ type: PUSH, card, target });
-      }
-    },
+    name: "FIRE GIANT",
+    targets: GOD | GIANT,
+    description: "RETALIATES BY ATTACKING ADJACENT GODS AND GIANTS",
   },
   [CHAOS_GIANT]: {
     sprite: FROST_GIANT,
     hp: 3,
     tags: GIANT,
-    targets: GIANT | GOD,
-    name: "Chaos Giant",
-    description: "ATTACKS ADJACENT GODS AND GIANTS",
+    targets: GOD | GIANT,
+    name: "CHAOS GIANT",
+    description: "RETALIATES BY PUSHING GODS AND GIANTS AWAY",
+    effect(card, targets) {
+      for (let target of targets) {
+        queue({ type: PUSH, card, target });
+      }
+    },
   },
 };
 
