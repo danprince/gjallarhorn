@@ -1124,6 +1124,7 @@ function generateLevel() {
       if (Math.random() < 0.6) return "I0";
       let hp = Math.floor(Math.random() * Math.random() * 6);
       let char = Math.random() < 0.7 ? "J" : "K";
+      if (Math.random() < 0.1) char = "L";
       return char + hp;
     })
     .join("");
