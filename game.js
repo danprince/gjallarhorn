@@ -434,15 +434,16 @@ async function perform(action) {
     await tween(card, target.slot, UI_ATTACK_MS);
     target.flashTimer = UI_ATTACK_MS;
     let dead = --target.hp <= 0;
-    if (dead) queue({ type: DIE, card: target });
+    if (dead) queue({ type: DIE, card: target, killer: card });
     if (dead && card.type === LOKI) queue({ type: SUMMON, card });
     await tween(card, card.slot, UI_ATTACK_MS);
   } else if (action.type === SUMMON) {
     let slot = hand.slots.find(isEmpty);
     if (slot) return move(action.card, slot);
   } else if (action.type === DIE) {
-    let { card } = action;
+    let { card, killer } = action;
     if (isShielded(card)) return (card.hp = 1);
+    if (killer?.type === HEL) return resurrect(card);
     if (card.type === HEL) return resurrect(card);
     if (card.slot.zone !== board) return;
     if (is(card, CRYSTAL)) return despawn(card);
@@ -1151,7 +1152,7 @@ function init() {
 
   if (state) {
     step = Infinity; // skip dialogue
-    unlocks = new Set([HEIMDALL, THOR, TYR, FRIGG]);
+    unlocks = new Set([HEIMDALL, THOR, TYR, FRIGG, HEL]);
     start(state);
   } else {
     let [state, chars] = Object.entries(LEVELS)[level];
