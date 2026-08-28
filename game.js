@@ -1001,9 +1001,17 @@ function showBoneTumble(slot) {
 /**
  * @param {Zone} zone
  */
-function renderZone(zone) {
+function renderZoneSlots(zone) {
   for (let slot of zone.slots) {
     draw(spritesheet.card_slot, slot.hb.x, slot.hb.y, slot.palette);
+  }
+}
+
+/**
+ * @param {Zone} zone
+ */
+function renderZoneCards(zone) {
+  for (let slot of zone.slots) {
     if (slot.card && slot.card !== drag?.card) {
       renderCard(slot.card);
     }
@@ -1101,9 +1109,12 @@ function render() {
     renderButton(resetButton);
   }
 
-  renderZone(grave);
-  renderZone(board);
-  renderZone(hand);
+  renderZoneSlots(grave);
+  renderZoneSlots(board);
+  renderZoneSlots(hand);
+  renderZoneCards(grave);
+  renderZoneCards(board);
+  renderZoneCards(hand);
   if (preview) renderPreview(preview);
   if (drag) renderCard(drag.card);
   renderParticles();
