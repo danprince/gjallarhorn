@@ -368,17 +368,24 @@ const LEVELS = {
   "I0J1I0J1I0I0I0I0I0I0I0J2I0J2I0-I0-I0------": [HEIMDALL, THOR, FRIGG],
 
   // 17. Overwhelming Odds
+  // This one is hard. Frigg hits the southern diagonal, Thor hits 3 crystals
+  // to the north, Heimdall summons both, Thor hits 3 giants, Frigg finishes.
+  // Might be the only solution.
   "-I0J2I0I0--I0J1I0-I0J4I0I0--I0-I0J1----": [HEIMDALL, THOR, FRIGG],
 
-  // 18. Fire Giants Snooker
-  // Learn about using fire giants offensively.
-  "--J1--------------K2-------": [HEIMDALL, THOR, FRIGG],
+  // 18. Fire Giant
+  // Learn about using fire giants to hit their own neighbours.
+  "-------J1---J1K2J1": [HEIMDALL, THOR, FRIGG],
 
   // 19. Fire Giants
   // Learn about using fire giants offensively.
-  "I0J3I0-----J1-I0-K4------------": [HEIMDALL, TYR, FRIGG],
+  "I0J3I0-----J1-I0-K4---J1": [HEIMDALL, TYR, FRIGG],
 
-  // 20. Welcome to Hel
+  // 20. Mr President!
+  // Fire giants "defending" a big frost giant
+  "-------K2---K2J4K2---K2": [HEIMDALL, TYR, FRIGG],
+
+  // 21. Welcome to Hel
   // Use Hel to get Heimdall back
   "-I0I0I0--I0J3I0-I0---I0I0---I0I0---I0": [HEIMDALL, HEL],
 
