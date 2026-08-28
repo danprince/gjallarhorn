@@ -237,7 +237,6 @@ const CARDS = {
     name: "THOR",
     targets: GIANT | CRYSTAL,
     description: "ATTACKS GIANTS AND CRYSTALS",
-    hp: 2,
   },
   [HEL]: { name: "HEL", description: "SWITCHES PLACES IN DEATH" },
   [TYR]: {
