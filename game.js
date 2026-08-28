@@ -398,10 +398,6 @@ const LEVELS = {
   // Fire giants "defending" a big frost giant
   "-------K2---K2J4K2---K2": [HEIMDALL, TYR, FRIGG],
 
-  // 21. Welcome to Hel
-  // Use Hel to get Heimdall back
-  "-I0I0I0--I0J3I0-I0---I0I0---I0I0---I0": [HEIMDALL, HEL],
-
   // 21. Fort Knox
   // Use everyone to dig into the fort.
   "-I0K2I0-I0J1I0J1I0I0J1I0J1I0I0I0I0I0I0-J2-J2-": [HEIMDALL, HEL, FRIGG, THOR],
