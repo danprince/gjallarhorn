@@ -1138,7 +1138,7 @@ function init() {
 
   if (state === "random") {
     state = generateLevel();
-    console.log("RANDOM", state);
+    location.hash = state;
   }
 
   if (IS_EDITOR) {
@@ -1152,7 +1152,7 @@ function init() {
 
   if (state) {
     step = Infinity; // skip dialogue
-    unlocks = new Set([HEIMDALL, THOR, TYR, FRIGG, HEL]);
+    unlocks = new Set([HEIMDALL, THOR, TYR, FRIGG, HEL, LOKI, ODIN]);
     start(state);
   } else {
     let [state, chars] = Object.entries(LEVELS)[level];
@@ -1187,6 +1187,11 @@ if (IS_EDITOR) {
 
     // shift + number keys set health for the card under the cursor.
     let shifted = ")!@£$%^&*()";
+
+    if (key === "R") {
+      location.hash = "#random";
+      location.reload();
+    }
 
     if (!slot) return;
     else if (card && shifted.includes(key)) card.hp = shifted.indexOf(key);
