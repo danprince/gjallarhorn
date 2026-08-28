@@ -115,7 +115,9 @@ export function write(text, x, y, palette = 17) {
       g.x = src.x + (c % cols) * gw;
       g.y = src.y + ((c / cols) | 0) * gh;
       draw(g, dx + 1, dy, 18); // shadow (18 is the black palette)
+      draw(g, dx - 1, dy, 18); // shadow (18 is the black palette)
       draw(g, dx, dy + 1, 18); // shadow (18 is the black palette)
+      draw(g, dx, dy - 1, 18); // shadow (18 is the black palette)
       draw(g, dx, dy, palette);
       dx += ls;
     }
