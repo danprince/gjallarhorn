@@ -443,38 +443,59 @@ const TRIGGER = 4;
  * @param {Action} action
  */
 async function perform(action) {
-  if (action.type === ATTACK) {
-    let { card, target } = action;
-    if (card.hp <= 0) return;
-    if (target.slot.zone !== board) return;
-    await tween(card, target.slot, UI_ATTACK_MS);
-    target.flashTimer = UI_ATTACK_MS;
-    let dead = --target.hp <= 0;
-    if (dead) queue({ type: DIE, card: target, killer: card });
-    if (dead && card.type === LOKI) queue({ type: SUMMON, card });
-    await tween(card, card.slot, UI_ATTACK_MS);
-  } else if (action.type === SUMMON) {
-    let slot = hand.slots.find(isEmpty);
-    if (slot) return move(action.card, slot);
-  } else if (action.type === DIE) {
-    let { card, killer } = action;
-    if (isShielded(card)) return (card.hp = 1);
-    if (killer?.type === HEL) return resurrect(card);
-    if (card.type === HEL) return resurrect(card);
-    if (card.slot.zone !== board) return;
-    if (is(card, CRYSTAL)) return despawn(card);
-    let slot = grave.slots.find(isEmpty);
-    return slot ? move(card, slot) : despawn(card);
-  } else if (action.type === PUSH) {
-    let { card, target } = action;
-    if (card.hp <= 0 || target.hp <= 0) return;
-    let dir = sub(target.slot, card.slot);
-    let slot = at(board, add(target.slot, dir));
-    if (slot?.card) return;
-    if (slot) return is(target, GOD) ? play(target, slot) : move(target, slot);
-  } else if (action.type === TRIGGER) {
-    return trigger(action.card);
-  }
+  if (action.type === ATTACK) return attack(action.card, action.target);
+  if (action.type === SUMMON) return summon(action.card);
+  if (action.type === DIE) return die(action.card, action.killer);
+  if (action.type === PUSH) return push(action.card, action.target);
+  if (action.type === TRIGGER) return trigger(action.card);
+}
+
+/**
+ * @param {Card} card
+ * @param {Card} target
+ */
+async function attack(card, target) {
+  if (card.hp <= 0) return;
+  if (target.slot.zone !== board) return;
+  await tween(card, target.slot, UI_ATTACK_MS);
+  target.flashTimer = UI_ATTACK_MS;
+  let dead = --target.hp <= 0;
+  if (dead) queue({ type: DIE, card: target, killer: card });
+  await tween(card, card.slot, UI_ATTACK_MS);
+  // Giants retaliate after being attacked.
+  if (is(target, GIANT)) queue({ type: TRIGGER, card: target });
+}
+
+/**
+ * @param {Card} card
+ */
+async function summon(card) {
+  let slot = hand.slots.find(isEmpty);
+  if (slot) return move(card, slot);
+}
+
+/**
+ * @param {Card} card
+ * @param {Card} target
+ */
+async function push(card, target) {
+  if (card.hp <= 0 || target.hp <= 0) return;
+  let dir = sub(target.slot, card.slot);
+  let slot = at(board, add(target.slot, dir));
+  if (slot?.card) return;
+  if (slot) return is(target, GOD) ? play(target, slot) : move(target, slot);
+}
+
+/**
+ * @param {Card} card
+ * @param {Card} [killer]
+ */
+async function die(card, killer) {
+  let pos = card.slot;
+  if (card.slot.zone !== board) return;
+  if (is(card, CRYSTAL)) return despawn(card);
+  let slot = grave.slots.find(isEmpty);
+  return slot ? await move(card, slot) : despawn(card);
 }
 
 function hasClearedGiants() {
@@ -498,13 +519,6 @@ function advanceToNextLevel() {
   unlocks = new Set(chars);
   step = 0;
   start(state);
-}
-
-/**
- * @param {Card} card
- */
-function isShielded(card) {
-  return is(card, GOD) && adjacent(card, GOD).some((c) => c.type === ODIN);
 }
 
 /**
@@ -843,17 +857,13 @@ function despawn(card) {
 async function play(card, slot) {
   await move(card, slot);
   trigger(card);
-
-  for (let target of adjacent(card, GIANT)) {
-    queue({ type: TRIGGER, card: target });
-  }
 }
 
 /**
  * @param {Card} card
  */
 function trigger(card) {
-  card.effect(card, adjacent(card, card.targets, card.adjacency));
+  return card.effect(card, adjacent(card, card.targets, card.adjacency));
 }
 
 /**
