@@ -137,3 +137,55 @@ export function spriteToDataUrl({ x, y, w, h }, palette = 1) {
   ctx.drawImage(palettes[palette], -x, -y);
   return c.toDataURL();
 }
+
+/**
+ * Render a nine-patch sprite from a sprite that has a center defined.
+ * @param {Rectangle & { center: Rectangle }} rect
+ * @param {number} x
+ * @param {number} y
+ * @param {number} w
+ * @param {number} h
+ */
+export function drawNinePatch(rect, x, y, w, h) {
+  let { x: sx, y: sy, w: sw, h: sh, center } = rect;
+  let { x: cx, y: cy, w: cw, h: ch } = center;
+
+  // Source slice sizes
+  let left = cx;
+  let top = cy;
+  let right = sw - cx - cw;
+  let bottom = sh - cy - ch;
+
+  // Clamp to minimum size to avoid degenerate areas
+  w = Math.max(w, left + right);
+  h = Math.max(h, top + bottom);
+
+  let dx0 = x;
+  let dx1 = dx0 + left;
+  let dx2 = dx0 + w - right;
+  let dy0 = y;
+  let dy1 = dy0 + top;
+  let dy2 = dy0 + h - bottom;
+
+  // Recompute middle sizes to ensure consistency
+  let dcw = dx2 - dx1;
+  let dch = dy2 - dy1;
+
+  // Source coordinates
+  let sx0 = sx;
+  let sx1 = sx0 + left;
+  let sx2 = sx0 + sw - right;
+  let sy0 = sy;
+  let sy1 = sy0 + top;
+  let sy2 = sy0 + sh - bottom;
+
+  blit(sx0, sy0, left, top, dx0, dy0, left, top); // top left
+  blit(sx2, sy0, right, top, dx2, dy0, right, top); // top right
+  blit(sx0, sy2, left, bottom, dx0, dy2, left, bottom); // bottom left
+  blit(sx2, sy2, right, bottom, dx2, dy2, right, bottom); // bottom right
+  blit(sx1, sy0, cw, top, dx1, dy0, dcw, top); // top
+  blit(sx1, sy2, cw, bottom, dx1, dy2, dcw, bottom); // bottom
+  blit(sx0, sy1, left, ch, dx0, dy1, left, dch); // left
+  blit(sx2, sy1, right, ch, dx2, dy1, right, dch); // right
+  blit(sx1, sy1, cw, ch, dx1, dy1, dcw, dch);
+}
