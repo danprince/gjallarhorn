@@ -1,4 +1,12 @@
-import { blit, canvas, ctx, draw, spriteToDataUrl, write } from "./graphics.js";
+import {
+  blit,
+  canvas,
+  ctx,
+  draw,
+  drawNinePatch,
+  spriteToDataUrl,
+  write,
+} from "./graphics.js";
 import { spritesheet } from "./sprites.js";
 import {
   add,
@@ -1023,12 +1031,8 @@ function renderButton(button) {
   let { x, y, w, h, active } = button;
   let palette = active ? 1 : 0;
   let sprite = spritesheet.btn;
-  let { x: sx, y: sy, center } = sprite;
-  let { x: cap, w: cw } = center;
   if (down && active) y += 1;
-  blit(sx, sy, cap, h, x, y, cap, h, palette);
-  blit(sx + cap + cw, sy, cap, h, x + w, y, -cap, h, palette);
-  blit(sx + cap, sy, cw, h, x + cap, y, w - cap * 2, h, palette);
+  drawNinePatch(sprite, x, y, w, h, palette);
   write(button.label, x + sprite.center.x + 1, y + 3);
 }
 

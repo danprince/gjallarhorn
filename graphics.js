@@ -145,8 +145,9 @@ export function spriteToDataUrl({ x, y, w, h }, palette = 1) {
  * @param {number} y
  * @param {number} w
  * @param {number} h
+ * @param {number} [palette]
  */
-export function drawNinePatch(rect, x, y, w, h) {
+export function drawNinePatch(rect, x, y, w, h, palette) {
   let { x: sx, y: sy, w: sw, h: sh, center } = rect;
   let { x: cx, y: cy, w: cw, h: ch } = center;
 
@@ -179,13 +180,14 @@ export function drawNinePatch(rect, x, y, w, h) {
   let sy1 = sy0 + top;
   let sy2 = sy0 + sh - bottom;
 
-  blit(sx0, sy0, left, top, dx0, dy0, left, top); // top left
-  blit(sx2, sy0, right, top, dx2, dy0, right, top); // top right
-  blit(sx0, sy2, left, bottom, dx0, dy2, left, bottom); // bottom left
-  blit(sx2, sy2, right, bottom, dx2, dy2, right, bottom); // bottom right
-  blit(sx1, sy0, cw, top, dx1, dy0, dcw, top); // top
-  blit(sx1, sy2, cw, bottom, dx1, dy2, dcw, bottom); // bottom
-  blit(sx0, sy1, left, ch, dx0, dy1, left, dch); // left
-  blit(sx2, sy1, right, ch, dx2, dy1, right, dch); // right
-  blit(sx1, sy1, cw, ch, dx1, dy1, dcw, dch);
+  let p = palette;
+  blit(sx0, sy0, left, top, dx0, dy0, left, top, p); // top left
+  blit(sx2, sy0, right, top, dx2, dy0, right, top, p); // top right
+  blit(sx0, sy2, left, bottom, dx0, dy2, left, bottom, p); // bottom left
+  blit(sx2, sy2, right, bottom, dx2, dy2, right, bottom, p); // bottom right
+  blit(sx1, sy0, cw, top, dx1, dy0, dcw, top, p); // top
+  blit(sx1, sy2, cw, bottom, dx1, dy2, dcw, bottom, p); // bottom
+  blit(sx0, sy1, left, ch, dx0, dy1, left, dch, p); // left
+  blit(sx2, sy1, right, ch, dx2, dy1, right, dch, p); // right
+  blit(sx1, sy1, cw, ch, dx1, dy1, dcw, dch, p);
 }
