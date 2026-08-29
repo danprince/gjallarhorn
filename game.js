@@ -1288,7 +1288,7 @@ function init() {
   onpointerdown = onpointermove = onpointerup = onPointerEvent;
   onresize = resize;
 
-  document.title = "Heimdall's Horn";
+  document.title = "Gjallarhorn";
   document.body.style.cssText = `background:${UI_BG};cursor:none;touch-action:none`;
   document.body.append(canvas);
 
