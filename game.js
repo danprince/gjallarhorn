@@ -1,5 +1,4 @@
 import {
-  blit,
   canvas,
   ctx,
   draw,
@@ -1026,9 +1025,6 @@ function renderCard(card) {
 function renderPreview(card) {
   let x = UI_TIP_X;
   let y = UI_TIP_Y;
-  let w = UI_TIP_W;
-  let h = UI_TIP_H;
-  drawNinePatch(spritesheet.frame, x - 1, y, w, h, card.palette);
   draw(card.sprite, x + 2, y + 2, card.palette);
   write(card.name, x + UI_CARD_SIZE + 4, y + 4, 1);
   write(card.description, x + UI_CARD_SIZE + 4, y + 12);
@@ -1080,10 +1076,12 @@ function render() {
   let story = STORY[level];
   let hasDialogue = story && step * 2 < story.length;
 
-  if (hasDialogue || hasClearedGiants()) {
-    renderButton(nextButton);
-  } else {
-    renderButton(resetButton);
+  if (!preview) {
+    if (hasDialogue || hasClearedGiants()) {
+      renderButton(nextButton);
+    } else {
+      renderButton(resetButton);
+    }
   }
 
   renderZoneSlots(grave);
