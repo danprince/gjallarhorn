@@ -715,7 +715,7 @@ function Button(x, y, label) {
  * @param {number} palette
  * @returns {Zone}
  */
-function Zone(x, y, cols, rows, palette = 0) {
+function Zone(x, y, cols, rows, palette = 12) {
   let s = UI_CELL_SIZE;
   let hb = Rect(x, y, cols * s, rows * s);
 
