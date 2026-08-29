@@ -53,6 +53,7 @@ import {
  * @prop {string} description
  * @prop {Sprite} sprite
  * @prop {number} palette
+ * @prop {number} paletteDamage
  * @prop {Rectangle} hb
  * @prop {Slot} slot
  * @prop {number} targets
@@ -69,6 +70,7 @@ import {
  * @prop {string} [description]
  * @prop {number} [sprite]
  * @prop {number} [palette]
+ * @prop {number} [paletteDamage]
  * @prop {number} [targets]
  * @prop {Vector[]} [adjacency]
  * @prop {(card: Card, targets: Card[]) => void | Promise<void>} [effect]
@@ -289,6 +291,7 @@ const CARDS = {
     tags: CRYSTAL,
     targets: NONE,
     description: "BLOCKS YOUR WAY",
+    paletteDamage: PALETTE_FROST_CRYSTAL,
   },
   [FROST_GIANT]: {
     hp: 1,
@@ -840,6 +843,7 @@ function spawn(type, slot, hp) {
     description: def.description ?? "",
     sprite,
     palette: def.palette ?? type,
+    paletteDamage: def.paletteDamage ?? PALETTE_DAMAGE,
     slot,
     hb: Rect(slot.hb.x, slot.hb.y, sprite.w, sprite.h),
     flashTimer: 0,
@@ -962,7 +966,8 @@ function showBloodSplatter(card, target) {
     let speed = random(10, 60);
     let vx = Math.sin(angle) * speed;
     let vy = Math.cos(angle) * speed;
-    emit({ x, y, vx, vy, palette: PALETTE_DAMAGE });
+    let palette = target.paletteDamage;
+    emit({ x, y, vx, vy, palette });
   }
 }
 
