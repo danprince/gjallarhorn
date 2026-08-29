@@ -148,12 +148,15 @@ const UI_CURSOR_SPRITES = strip(spritesheet.cursors, 9);
 const UI_CURSOR_PIVOT_X = spritesheet.cursors.pivot.x;
 const UI_CURSOR_PIVOT_Y = spritesheet.cursors.pivot.y;
 
-const UI_DIALOGUE_WIDTH = 160;
-const UI_DIALOGUE_HEIGHT = 180;
-const UI_DIALOGUE_X = UI_CENTER_X - UI_DIALOGUE_WIDTH / 2;
-const UI_DIALOGUE_Y = UI_CENTER_Y - UI_DIALOGUE_HEIGHT / 2;
-const UI_DIALOGUE_ITEM_HEIGHT = 26;
-const UI_DIALOGUE_VISIBLE_ITEMS = 6;
+const UI_DIALOGUE_WIDTH = UI_HAND_W;
+const UI_DIALOGUE_HEIGHT = 29;
+const UI_DIALOGUE_X = UI_HAND_X;
+const UI_DIALOGUE_Y = UI_HAND_Y - UI_DIALOGUE_HEIGHT;
+
+const UI_TIP_H = 24;
+const UI_TIP_W = UI_HAND_W;
+const UI_TIP_X = UI_HAND_X;
+const UI_TIP_Y = UI_HAND_Y + UI_HAND_H + 2;
 
 const DEG_90 = Math.PI / 2;
 const DEG_180 = DEG_90 * 2;
@@ -240,7 +243,7 @@ const CHAOS_GIANT = 11;
 const CARDS = {
   [HEIMDALL]: {
     name: "HEIMDALL",
-    description: "SUMMONS ADJACENT GODS HOME",
+    description: "RECALLS ADJACENT GODS",
     targets: GOD | GIANT,
     async effect(card, targets) {
       for (let target of targets) {
@@ -257,7 +260,7 @@ const CARDS = {
   [THOR]: {
     name: "THOR",
     targets: GIANT | CRYSTAL,
-    description: "ATTACKS GIANTS AND CRYSTALS",
+    description: "ATTACKS CRYSTALS",
   },
   [HEL]: { name: "HEL", description: "SWITCHES PLACES IN DEATH" },
   [TYR]: {
@@ -279,20 +282,21 @@ const CARDS = {
   },
   [LOKI]: {
     name: "LOKI",
-    description: "RETURNS HOME IF HE SLAYS A GIANT",
+    description: "RECALL AFTER SLAYING A GIANT",
   },
   [FROST_CRYSTAL]: {
     hp: 0,
     name: "CRYSTAL",
     tags: CRYSTAL,
     targets: NONE,
+    description: "BLOCKS YOUR WAY",
   },
   [FROST_GIANT]: {
     hp: 1,
     tags: GIANT,
     name: "GIANT",
     targets: GOD,
-    description: "RETALIATES BY ATTACKING ADJACENT GODS",
+    description: "ATTACKS ADJACENT GODS",
   },
   [FIRE_GIANT]: {
     sprite: FROST_GIANT,
@@ -300,7 +304,7 @@ const CARDS = {
     tags: GIANT,
     name: "FIRE GIANT",
     targets: GOD | GIANT,
-    description: "RETALIATES BY ATTACKING ADJACENT GODS AND GIANTS",
+    description: "ATTACKS GODS AND GIANTS",
   },
   [CHAOS_GIANT]: {
     sprite: FROST_GIANT,
@@ -308,7 +312,7 @@ const CARDS = {
     tags: GIANT,
     targets: GOD | GIANT,
     name: "CHAOS GIANT",
-    description: "RETALIATES BY PUSHING GODS AND GIANTS AWAY",
+    description: "PUSHES GODS AND GIANTS AWAY",
     async effect(card, targets) {
       for (let target of targets) {
         await push(card, target);
@@ -417,34 +421,33 @@ const LEVELS = {
 const STORY = {
   0: [
     HEIMDALL,
-    "THE GIANTS TOOK THE GJALLARHORN!",
+    "GIANTS TOOK THE GJALLARHORN!",
 
     ODIN,
-    "OH NO...\n" + "HEIMDALL? WHAT IS A GJALLARHORN?",
+    "OH NO... HEIMDALL?\nWHAT IS A GJALLARHORN?",
 
     HEIMDALL,
-    "IT'S THE *UNIQUE HORN* THAT SUMMONS\n" + "THE GODS BACK TO THE BIFROST.",
+    "THE UNIQUE HORN THAT SUMMONS\nGODS BACK TO THE BIFROST.",
 
     ODIN,
-    "AHH. ERM. WHAT'S THE BIFROST?",
+    "AHH... WHAT'S THE BIFROST?",
 
     HEIMDALL,
-    "THE *RAINBOW BRIDGE* THAT CONNECTS\n" + "ASGARD TO THE OTHER WORLDS!",
+    "THE RAINBOW BRIDGE THAT\nCONNECTS US TO OTHER WORLDS!",
 
     ODIN,
-    "OH, RIGHT. WELL IF IT'S A *UNIQUE HORN*\n" +
-      "THEN YOU'D BEST GET IT BACK!",
+    "RIGHT... SOUNDS LIKE YOU\nSHOULD GET IT BACK!",
 
     HEIMDALL,
-    "I'LL RETURN TO THE BIFROST IMMEDIATELY.",
+    "I SHOULD DRAG MYSELF INTO\nACTION.",
   ],
 
   1: [
     HEIMDALL,
-    "THERE ARE GIANTS ON THE RAINBOW BRIDGE!",
+    "WHAT CAN I DO AGAINST SUCH A\nSTRONG GIANT?",
 
     THOR,
-    "IT'S A SLOW DAY IN ASGARD. I'LL HELP YOU!",
+    "BIT OF A SLOW DAY IN ASGARD,\nI'LL HELP YOU!",
   ],
 };
 
@@ -523,6 +526,7 @@ function advanceToNextLevel() {
   unlocks = new Set(chars);
   step = 0;
   start(state);
+  location.hash = "" + level;
 }
 
 /**
@@ -1004,13 +1008,14 @@ function renderZoneCards(zone) {
  * @param {Card} card
  */
 function renderCard(card) {
-  let { x, y, w, h } = card.hb;
-  draw(spritesheet.card, x, y, card.palette);
-  if (isLocked(card)) return draw(card.sprite, x, y, PALETTE_BLACK);
+  let { x, y } = card.hb;
   let palette = card.flashTimer > 0 ? 10 : card.palette;
-  draw(card.sprite, x, y, palette);
-
-  if (card.hp > 0) {
+  let locked = isLocked(card);
+  draw(spritesheet.card, x, y, card.palette);
+  draw(card.sprite, x, y, locked ? PALETTE_BLACK : palette);
+  if (locked) {
+    draw(spritesheet.lock, x + 6, y + 10, card.palette);
+  } else if (card.hp > 0) {
     write(`${card.hp}`, x + 8, y + 13);
   }
 }
@@ -1019,9 +1024,14 @@ function renderCard(card) {
  * @param {Card} card
  */
 function renderPreview(card) {
-  draw(card.sprite, 2, 2, card.palette);
-  write(card.name, UI_CARD_SIZE + 4, 4, 1);
-  write(card.description, UI_CARD_SIZE + 4, 12);
+  let x = UI_TIP_X;
+  let y = UI_TIP_Y;
+  let w = UI_TIP_W;
+  let h = UI_TIP_H;
+  drawNinePatch(spritesheet.frame, x - 1, y, w, h, card.palette);
+  draw(card.sprite, x + 2, y + 2, card.palette);
+  write(card.name, x + UI_CARD_SIZE + 4, y + 4, 1);
+  write(card.description, x + UI_CARD_SIZE + 4, y + 12);
 }
 
 /**
@@ -1029,7 +1039,7 @@ function renderPreview(card) {
  */
 function renderButton(button) {
   let { x, y, w, h, active } = button;
-  let palette = active ? 1 : 0;
+  let palette = active ? 16 : 14;
   let sprite = spritesheet.btn;
   if (down && active) y += 1;
   drawNinePatch(sprite, x, y, w, h, palette);
@@ -1047,41 +1057,30 @@ function renderParticles() {
   }
 }
 
-/**
- *
- * @param {(number | string)[]} steps
- */
-function renderStory(steps) {
+function renderDialogue() {
+  let story = STORY[level];
+  if (!story || step * 2 >= story.length) return;
+
   let x = UI_DIALOGUE_X;
   let y = UI_DIALOGUE_Y;
-  for (let i = 0; i < steps.length; i += 2) {
-    let char = /** @type {CardType} */ (steps[i]);
-    let text = /** @type {string} */ (steps[i + 1]);
-    let card = CARDS[char];
-    draw(UI_CARD_SPRITES[char], x, y, char);
-    write(card.name, x + UI_CARD_SIZE + 4, y + 2, 1);
-    write(text, x + UI_CARD_SIZE + 4, y + 10);
-    y += UI_DIALOGUE_ITEM_HEIGHT;
-  }
-
-  renderButton(nextButton);
+  let w = UI_DIALOGUE_WIDTH;
+  let h = UI_DIALOGUE_HEIGHT;
+  let char = /** @type {CardType} */ (story[step * 2]);
+  let text = /** @type {string} */ (story[step * 2 + 1]);
+  let card = CARDS[char];
+  drawNinePatch(spritesheet.frame, x, y, w, h, card.palette ?? char);
+  draw(UI_CARD_SPRITES[char], x + 3, y + 2, card.palette ?? char);
+  write(card.name, x + UI_CARD_SIZE + 4, y + 6, 1);
+  write(text, x + UI_CARD_SIZE + 4, y + 12);
 }
 
 function render() {
   ctx.clearRect(0, 0, UI_W, UI_H);
 
   let story = STORY[level];
+  let hasDialogue = story && step * 2 < story.length;
 
-  if (story && step * 2 < story.length) {
-    let end = step;
-    let start = Math.max(0, end - UI_DIALOGUE_VISIBLE_ITEMS + 1);
-    let steps = story.slice(start * 2, (end + 1) * 2);
-    renderStory(steps);
-    renderCursor();
-    return;
-  }
-
-  if (hasClearedGiants()) {
+  if (hasDialogue || hasClearedGiants()) {
     renderButton(nextButton);
   } else {
     renderButton(resetButton);
@@ -1093,12 +1092,13 @@ function render() {
   renderZoneCards(grave);
   renderZoneCards(board);
   renderZoneCards(hand);
+  renderDialogue();
   if (preview) renderPreview(preview);
   if (drag) renderCard(drag.card);
   renderParticles();
+
   renderCursor();
 }
-
 async function updateActions() {
   if (busy || actions.length) refresh = true;
   if (busy) return;
@@ -1198,8 +1198,6 @@ function updateCards() {
 }
 
 function update() {
-  let story = STORY[level];
-  if (story && step * 2 < story.length) refresh = true;
   cursor = CURSOR_DEFAULT;
   updateActions();
   updateTimers();
@@ -1209,6 +1207,7 @@ function update() {
   updateCards();
   if (nextButton.pressed) next();
   if (resetButton.pressed) reset();
+  if (busy) preview = undefined;
 }
 
 function loop(now = pt) {
