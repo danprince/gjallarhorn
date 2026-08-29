@@ -177,3 +177,20 @@ export function anchor(r, x, y) {
 export function random(min = 0, max = 1) {
   return min + (max - min) * Math.random();
 }
+
+/**
+ * Creates a seeded PRNG.
+ * @param {number} seed
+ * @returns {(min?: number, max?: number) => number}
+ */
+export function prng(seed = 123) {
+  let state = seed >>> 0 || 1; // must be non-zero
+  return (min = 0, max = 1) => {
+    state ^= state << 13;
+    state >>>= 0;
+    state ^= state >>> 17;
+    state ^= state << 5;
+    state >>>= 0;
+    return min + ((max - min) * state) / 4294967296;
+  };
+}

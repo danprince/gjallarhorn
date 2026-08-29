@@ -16,6 +16,7 @@ import {
   inside,
   lerp,
   pick,
+  prng,
   random,
   range,
   Rect,
@@ -119,7 +120,7 @@ const UI_CELL_SIZE = 20;
 const UI_GAP = 10;
 const UI_CARD_ANIMATION_MS = 250;
 const UI_ATTACK_MS = 150;
-const UI_BG = "#000";
+const UI_BG = "#071326";
 
 const UI_BOARD_COLS = 5;
 const UI_BOARD_ROWS = 5;
@@ -162,6 +163,7 @@ const UI_TIP_Y = UI_HAND_Y + UI_HAND_H + 2;
 const DEG_90 = Math.PI / 2;
 const DEG_180 = DEG_90 * 2;
 const DEG_270 = DEG_90 * 3;
+const DEG_360 = DEG_90 * 4;
 
 const CURSOR_DEFAULT = 0;
 const CURSOR_POINTER = 1;
@@ -988,6 +990,44 @@ function showBoneTumble(slot) {
   }
 }
 
+function renderCloudBand(jitter = 30, palette = 0) {
+  let rng = prng();
+  let count = 500;
+  let speed = pt / 100;
+  let sprites = [spritesheet.gas_1, spritesheet.gas_2, spritesheet.gas_3];
+  let freq = 8;
+  let amplitude = 10;
+
+  for (let i = 0; i < count; i++) {
+    let x = (rng(0, UI_W) + speed) % UI_W;
+    let step = x / UI_W;
+    let y =
+      UI_H / 2 +
+      Math.sin(step * Math.PI * freq) * amplitude +
+      rng() * rng(-jitter, jitter);
+    let s = rng(0, sprites.length) | 0;
+    draw(sprites[s], x, y, palette);
+  }
+}
+
+function renderBackground() {
+  let rng = prng();
+  let stars = rng(200, 800);
+  let sprites = [spritesheet.star_3, spritesheet.star_4];
+  for (let i = 0; i < 30; i++)
+    sprites.push(spritesheet.star_1, spritesheet.star_2);
+
+  renderCloudBand(40, PALETTE_FROST_GIANT);
+
+  for (let i = 0; i < stars; i++) {
+    let x = rng(0, UI_W);
+    let y = rng(0, UI_H);
+    let s = rng(0, sprites.length) | 0;
+    let p = PALETTE_FROST_GIANT;
+    draw(sprites[s], x, y, p);
+  }
+}
+
 /**
  * @param {Zone} zone
  */
@@ -1077,6 +1117,7 @@ function renderDialogue() {
 
 function render() {
   ctx.clearRect(0, 0, UI_W, UI_H);
+  renderBackground();
 
   let story = STORY[level];
   let hasDialogue = story && step * 2 < story.length;
@@ -1089,6 +1130,14 @@ function render() {
     }
   }
 
+  drawNinePatch(
+    spritesheet.frame,
+    UI_BOARD_X - 4,
+    UI_BOARD_Y - 4,
+    UI_BOARD_W + 6,
+    UI_BOARD_H + 6,
+    16,
+  );
   renderZoneSlots(grave);
   renderZoneSlots(board);
   renderZoneSlots(hand);
@@ -1223,6 +1272,7 @@ function loop(now = pt) {
 
   update();
 
+  refresh = true;
   refresh && render();
   refresh = false;
 
