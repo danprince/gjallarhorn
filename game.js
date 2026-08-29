@@ -148,9 +148,9 @@ const UI_CURSOR_PIVOT_X = spritesheet.cursors.pivot.x;
 const UI_CURSOR_PIVOT_Y = spritesheet.cursors.pivot.y;
 
 const UI_DIALOGUE_WIDTH = UI_HAND_W;
-const UI_DIALOGUE_HEIGHT = 29;
-const UI_DIALOGUE_X = UI_HAND_X;
-const UI_DIALOGUE_Y = UI_HAND_Y - UI_DIALOGUE_HEIGHT;
+const UI_DIALOGUE_HEIGHT = 25;
+const UI_DIALOGUE_X = UI_CENTER_X - UI_DIALOGUE_WIDTH / 2;
+const UI_DIALOGUE_Y = UI_HAND_Y - 3;
 
 const UI_TIP_H = 24;
 const UI_TIP_W = UI_HAND_W;
@@ -1065,9 +1065,9 @@ function renderDialogue() {
   let text = /** @type {string} */ (story[step * 2 + 1]);
   let card = CARDS[char];
   drawNinePatch(spritesheet.frame, x, y, w, h, card.palette ?? char);
-  draw(UI_CARD_SPRITES[char], x + 3, y + 2, card.palette ?? char);
-  write(card.name, x + UI_CARD_SIZE + 4, y + 6, 1);
-  write(text, x + UI_CARD_SIZE + 4, y + 12);
+  draw(UI_CARD_SPRITES[char], x + 3, y + 4, card.palette ?? char);
+  write(card.name, x + UI_CARD_SIZE + 4, y + 4, 1);
+  write(text, x + UI_CARD_SIZE + 4, y + 10);
 }
 
 function render() {
@@ -1097,6 +1097,7 @@ function render() {
 
   renderCursor();
 }
+
 async function updateActions() {
   if (busy || actions.length) refresh = true;
   if (busy) return;
