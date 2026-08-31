@@ -298,6 +298,7 @@ const CARDS = {
   },
   [FRIGG]: {
     name: "FRIGG",
+    hp: 2,
     adjacency: diagonals,
     description: "ATTACKS ON DIAGONALS",
   },
@@ -1391,7 +1392,7 @@ function start(state) {
   spawn(HEIMDALL, hand.slots[0]);
   spawn(THOR, hand.slots[1]);
   spawn(TYR, hand.slots[2]);
-  spawn(FRIGG, hand.slots[3], 2);
+  spawn(FRIGG, hand.slots[3]);
   spawn(HEL, hand.slots[4]);
   spawn(LOKI, hand.slots[5]);
   spawn(ODIN, hand.slots[6]);
