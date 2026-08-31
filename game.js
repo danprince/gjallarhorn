@@ -468,9 +468,62 @@ const LEVELS = {
   // Fire giants "defending" a big frost giant
   "-------K2---K2J4K2---K2": [HEIMDALL, TYR, FRIGG],
 
-  // 21. Fort Knox
-  // Use everyone to dig into the fort.
-  "-I0K2I0-I0J1I0J1I0I0J1I0J1I0I0I0I0I0I0-J2-J2-": [HEIMDALL, HEL, FRIGG, THOR],
+  // 21. Welcome to Hel
+  // Basic introduction to Hel's multihit mechanics.
+  "-J1-J1--I0-I0---J4---I0-I0--J1-J1": [HEIMDALL, THOR, HEL],
+
+  // 22. Inner Circle
+  // Punch through the ring to fill the grave before triggering Hel.
+  "-I0I0I0-I0-J1-I0I0J1J1J1I0I0-K5-I0-I0I0I0": [TYR, FRIGG, HEL],
+
+  // 23. X Marks the Spot
+  "J1---J1-J1-J1---K7---J1-J1-J1---J1": [HEIMDALL, TYR, FRIGG, HEL],
+
+  // 24. Runestone Tutorial
+  "--J2------J2--M0------J2--J2": [HEIMDALL, TYR, FRIGG, HEL],
+
+  // 25. Hel + Rune
+  "I0J1K9J1I0J1---J1J1-M0-J1": [TYR, FRIGG, HEL],
+
+  // 26. Boxing Match
+  // The giants can destroy each other if Tyr forces them to meet face to face.
+  "----------I0K4-K5I0": [TYR, THOR, FRIGG, HEL],
+
+  // 27. Chaos is a Ladder
+  // Learning about Chaos Giants.
+  "--J1--------J1------L3": [TYR, HEIMDALL],
+
+  // 28. Chaos is a Pit
+  // Learning about Chaos Giants.
+  "------------L3-------J1J1I0": [TYR, FRIGG],
+
+  // 28. Throne Room
+  // Long line of guards for a chaos giant.
+  "-----J1J1J1J1J1----L2J1J1J1J1J1": [TYR, FRIGG, THOR],
+
+  // 29. Chaos Sokoban
+  // Super fun. Involves some careful deliberation about how to push the chaos
+  // giants to open up enough space for Thor to clear the central crystal for
+  // Frigg to take a shot.
+  "I0I0I0-I0--L2-I0I0L2I0L1I0I0L3I0-I0I0-I0I0I0": [
+    HEIMDALL,
+    TYR,
+    FRIGG,
+    THOR,
+    HEL,
+  ],
+
+  // X. Ymir: The First Giant
+  // The final boss is one of the hardest puzzles. Ymir creates crystals
+  // whenever he attacks which means you're constantly struggling to manage
+  // to find attack windows.
+  //
+  // There are at least two viable solutions:
+  // 1. Set up a big runestone corner for Frigg to multihit from diagonals.
+  //    This can be done by using Tyr to re-trigger Odin so that Heimdall is
+  //    free to recall Frigg.
+  // 2. Set up a big grave and have Hel do a multihit.
+  "------------N9": [HEIMDALL, THOR, TYR, FRIGG, HEL, LOKI, ODIN],
 };
 
 /**
