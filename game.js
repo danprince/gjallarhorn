@@ -513,7 +513,11 @@ async function die(card, killer) {
   let pos = card.slot;
   if (card.slot.zone !== board) return;
   if (is(card, CRYSTAL)) return despawn(card);
+
   showBoneTumble(card.slot);
+
+  if (killer?.type === HEL) return resurrect(card);
+
   let slot = grave.slots.find(isEmpty);
   slot ? await move(card, slot) : despawn(card);
 
