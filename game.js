@@ -231,6 +231,7 @@ const FROST_GIANT = 9;
 const FIRE_GIANT = 10;
 const CHAOS_GIANT = 11;
 const RUNESTONE = 12;
+const YMIR = 13;
 
 /**
  * @typedef {(
@@ -246,6 +247,7 @@ const RUNESTONE = 12;
  *   | typeof FIRE_GIANT
  *   | typeof CHAOS_GIANT
  *   | typeof RUNESTONE
+ *   | typeof YMIR
  * )} CardType
  */
 
@@ -354,6 +356,25 @@ const CARDS = {
     sprite: 10,
     palette: PALETTE_RUNESTONE,
     hp: 0,
+  },
+  [YMIR]: {
+    hp: 9,
+    tags: GIANT,
+    name: "YMIR",
+    targets: GOD,
+    sprite: FROST_GIANT,
+    palette: 12,
+    description: "CREATES CRYSTALS IN EMPTY SLOTS",
+    async effect(card, targets) {
+      await defaultAttackEffect(card, targets);
+      for (let step of cardinals) {
+        let slot = at(board, add(card.slot, step));
+        if (slot && isEmpty(slot)) {
+          let crystal = spawn(FROST_CRYSTAL, slot);
+          crystal.tags |= TRANSIENT;
+        }
+      }
+    },
   },
 };
 
@@ -1444,6 +1465,7 @@ if (IS_EDITOR) {
     else if (key === "3") spawn(FIRE_GIANT, slot);
     else if (key === "4") spawn(CHAOS_GIANT, slot);
     else if (key === "5") spawn(RUNESTONE, slot);
+    else if (key === "6") spawn(YMIR, slot);
     else return;
 
     location.hash = save();
