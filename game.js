@@ -529,38 +529,22 @@ const LEVELS = {
 };
 
 /**
- * @type {Record<string, (number | string)[] | undefined>}
+ * @type {Record<string, [char: CardType, text: string][] | undefined>}
  */
 const STORY = {
   0: [
-    HEIMDALL,
-    "GIANTS TOOK THE GJALLARHORN!",
-
-    ODIN,
-    "OH NO... HEIMDALL?\nWHAT IS A GJALLARHORN?",
-
-    HEIMDALL,
-    "THE UNIQUE HORN THAT SUMMONS\nGODS BACK TO THE BIFROST.",
-
-    ODIN,
-    "AHH... WHAT'S THE BIFROST?",
-
-    HEIMDALL,
-    "THE RAINBOW BRIDGE THAT\nCONNECTS US TO OTHER WORLDS!",
-
-    ODIN,
-    "RIGHT... SOUNDS LIKE YOU\nSHOULD GET IT BACK!",
-
-    HEIMDALL,
-    "I SHOULD DRAG MYSELF INTO\nACTION.",
+    [HEIMDALL, "GIANTS TOOK THE GJALLARHORN!"],
+    [ODIN, "OH NO... HEIMDALL?\nWHAT IS A GJALLARHORN?"],
+    [HEIMDALL, "THE UNIQUE HORN THAT SUMMONS\nGODS BACK TO THE BIFROST."],
+    [ODIN, "AHH... WHAT'S THE BIFROST?"],
+    [HEIMDALL, "THE RAINBOW BRIDGE THAT\nCONNECTS US TO OTHER WORLDS!"],
+    [ODIN, "RIGHT... SOUNDS LIKE YOU\nSHOULD GET IT BACK!"],
+    [HEIMDALL, "I SHOULD DRAG MYSELF INTO\nACTION."],
   ],
 
   1: [
-    HEIMDALL,
-    "WHAT CAN I DO AGAINST SUCH A\nSTRONG GIANT?",
-
-    THOR,
-    "BIT OF A SLOW DAY IN ASGARD,\nI'LL HELP YOU!",
+    [HEIMDALL, "WHAT CAN I DO AGAINST SUCH A\nSTRONG GIANT?"],
+    [THOR, "BIT OF A SLOW DAY IN ASGARD,\nI'LL HELP YOU!"],
   ],
 };
 
@@ -1307,14 +1291,13 @@ function renderParticles() {
 
 function renderDialogue() {
   let story = STORY[level];
-  if (!story || step * 2 >= story.length) return;
+  if (!story || step >= story.length) return;
 
   let x = UI_DIALOGUE_X;
   let y = UI_DIALOGUE_Y;
   let w = UI_DIALOGUE_WIDTH;
   let h = UI_DIALOGUE_HEIGHT;
-  let char = /** @type {CardType} */ (story[step * 2]);
-  let text = /** @type {string} */ (story[step * 2 + 1]);
+  let [char, text] = story[step];
   let card = CARDS[char];
   drawNinePatch(spritesheet.frame, x, y, w, h, card.palette ?? char);
   draw(UI_CARD_SPRITES[char], x + 3, y + 4, card.palette ?? char);
@@ -1337,7 +1320,7 @@ function render() {
   renderBackground();
 
   let story = STORY[level];
-  let hasDialogue = story && step * 2 < story.length;
+  let hasDialogue = story && step < story.length;
 
   if (!preview) {
     if (hasDialogue || hasClearedGiants()) {
