@@ -887,6 +887,9 @@ function spawn(type, slot, hp) {
 function despawn(card) {
   card.slot.card = undefined;
   card.slot = banished;
+
+  // Delete echoes permanently. We don't want them to come back on reset.
+  if (is(card, ECHO)) cards.delete(card);
 }
 
 /**
