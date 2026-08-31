@@ -1079,7 +1079,10 @@ async function attack(card, target) {
  * @param {Card} card
  */
 async function summon(card) {
-  let slot = hand.slots.find(isEmpty);
+  let slot = card.startingSlot;
+  if (!slot || !isEmpty(slot)) {
+    slot = hand.slots.find(isEmpty);
+  }
   if (slot) return move(card, slot);
 }
 
