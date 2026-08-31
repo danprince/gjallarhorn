@@ -187,7 +187,7 @@ const PALETTE_FROST_GIANT = 9;
 const PALETTE_FIRE_GIANT = 10;
 const PALETTE_11 = 11;
 const PALETTE_12 = 12;
-const PALETTE_13 = 13;
+const PALETTE_RUNESTONE = 13;
 const PALETTE_DAMAGE = 14;
 const PALETTE_WHITE = 15;
 const PALETTE_BLACK = 16;
@@ -266,7 +266,7 @@ const CARDS = {
   [ODIN]: {
     name: "ODIN",
     hp: 2,
-    description: "GODS NEXT TO ODIN CANNOT DIE",
+    description: "ADDS A RUNESTONE TO YOUR HAND",
   },
   [THOR]: {
     name: "THOR",
@@ -344,7 +344,7 @@ const CARDS = {
     description: "ADJACENT GODS PLAY TWICE",
     tags: POWERUP,
     sprite: 10,
-    palette: PALETTE_13,
+    palette: PALETTE_RUNESTONE,
     hp: 0,
   },
 };
@@ -932,6 +932,10 @@ async function play(card, slot) {
   await trigger(card);
   for (let _ of adjacent(card, POWERUP)) {
     await trigger(card);
+  }
+  if (card.type === ODIN) {
+    let slot = hand.slots.find(isEmpty);
+    if (slot) spawn(RUNESTONE, slot);
   }
 }
 
