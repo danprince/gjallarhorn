@@ -1043,14 +1043,20 @@ function renderBackground() {
   for (let i = 0; i < 30; i++)
     sprites.push(spritesheet.star_1, spritesheet.star_2);
 
-  renderCloudBand(40, PALETTE_FROST_GIANT);
-
   for (let i = 0; i < stars; i++) {
     let x = rng(0, UI_W);
     let y = rng(0, UI_H);
     let s = rng(0, sprites.length) | 0;
     let p = PALETTE_FROST_GIANT;
     draw(sprites[s], x, y, p);
+  }
+
+  renderCloudBand(40, PALETTE_FROST_GIANT);
+
+  let spr = spritesheet.runes;
+  for (let x = 0; x < UI_W; x += spr.w) {
+    draw(spr, x, 1);
+    draw(spr, x, UI_H - spr.h - 1);
   }
 }
 
@@ -1148,7 +1154,7 @@ function renderProgress() {
   let w = label.length * 4;
   let h = 13;
   let x = UI_CENTER_X - w / 2;
-  let y = UI_GRAVE_Y - UI_GAP - h;
+  let y = UI_GRAVE_Y - h - 5;
   drawNinePatch(spritesheet.frame, x - 4, y - 4, w + 7, h, PALETTE_FROST_GIANT);
   write(label, x, y);
 }
