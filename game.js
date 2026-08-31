@@ -273,7 +273,14 @@ const CARDS = {
     targets: GIANT | CRYSTAL,
     description: "ATTACKS CRYSTALS",
   },
-  [HEL]: { name: "HEL", description: "SWITCHES PLACES IN DEATH" },
+  [HEL]: {
+    name: "HEL",
+    description: "ATTACKS FOR EACH OF THE DEAD",
+    async effect(card, targets) {
+      let count = grave.slots.filter(isNotEmpty).length;
+      for (let i = 0; i < count; i++) await defaultAttackEffect(card, targets);
+    },
+  },
   [TYR]: {
     name: "TYR",
     hp: 3,
@@ -531,8 +538,6 @@ async function die(card, killer) {
 
   showBoneTumble(card.slot);
 
-  if (killer?.type === HEL) return resurrect(card);
-
   let slot = grave.slots.find(isEmpty);
   slot ? await move(card, slot) : despawn(card);
 
@@ -574,27 +579,6 @@ function advanceToNextLevel() {
 function isLocked(card) {
   if (!is(card, GOD)) return false;
   return !unlocks.has(card.type);
-}
-
-/**
- * @param {Card} card
- */
-async function resurrect(card) {
-  let graveSlot = grave.slots.findLast(isNotEmpty) ?? grave.slots.find(isEmpty);
-  let boardSlot = card.slot;
-  let target = graveSlot?.card;
-
-  if (graveSlot) {
-    card.slot = graveSlot;
-    boardSlot.card = undefined;
-    await move(card, graveSlot);
-  }
-
-  if (target) {
-    target.hp = 1;
-    target.slot = boardSlot;
-    await play(target, boardSlot);
-  }
 }
 
 /**
