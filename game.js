@@ -1371,8 +1371,8 @@ function start(state) {
   spawn(THOR, hand.slots[1]);
   spawn(TYR, hand.slots[2]);
   spawn(FRIGG, hand.slots[3], 2);
-  spawn(LOKI, hand.slots[4]);
-  spawn(HEL, hand.slots[5]);
+  spawn(HEL, hand.slots[4]);
+  spawn(LOKI, hand.slots[5]);
   spawn(ODIN, hand.slots[6]);
 }
 
