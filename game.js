@@ -216,6 +216,7 @@ const GIANT = 2;
 const CRYSTAL = 4;
 const ECHO = 8;
 const POWERUP = 16;
+const TRANSIENT = 32;
 
 // [Cards]
 const HEIMDALL = 1;
@@ -542,8 +543,7 @@ async function die(card, killer) {
   slot ? await move(card, slot) : despawn(card);
 
   if (!pos.card && killer?.type === LOKI) {
-    let clone = spawn(LOKI, pos);
-    clone.tags |= ECHO;
+    let clone = spawn(LOKI, pos, ECHO | TRANSIENT);
     await trigger(clone);
   }
 }
@@ -840,7 +840,7 @@ function load(state) {
     let type = (q.shift() || "").charCodeAt(0) - 65;
     if (isCardType(type)) {
       let hp = parseInt(required(q.shift())) || 0;
-      spawn(type, slot, hp);
+      spawn(type, slot, NONE, hp);
     }
   }
 }
@@ -866,10 +866,11 @@ async function defaultAttackEffect(card, targets) {
 /**
  * @param {CardType} type
  * @param {Slot} slot
+ * @param {number} [tags]
  * @param {number} [hp]
  * @returns {Card}
  */
-function spawn(type, slot, hp) {
+function spawn(type, slot, tags = NONE, hp) {
   let def = CARDS[type];
   let sprite = UI_CARD_SPRITES[def.sprite ?? type];
   hp ||= def.hp ?? 1;
@@ -885,7 +886,7 @@ function spawn(type, slot, hp) {
     hb: Rect(slot.hb.x, slot.hb.y, sprite.w, sprite.h),
     flashTimer: 0,
     hp,
-    tags: def.tags ?? GOD,
+    tags: (def.tags ?? GOD) | tags,
     targets: def.targets ?? GIANT,
     effect: def.effect ?? defaultAttackEffect,
     adjacency: def.adjacency ?? cardinals,
@@ -902,9 +903,7 @@ function spawn(type, slot, hp) {
 function despawn(card) {
   card.slot.card = undefined;
   card.slot = banished;
-
-  // Delete echoes permanently. We don't want them to come back on reset.
-  if (is(card, ECHO)) cards.delete(card);
+  if (is(card, TRANSIENT)) cards.delete(card);
 }
 
 /**
@@ -919,7 +918,7 @@ async function play(card, slot) {
   }
   if (card.type === ODIN) {
     let slot = hand.slots.find(isEmpty);
-    if (slot) spawn(RUNESTONE, slot);
+    if (slot) spawn(RUNESTONE, slot, TRANSIENT);
   }
 }
 
