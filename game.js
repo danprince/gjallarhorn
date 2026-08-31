@@ -106,6 +106,8 @@ import {
  * @prop {number} h
  * @prop {boolean} active
  * @prop {boolean} pressed
+ * @prop {number} palette
+ * @prop {number} paletteActive
  */
 
 const IS_MOBILE = innerWidth < innerHeight;
@@ -666,7 +668,13 @@ let hand = Zone(UI_HAND_X, UI_HAND_Y, UI_HAND_COLS, UI_HAND_ROWS);
 let board = Zone(UI_BOARD_X, UI_BOARD_Y, UI_BOARD_COLS, UI_BOARD_ROWS);
 let grave = Zone(UI_GRAVE_X, UI_GRAVE_Y, UI_GRAVE_COLS, UI_GRAVE_ROWS);
 
-let resetButton = Button(UI_BUTTON_ANCHOR_X, UI_BUTTON_ANCHOR_Y, "RESET");
+let resetButton = Button(
+  UI_BUTTON_ANCHOR_X,
+  UI_BUTTON_ANCHOR_Y,
+  "RESET",
+  PALETTE_BTN_SECONDARY,
+);
+
 let nextButton = Button(UI_BUTTON_ANCHOR_X, UI_BUTTON_ANCHOR_Y, "NEXT");
 
 /**
@@ -734,11 +742,21 @@ function onPointerEvent({ buttons, clientX: x, clientY: y }) {
  * @param {string} label
  * @returns {Button}
  */
-function Button(x, y, label) {
+function Button(x, y, label, palette = PALETTE_BTN_PRIMARY) {
   let cap = spritesheet.btn.center.x;
   let w = cap + label.length * 4 + 1 + cap;
   let h = spritesheet.btn.h;
-  let btn = { x, y, w, h, label, active: false, pressed: false };
+  let btn = {
+    x,
+    y,
+    w,
+    h,
+    label,
+    active: false,
+    pressed: false,
+    palette,
+    paletteActive: palette + 1,
+  };
   btn.x -= (w / 2) | 0;
   buttons.push(btn);
   return btn;
@@ -1130,7 +1148,7 @@ function renderPreview(card) {
  */
 function renderButton(button) {
   let { x, y, w, h, active } = button;
-  let palette = active ? 16 : 14;
+  let palette = active ? button.paletteActive : button.palette;
   let sprite = spritesheet.btn;
   if (down && active) y += 1;
   drawNinePatch(sprite, x, y, w, h, palette);
@@ -1198,7 +1216,7 @@ function render() {
     UI_BOARD_Y - 4,
     UI_BOARD_W + 6,
     UI_BOARD_H + 6,
-    16,
+    PALETTE_BTN_PRIMARY_ACTIVE,
   );
   renderZoneSlots(grave);
   renderZoneSlots(board);
