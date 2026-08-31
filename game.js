@@ -211,6 +211,7 @@ const GOD = 1;
 const GIANT = 2;
 const CRYSTAL = 4;
 const ECHO = 8;
+const POWERUP = 16;
 
 // [Cards]
 const HEIMDALL = 1;
@@ -224,6 +225,7 @@ const FROST_CRYSTAL = 8;
 const FROST_GIANT = 9;
 const FIRE_GIANT = 10;
 const CHAOS_GIANT = 11;
+const RUNESTONE = 12;
 
 /**
  * @typedef {(
@@ -238,6 +240,7 @@ const CHAOS_GIANT = 11;
  *   | typeof FROST_GIANT
  *   | typeof FIRE_GIANT
  *   | typeof CHAOS_GIANT
+ *   | typeof RUNESTONE
  * )} CardType
  */
 
@@ -331,6 +334,14 @@ const CARDS = {
         await push(card, target);
       }
     },
+  },
+  [RUNESTONE]: {
+    name: "RUNESTONE",
+    description: "ADJACENT GODS PLAY TWICE",
+    tags: POWERUP,
+    sprite: 10,
+    palette: PALETTE_13,
+    hp: 0,
   },
 };
 
@@ -898,7 +909,10 @@ function despawn(card) {
  */
 async function play(card, slot) {
   await move(card, slot);
-  return trigger(card);
+  await trigger(card);
+  for (let _ of adjacent(card, POWERUP)) {
+    await trigger(card);
+  }
 }
 
 /**
@@ -1421,6 +1435,7 @@ if (IS_EDITOR) {
     else if (key === "2") spawn(FROST_GIANT, slot);
     else if (key === "3") spawn(FIRE_GIANT, slot);
     else if (key === "4") spawn(CHAOS_GIANT, slot);
+    else if (key === "5") spawn(RUNESTONE, slot);
     else return;
 
     location.hash = save();
