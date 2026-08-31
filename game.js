@@ -1143,6 +1143,16 @@ function renderDialogue() {
   write(text, x + UI_CARD_SIZE + 4, y + 10);
 }
 
+function renderProgress() {
+  let label = `${level + 1}/${Object.keys(LEVELS).length}`;
+  let w = label.length * 4;
+  let h = 13;
+  let x = UI_CENTER_X - w / 2;
+  let y = UI_GRAVE_Y - UI_GAP - h;
+  drawNinePatch(spritesheet.frame, x - 4, y - 4, w + 7, h, PALETTE_FROST_GIANT);
+  write(label, x, y);
+}
+
 function render() {
   ctx.clearRect(0, 0, UI_W, UI_H);
   renderBackground();
@@ -1157,6 +1167,8 @@ function render() {
       renderButton(resetButton);
     }
   }
+
+  renderProgress();
 
   drawNinePatch(
     spritesheet.frame,

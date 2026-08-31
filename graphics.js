@@ -157,10 +157,6 @@ export function drawNinePatch(rect, x, y, w, h, palette) {
   let right = sw - cx - cw;
   let bottom = sh - cy - ch;
 
-  // Clamp to minimum size to avoid degenerate areas
-  w = Math.max(w, left + right);
-  h = Math.max(h, top + bottom);
-
   let dx0 = x;
   let dx1 = dx0 + left;
   let dx2 = dx0 + w - right;
@@ -169,8 +165,8 @@ export function drawNinePatch(rect, x, y, w, h, palette) {
   let dy2 = dy0 + h - bottom;
 
   // Recompute middle sizes to ensure consistency
-  let dcw = dx2 - dx1;
-  let dch = dy2 - dy1;
+  let dcw = Math.max(0, dx2 - dx1);
+  let dch = Math.max(0, dy2 - dy1);
 
   // Source coordinates
   let sx0 = sx;
