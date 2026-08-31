@@ -1294,6 +1294,7 @@ function renderButton(button) {
 }
 
 function renderCursor() {
+  if (IS_MOBILE) return;
   let sprite = UI_CURSOR_SPRITES[cursor];
   draw(sprite, pointer.x - UI_CURSOR_PIVOT_X, pointer.y - UI_CURSOR_PIVOT_Y);
 }
