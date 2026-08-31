@@ -108,6 +108,8 @@ import {
  * @prop {boolean} pressed
  * @prop {number} palette
  * @prop {number} paletteActive
+ *
+ * @typedef {() => void | Promise<void>} Action
  */
 
 const IS_MOBILE = innerWidth < innerHeight;
@@ -563,170 +565,95 @@ const STORY = {
 };
 
 /**
- * @typedef {() => void | Promise<void>} Action
- */
-
-/**
- * @param {Card} card
- * @param {Card} target
- */
-async function attack(card, target) {
-  if (card.hp <= 0) return;
-  if (target.slot.zone !== board) return;
-  await tween(card, target.slot, UI_ATTACK_MS);
-  target.flashTimer = UI_ATTACK_MS;
-  showBloodSplatter(card, target);
-  let dead = --target.hp <= 0;
-  if (dead) die(target, card);
-  await tween(card, card.slot, UI_ATTACK_MS);
-  // Giants retaliate after being attacked.
-  if (is(target, GIANT)) queue(() => trigger(target));
-}
-
-/**
- * @param {Card} card
- */
-async function summon(card) {
-  let slot = hand.slots.find(isEmpty);
-  if (slot) return move(card, slot);
-}
-
-/**
- * @param {Card} card
- * @param {Card} target
- */
-async function push(card, target) {
-  if (card.hp <= 0 || target.hp <= 0) return;
-  let dir = sub(target.slot, card.slot);
-  let slot = at(board, add(target.slot, dir));
-  if (slot?.card) return;
-  if (slot) return is(target, GOD) ? play(target, slot) : move(target, slot);
-}
-
-/**
- * @param {Card} card
- * @param {Card} [killer]
- */
-async function die(card, killer) {
-  let pos = card.slot;
-  if (card.slot.zone !== board) return;
-  if (is(card, CRYSTAL)) return despawn(card);
-
-  showBoneTumble(card.slot);
-
-  let slot = grave.slots.find(isEmpty);
-  slot ? await move(card, slot) : despawn(card);
-
-  if (!pos.card && killer?.type === LOKI) {
-    let clone = spawn(LOKI, pos, ECHO | TRANSIENT);
-    await trigger(clone);
-  }
-}
-
-function hasClearedGiants() {
-  for (let card of cards) {
-    if (is(card, GIANT) && card.slot.zone === board) {
-      return false;
-    }
-  }
-  return true;
-}
-
-function advanceToNextLevel() {
-  for (let card of cards) despawn(card);
-  cards.clear();
-
-  // TODO: Would be great to show the gods visually animating back to the hand
-  // and healing back to their base HP instead of just snapping to the new state.
-  // Probably relies on taking a "start snapshot" instead of storing a bit of
-  // starting state on each card.
-  let [state, chars] = Object.entries(LEVELS)[++level];
-  unlocks = new Set(chars);
-  step = 0;
-  start(state);
-  location.hash = "" + level;
-}
-
-/**
- * @param {Card} card
- * @returns {boolean}
- */
-function isLocked(card) {
-  if (!is(card, GOD)) return false;
-  return !unlocks.has(card.type);
-}
-
-/**
- * @param {Action} action
- */
-function queue(action) {
-  actions.push(action);
-}
-
-/**
+ * The sprite index of the active cursor.
  * @type {number}
  */
 let cursor = CURSOR_DEFAULT;
 
 /**
+ * All active buttons in the scene.
  * @type {Button[]}
  */
 let buttons = [];
 
 /**
+ * All active timers in the scene.
  * @type {Set<Timer>}
  */
 let timers = new Set();
 
 /**
+ * All active particles in the scene.
  * @type {Set<Particle>}
  */
 let particles = new Set();
 
 /**
+ * A master set of all cards from this level.
  * @type {Set<Card>}
  */
 let cards = new Set();
 
 /**
+ * The drag state for dragging cards.
  * @type {Drag | undefined}
  */
 let drag;
 
 /**
+ * The card we're currently previewing.
  * @type {Card | undefined}
  */
 let preview;
 
 /**
+ * Actions in the queue will be processed during the next available frame.
  * @type {Array<() => void | Promise<void>>}
  */
 let actions = [];
 
 /**
+ * Whether or not we're currently processing an action from the queue.
  * @type {boolean}
  */
 let busy = false;
 
 /**
+ * The player's current level/puzzle index.
  * @type {number}
  */
 let level = 0;
 
 /**
+ * The player's current dialogue index.
  * @type {number}
  */
 let step = 0;
 
 /**
+ * The set of cards that are currently unlocked current level.
  * @type {Set<CardType>}
  */
 let unlocks = new Set();
 
+/**
+ * The hand contains the cards the player can actively play.
+ */
 let hand = Zone(UI_HAND_X, UI_HAND_Y, UI_HAND_COLS, UI_HAND_ROWS);
+
+/**
+ * The board is where cards are played.
+ */
 let board = Zone(UI_BOARD_X, UI_BOARD_Y, UI_BOARD_COLS, UI_BOARD_ROWS);
+
+/**
+ * The grave is where cards go if they die on the board.
+ */
 let grave = Zone(UI_GRAVE_X, UI_GRAVE_Y, UI_GRAVE_COLS, UI_GRAVE_ROWS);
 
+/**
+ * The reset button reverts the board back to the initial state.
+ */
 let resetButton = Button(
   UI_BUTTON_ANCHOR_X,
   UI_BUTTON_ANCHOR_Y,
@@ -734,6 +661,9 @@ let resetButton = Button(
   PALETTE_BTN_SECONDARY,
 );
 
+/**
+ * The next button advances through dialogue and moves to the next level.
+ */
 let nextButton = Button(UI_BUTTON_ANCHOR_X, UI_BUTTON_ANCHOR_Y, "NEXT");
 
 /**
@@ -751,13 +681,16 @@ let banished = {
 };
 
 /**
+ * Check whether the pointer is currently over a specific rectangle.
  * @param {Rectangle} r
+ * @returns {boolean}
  */
 function hover(r) {
   return inside(r, pointer);
 }
 
 /**
+ * Check whether a card matches a specific set of tags.
  * @param {Card} card
  * @param {number} tags
  * @returns {boolean}
@@ -767,6 +700,7 @@ function is(card, tags) {
 }
 
 /**
+ * Create a timer, returning a promise that resolves when the timer finishes.
  * @param {number} ms
  * @param {(t: number) => void} callback
  * @returns {Promise<void>}
@@ -777,12 +711,16 @@ function timer(ms, callback) {
   });
 }
 
+/**
+ * Resize the canvas to fill the screen.
+ */
 function resize() {
   let s = Math.min(innerWidth / UI_W, innerHeight / UI_H);
   canvas.style.cssText = `position:fixed;inset:0;image-rendering:pixelated;width:${UI_W * s}px;height:${UI_H * s}px`;
 }
 
 /**
+ * Updates the pointer state in response to pointer events.
  * @param {PointerEvent} event
  */
 function onPointerEvent({ buttons, clientX: x, clientY: y }) {
@@ -796,6 +734,7 @@ function onPointerEvent({ buttons, clientX: x, clientY: y }) {
 }
 
 /**
+ * Creates a button.
  * @param {number} x
  * @param {number} y
  * @param {string} label
@@ -822,6 +761,7 @@ function Button(x, y, label, palette = PALETTE_BTN_PRIMARY) {
 }
 
 /**
+ * Creates a grid-based zone for cards.
  * @param {number} x
  * @param {number} y
  * @param {number} cols
@@ -849,6 +789,26 @@ function Zone(x, y, cols, rows, palette = 12) {
 }
 
 /**
+ * Check whether a given card is locked.
+ * @param {Card} card
+ * @returns {boolean}
+ */
+function isLocked(card) {
+  if (!is(card, GOD)) return false;
+  return !unlocks.has(card.type);
+}
+
+/**
+ * Enqueue an action to be performed asynchronously after the current actions
+ * have finished processing.
+ * @param {Action} action
+ */
+function queue(action) {
+  actions.push(action);
+}
+
+/**
+ * Check whether a given slot is empty.
  * @param {Slot} slot
  * @returns {boolean}
  */
@@ -857,6 +817,7 @@ function isEmpty(slot) {
 }
 
 /**
+ * Check whether a given slot contains a card.
  * @param {Slot} slot
  * @returns {boolean}
  */
@@ -864,6 +825,9 @@ function isNotEmpty(slot) {
   return slot.card !== undefined;
 }
 
+/**
+ * Go to the "next" step/level.
+ */
 function next() {
   if (hasClearedGiants()) {
     advanceToNextLevel();
@@ -881,7 +845,7 @@ function reset() {
   }
 
   for (let card of cards) {
-    if (card.startingSlot) {
+    if (card.startingSlot && !is(card, TRANSIENT)) {
       card.hp = card.startingHp;
       move(card, card.startingSlot);
     }
@@ -921,6 +885,7 @@ function load(state) {
 }
 
 /**
+ * Check whether a given number is a valid card type.
  * @param {number} n
  * @returns {n is CardType}
  */
@@ -929,16 +894,7 @@ function isCardType(n) {
 }
 
 /**
- * @param {Card} card
- * @param {Card[]} targets
- */
-async function defaultAttackEffect(card, targets) {
-  for (let target of targets) {
-    await attack(card, target);
-  }
-}
-
-/**
+ * Spawn a card in a specific slot.
  * @param {CardType} type
  * @param {Slot} slot
  * @param {number} [tags]
@@ -973,24 +929,32 @@ function spawn(type, slot, tags = NONE, hp) {
 }
 
 /**
+ * Despawn/banish a card. This happens when the grave is full, or for special
+ * case cards that skip the grave entirely.
  * @param {Card} card
  */
 function despawn(card) {
   card.slot.card = undefined;
   card.slot = banished;
-  if (is(card, TRANSIENT)) cards.delete(card);
 }
 
 /**
+ * Play a card on a specific slot. Usually a direct result of dragging the
+ * card there from the hand.
  * @param {Card} card
  * @param {Slot} slot
  */
 async function play(card, slot) {
   await move(card, slot);
   await trigger(card);
+
+  // Trigger again for adjacent runestones (currently the only POWERUP).
   for (let _ of adjacent(card, POWERUP)) {
     await trigger(card);
   }
+
+  // Special case for Odin's effect so that playing Odin next to a
+  // runestone can't create more runestones indefinitely.
   if (card.type === ODIN) {
     let slot = hand.slots.find(isEmpty);
     if (slot) spawn(RUNESTONE, slot, TRANSIENT);
@@ -998,6 +962,7 @@ async function play(card, slot) {
 }
 
 /**
+ * Trigger the effect for a card.
  * @param {Card} card
  */
 async function trigger(card) {
@@ -1007,6 +972,7 @@ async function trigger(card) {
 }
 
 /**
+ * Returns the array of cards that match the tags and the adjacency rules for another card.
  * @param {Card} card
  * @param {number} tags
  * @returns {Card[]}
@@ -1021,6 +987,7 @@ function adjacent(card, tags = ALL, adjacency = cardinals) {
 }
 
 /**
+ * Find a slot in a zone from a coordinate.
  * @param {Zone} zone
  * @param {Point} p
  * @returns {Slot | undefined}
@@ -1032,6 +999,7 @@ function at({ slots, cols, rows }, { x, y }) {
 }
 
 /**
+ * Move a card to a specific slot with animations.
  * @param {Card} card
  * @param {Slot} slot
  */
@@ -1043,7 +1011,7 @@ function move(card, slot) {
 }
 
 /**
- * Animate a card to
+ * Animate a card to a specific slot.
  * @param {Card} card
  * @param {Slot} slot
  */
@@ -1059,6 +1027,7 @@ function tween(card, slot, ms = UI_CARD_ANIMATION_MS) {
 }
 
 /**
+ * Create a single particle.
  * @param {Partial<Particle>} p
  */
 function emit(p) {
@@ -1075,6 +1044,109 @@ function emit(p) {
     palette: 0,
     ...p,
   });
+}
+
+/**
+ * @param {Card} card
+ * @param {Card[]} targets
+ */
+async function defaultAttackEffect(card, targets) {
+  for (let target of targets) {
+    await attack(card, target);
+  }
+}
+
+/**
+ * Perform an animated attack from one card to another.
+ * @param {Card} card
+ * @param {Card} target
+ */
+async function attack(card, target) {
+  if (card.hp <= 0) return;
+  if (target.slot.zone !== board) return;
+  await tween(card, target.slot, UI_ATTACK_MS);
+  target.flashTimer = UI_ATTACK_MS;
+  showBloodSplatter(card, target);
+  let dead = --target.hp <= 0;
+  if (dead) die(target, card);
+  await tween(card, card.slot, UI_ATTACK_MS);
+  // Giants retaliate after being attacked.
+  if (is(target, GIANT)) queue(() => trigger(target));
+}
+
+/**
+ * Recall a card back to your hand.
+ * @param {Card} card
+ */
+async function summon(card) {
+  let slot = hand.slots.find(isEmpty);
+  if (slot) return move(card, slot);
+}
+
+/**
+ * Push a target away from card, retriggering its effect if necessary.
+ * @param {Card} card
+ * @param {Card} target
+ */
+async function push(card, target) {
+  if (card.hp <= 0 || target.hp <= 0) return;
+  let dir = sub(target.slot, card.slot);
+  let slot = at(board, add(target.slot, dir));
+  if (slot?.card) return;
+  if (slot) return is(target, GOD) ? play(target, slot) : move(target, slot);
+}
+
+/**
+ * Die and attempt to move to the
+ * @param {Card} card
+ * @param {Card} [killer]
+ */
+async function die(card, killer) {
+  let pos = card.slot;
+  if (card.slot.zone !== board) return;
+  if (is(card, CRYSTAL)) return despawn(card);
+
+  showBoneTumble(card.slot);
+
+  let slot = grave.slots.find(isEmpty);
+  slot ? await move(card, slot) : despawn(card);
+
+  // Loki's logic is simpler to implement here than in his effect.
+  if (!pos.card && killer?.type === LOKI) {
+    let clone = spawn(LOKI, pos, ECHO | TRANSIENT);
+    await trigger(clone);
+  }
+}
+
+/**
+ * Check whether the board has been cleared of giants.
+ * @returns {boolean}
+ */
+function hasClearedGiants() {
+  for (let card of cards) {
+    if (is(card, GIANT) && card.slot.zone === board) {
+      return false;
+    }
+  }
+  return true;
+}
+
+/**
+ * Move to the next level.
+ */
+function advanceToNextLevel() {
+  for (let card of cards) despawn(card);
+  cards.clear();
+
+  // TODO: Would be great to show the gods visually animating back to the hand
+  // and healing back to their base HP instead of just snapping to the new state.
+  // Probably relies on taking a "start snapshot" instead of storing a bit of
+  // starting state on each card.
+  let [state, chars] = Object.entries(LEVELS)[++level];
+  unlocks = new Set(chars);
+  step = 0;
+  start(state);
+  location.hash = "" + level;
 }
 
 /**
