@@ -1043,14 +1043,15 @@ function renderCloudBand(jitter = 30, palette = 0) {
   let count = 500;
   let speed = pt / 100;
   let sprites = [spritesheet.gas_1, spritesheet.gas_2, spritesheet.gas_3];
-  let freq = 8;
-  let amplitude = 10;
+  let freq = 1;
+  let amplitude = -50;
 
   for (let i = 0; i < count; i++) {
     let x = (rng(0, UI_W) + speed) % UI_W;
     let step = x / UI_W;
     let y =
       UI_H / 2 +
+      50 +
       Math.sin(step * Math.PI * freq) * amplitude +
       rng() * rng(-jitter, jitter);
     let s = rng(0, sprites.length) | 0;
