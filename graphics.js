@@ -103,6 +103,7 @@ export function write(text, x, y, palette = 17) {
   let dx = x; // destination x
   let dy = y; // destination y
   let g = Rect(0, 0, gw, gh);
+  let outline = 16; // black palette
 
   for (let i = 0; i < text.length; i++) {
     let c = text.charCodeAt(i) - start;
@@ -114,10 +115,10 @@ export function write(text, x, y, palette = 17) {
     } else {
       g.x = src.x + (c % cols) * gw;
       g.y = src.y + ((c / cols) | 0) * gh;
-      draw(g, dx + 1, dy, 18); // shadow (18 is the black palette)
-      draw(g, dx - 1, dy, 18); // shadow (18 is the black palette)
-      draw(g, dx, dy + 1, 18); // shadow (18 is the black palette)
-      draw(g, dx, dy - 1, 18); // shadow (18 is the black palette)
+      draw(g, dx + 1, dy, outline);
+      draw(g, dx - 1, dy, outline);
+      draw(g, dx, dy + 1, outline);
+      draw(g, dx, dy - 1, outline);
       draw(g, dx, dy, palette);
       dx += ls;
     }
