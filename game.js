@@ -210,6 +210,7 @@ const ALL = ~0;
 const GOD = 1;
 const GIANT = 2;
 const CRYSTAL = 4;
+const ECHO = 8;
 
 // [Cards]
 const HEIMDALL = 1;
@@ -285,7 +286,15 @@ const CARDS = {
   },
   [LOKI]: {
     name: "LOKI",
-    description: "RECALL AFTER SLAYING A GIANT",
+    description: "ECHO AFTER SLAYING GODS/GIANTS",
+    targets: GIANT | GOD,
+    async effect(card, targets) {
+      for (let target of targets) {
+        if (target.type !== LOKI) {
+          await attack(card, target);
+        }
+      }
+    },
   },
   [FROST_CRYSTAL]: {
     hp: 0,
@@ -506,7 +515,13 @@ async function die(card, killer) {
   if (is(card, CRYSTAL)) return despawn(card);
   showBoneTumble(card.slot);
   let slot = grave.slots.find(isEmpty);
-  return slot ? await move(card, slot) : despawn(card);
+  slot ? await move(card, slot) : despawn(card);
+
+  if (!pos.card && killer?.type === LOKI) {
+    let clone = spawn(LOKI, pos);
+    clone.tags |= ECHO;
+    await trigger(clone);
+  }
 }
 
 function hasClearedGiants() {
@@ -833,6 +848,7 @@ async function defaultAttackEffect(card, targets) {
  * @param {CardType} type
  * @param {Slot} slot
  * @param {number} [hp]
+ * @returns {Card}
  */
 function spawn(type, slot, hp) {
   let def = CARDS[type];
@@ -858,6 +874,7 @@ function spawn(type, slot, hp) {
     startingHp: hp,
   });
   cards.add(card);
+  return card;
 }
 
 /**
@@ -880,8 +897,10 @@ async function play(card, slot) {
 /**
  * @param {Card} card
  */
-function trigger(card) {
-  return card.effect(card, adjacent(card, card.targets, card.adjacency));
+async function trigger(card) {
+  await card.effect(card, adjacent(card, card.targets, card.adjacency));
+  // Echoes despawn immediately aftering triggering their effect.
+  if (is(card, ECHO)) despawn(card);
 }
 
 /**
@@ -1055,6 +1074,7 @@ function renderCard(card) {
   let { x, y } = card.hb;
   let palette = card.flashTimer > 0 ? 10 : card.palette;
   let locked = isLocked(card);
+  if (is(card, ECHO)) ctx.globalAlpha = 0.5;
   draw(spritesheet.card, x, y, card.palette);
   draw(card.sprite, x, y, locked ? PALETTE_BLACK : palette);
   if (locked) {
@@ -1062,6 +1082,7 @@ function renderCard(card) {
   } else if (card.hp > 0) {
     write(`${card.hp}`, x + 8, y + 13);
   }
+  if (is(card, ECHO)) ctx.globalAlpha = 1;
 }
 
 /**
