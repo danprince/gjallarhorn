@@ -76,6 +76,9 @@ import {
  * @prop {Vector[]} [adjacency]
  * @prop {(card: Card, targets: Card[]) => void | Promise<void>} [effect]
  *
+ * @typedef {[character: CardType, text: string]} Dialogue
+ * @typedef {[puzzle: string, characters: CardType[], ...dialogue: Dialogue[]]} Level
+ *
  * @typedef {object} Timer
  * @prop {number} duration
  * @prop {number} elapsed
@@ -389,172 +392,204 @@ const CARDS = {
 };
 
 /**
- * @type {Record<string, CardType[]>}
+ * @type {Record<number, Level>}
  */
 const LEVELS = {
-  // 1. Tutorial 1
+  // Tutorial 1
   // There are some diagonal gaps that they might try but the only solution
   // involves playing in the south slot.
-  "-------I0---I0J1I0--I0-I0------": [HEIMDALL],
+  1: [
+    "-------I0---I0J1I0--I0-I0------",
+    [HEIMDALL],
+    [HEIMDALL, "GIANTS TOOK THE GJALLARHORN!"],
+    [ODIN, "OH NO... HEIMDALL?\nWHAT IS A GJALLARHORN?"],
+    [HEIMDALL, "THE UNIQUE HORN THAT SUMMONS\nGODS BACK TO THE BIFROST."],
+    [ODIN, "AHH... WHAT'S THE BIFROST?"],
+    [HEIMDALL, "THE RAINBOW BRIDGE THAT\nCONNECTS US TO OTHER WORLDS!"],
+    [ODIN, "RIGHT... SOUNDS LIKE YOU\nSHOULD GET IT BACK!"],
+    [TUTORIAL, "CLEAR EVERY GIANT FROM THE\nBOARD TO ADVANCE"],
+  ],
 
-  // 2. Tutorial 2
+  // Tutorial 2
   // Teach the player that they need to hit twice when giants have more health.
-  "------I0-I0---J2---I0-I0------": [HEIMDALL, THOR],
+  2: [
+    "------------J2",
+    [HEIMDALL, THOR],
+    [HEIMDALL, "WHAT CAN I DO AGAINST SUCH A\nSTRONG GIANT?"],
+    [THOR, "BIT OF A SLOW DAY IN ASGARD,\nI'LL HELP YOU!"],
+  ],
 
-  // 3. Tutorial 3
-  // Teach the player to hit 3 giants with two characters.
-  "I0---I0--I0--J1-J2-J1--I0--I0I0-I0I0": [HEIMDALL, THOR],
-
-  // 4. Prisoner
+  // Prisoner
   // Teach the player to use Thor to smash crystals and Heimdall to return him
   // to the hand.
-  "------I0I0I0--I0J2I0--I0I0I0------": [HEIMDALL, THOR],
+  3: [
+    "------I0I0I0--I0J2I0--I0I0I0------",
+    [HEIMDALL, THOR],
+    [TUTORIAL, "EACH GOD HAS A POWER THEY\nUSE AFTER ATTACKING."],
+    [TUTORIAL, "CHOOSE THE ORDER YOU PLAY\nTHE GODS IN WISELY."],
+  ],
 
-  // 5. Prison Break
+  // Prison Break
   // Teach the player to neutralize a larger pattern of giants.
-  "------J1I0J1-J1I0-I0J1-J1I0J1------": [HEIMDALL, THOR],
+  4: ["------J1I0J1-J1I0-I0J1-J1I0J1------", [HEIMDALL, THOR]],
 
-  // 6. Push
+  // Push
   // Teach the player to push with Tyr, pushing a giant into a spot where
   // Thor can hit two.
-  "-------I0J1I0-I0-----J2-------": [THOR, TYR],
+  5: [
+    "-------I0J1I0-I0-----J2-------",
+    [THOR, TYR],
+    [TYR, "LOOKS LIKE YOU MIGHT NEED\nSOME HELP!"],
+  ],
 
-  // 7. Pushing Thor
+  // Pushing Thor
   // Teach the player to push Thor instead of a giant to repeat his effect.
-  "-I0J1I0--J1I0J1--J1-J1--------J1--": [THOR, TYR],
+  6: ["-I0J1I0--J1I0J1--J1-J1--------J1--", [THOR, TYR]],
 
-  // 8. Push & Reset
+  // Push & Reset
   // Teach the player to use all three character effects together in a chain.
-  "--J1---I0I0I0-J1I0-I0J1-I0I0I0---J1--": [HEIMDALL, THOR, TYR],
+  7: ["--J1---I0I0I0-J1I0-I0J1-I0I0I0---J1--", [HEIMDALL, THOR, TYR]],
 
-  // 9. Pushing Trap
+  // Pushing Trap
   // Teach the player that pushing is sometimes worse than summoning.
-  "-I0J3I0--J2I0J2----------------": [HEIMDALL, THOR, TYR],
+  8: [
+    "-I0J3I0--J2I0J2----------------",
+    [HEIMDALL, THOR, TYR],
+    [TYR, "THE GIANTS HAVE DEVISED A\nCRAFTY DEFENSE..."],
+    [FROST_GIANT, 'THIS FOOL THINKS STANDING\nBEHIND A CRYSTAL IS "CRAFTY"'],
+    [TYR, "HEY! YOU'RE NOT SUPPOSED TO\nHAVE DIALOGUE!"],
+    [TUTORIAL, "JUST REMEMBER IT'S OKAY TO\nRESET AND TRY AGAIN"],
+  ],
 
-  // 10. Fortress
+  // Fortress
   // Use Thor to break into a fortress with pushes from Tyr.
-  "I0I0J2I0I0-J2I0J2-I0I0I0I0I0I0---I0-----": [HEIMDALL, THOR, TYR],
+  9: ["I0I0J2I0I0-J2I0J2-I0I0I0I0I0I0---I0-----", [HEIMDALL, THOR, TYR]],
 
-  // 11. Thortex
+  // Thortex
   // Use Tyr to turn the spiral into a cross.
-  "--I0-----J2-I0J2-J1I0-J3-----I0--": [HEIMDALL, THOR, TYR],
+  10: ["--I0-----J2-I0J2-J1I0-J3-----I0--", [HEIMDALL, THOR, TYR]],
 
-  // 12. Lazarus
+  // Lazarus
   // Vertical puzzle that requires retriggering Heimdall with a push.
-  "-J1I0----I0J2----J1--------J1--": [HEIMDALL, THOR, TYR],
+  11: ["-J1I0----I0J2----J1--------J1--", [HEIMDALL, THOR, TYR]],
 
-  // 13. Old School Runestone
+  // Old School Runestone
   // Learning how to use runestones to repeat effects.
   // Need to make sure you use Tyr last, otherwise giants are out of reach.
-  "------J5-J5---M0": [HEIMDALL, THOR, TYR],
+  12: ["------J5-J5---M0", [HEIMDALL, THOR, TYR]],
 
-  // 14. Spatial Awareness
+  // Spatial Awareness
   // Runestone puzzle that can either be approached with Heimdall's recalls or
   // a dual push from Tyr.
-  "--J2----I0M0-J1J1------J1": [HEIMDALL, THOR, FRIGG],
+  13: ["--J2----I0M0-J1J1------J1", [HEIMDALL, THOR, FRIGG]],
 
-  // 15. Frigg
+  // Frigg
   // Use Frigg's ability to hit on diagonals.
-  "J1---I0---I0---J3---I0---I0---J1": [HEIMDALL, FRIGG],
+  14: ["J1---I0---I0---J3---I0---I0---J1", [HEIMDALL, FRIGG]],
 
-  // 16. Thin Line
+  // Thin Line
   // Use Frigg and Heimdall to defeat giants in a diagonal line.
-  "J1-----J1-----J3------------": [HEIMDALL, FRIGG],
+  15: ["J1-----J1-----J3------------", [HEIMDALL, FRIGG]],
 
-  // 17. Fortress II
+  // Fortress II
   // Heimdall helps Thor burrow in, then Frigg finishes the job.
-  "I0J1I0J1I0I0I0I0I0I0I0J2I0J2I0-I0-I0------": [HEIMDALL, THOR, FRIGG],
+  16: ["I0J1I0J1I0I0I0I0I0I0I0J2I0J2I0-I0-I0------", [HEIMDALL, THOR, FRIGG]],
 
-  // 18. T-pain
+  // T-pain
   // Clear out a T shaped level of giants using a triple push from Tyr.
-  "J1J1J1J1J1-----J1J1-J1J1-J1-J1--J1-J1": [HEIMDALL, THOR, FRIGG, TYR],
+  17: ["J1J1J1J1J1-----J1J1-J1J1-J1-J1--J1-J1", [HEIMDALL, THOR, FRIGG, TYR]],
 
-  // 19. Overwhelming Odds
+  // Overwhelming Odds
   // This one is hard. Frigg hits the southern diagonal, Thor hits 3 crystals
   // to the north, Heimdall summons both, Thor hits 3 giants, Frigg finishes.
   // Might be the only solution.
-  "-I0J2I0I0--I0J1I0-I0J4I0I0--I0-I0J1----": [HEIMDALL, THOR, FRIGG],
+  18: ["-I0J2I0I0--I0J1I0-I0J4I0I0--I0-I0J1----", [HEIMDALL, THOR, FRIGG]],
 
-  // 20. Fire Giant
+  // Fire Giant
   // Learn about using fire giants to hit their own neighbours.
-  "-------J1---J1K2J1": [HEIMDALL, THOR, FRIGG],
+  19: ["-------J1---J1K2J1", [HEIMDALL, THOR, FRIGG]],
 
-  // 21. Fire Giants
+  // Fire Giants
   // Learn about using fire giants offensively.
-  "I0J3I0-----J1-I0-K4---J1": [HEIMDALL, TYR, FRIGG],
+  20: ["I0J3I0-----J1-I0-K4---J1", [HEIMDALL, TYR, FRIGG]],
 
-  // 22. Mr President!
+  // Tough Guy
   // Fire giants "defending" a big frost giant
-  "-------K2---K2J4K2---K2": [HEIMDALL, TYR, FRIGG],
+  21: ["-------K2---K2J4K2---K2", [HEIMDALL, TYR, FRIGG]],
 
-  // 23. Welcome to Hel
+  // Welcome to Hel
   // Basic introduction to Hel's multihit mechanics.
-  "-J1-J1--I0-I0---J4---I0-I0--J1-J1": [HEIMDALL, THOR, HEL],
+  22: ["-J1-J1--I0-I0---J4---I0-I0--J1-J1", [HEIMDALL, THOR, HEL]],
 
-  // 24. Inner Circle
+  // Inner Circle
   // Punch through the ring to fill the grave before triggering Hel.
-  "-I0I0I0-I0-J1-I0I0J1J1J1I0I0-K5-I0-I0I0I0": [TYR, FRIGG, HEL],
+  23: ["-I0I0I0-I0-J1-I0I0J1J1J1I0I0-K5-I0-I0I0I0", [TYR, FRIGG, HEL]],
 
-  // 25. X Marks the Spot
-  "J1---J1-J1-J1---K7---J1-J1-J1---J1": [HEIMDALL, TYR, FRIGG, HEL],
+  // X Marks the Spot
+  24: ["J1---J1-J1-J1---K7---J1-J1-J1---J1", [HEIMDALL, TYR, FRIGG, HEL]],
 
-  // 26. Frigg 'n Hel
+  // Frigg 'n Hel
   // Use a runestone to power up Hel's hits
-  "------J4-J4---M0---J1-J1": [FRIGG, HEL],
+  25: ["------J4-J4---M0---J1-J1", [FRIGG, HEL]],
 
-  // 27. Boxing Match
+  // Boxing Match
   // The giants can destroy each other if Tyr forces them to meet face to face.
-  "----------I0K4-K5I0": [TYR, THOR, FRIGG, HEL],
+  26: ["----------I0K4-K5I0", [TYR, THOR, FRIGG, HEL]],
 
-  // 28. Chaos is a Pit
+  // Chaos is a Pit
   // Learning about Chaos Giants.
-  "": [THOR, FRIGG],
+  27: ["", [THOR, FRIGG]],
 
-  // 29. Distributed Chaos
+  // Distributed Chaos
   // Use a Chaos Giant to get giants set up for Frigg.
-  "------------L2J1---J1": [THOR, FRIGG],
+  28: ["------------L2J1---J1", [THOR, FRIGG]],
 
-  // 30. Friggblocker
+  // Friggblocker
   // Use Frigg to prevent Tyr's push from cancelling out the Chaos Giant's push.
-  "------J1-J1--------L2": [FRIGG, TYR],
+  29: ["------J1-J1--------L2", [FRIGG, TYR]],
 
-  // 31. Throne Room
+  // Throne Room
   // Long line of guards for a chaos giant.
   // Start with Frigg next to the chaos giant and use a combination of the giant
   // and Tyr to push her along the line of guards.
-  "-----J1J1J1J1J1----L2J1J1J1J1J1": [TYR, FRIGG, THOR],
+  30: ["-----J1J1J1J1J1----L2J1J1J1J1J1", [TYR, FRIGG, THOR]],
 
-  // 32. Chaos Sokoban
+  // Chaos Sokoban
   // Super fun. Involves some careful deliberation about how to push the chaos
   // giants to open up enough space for Thor to clear the central crystal for
   // Frigg to take a shot.
-  "I0I0I0-I0--L2-I0I0L2I0L1I0I0L3I0-I0I0-I0I0I0": [HEIMDALL, TYR, FRIGG, THOR],
+  31: [
+    "I0I0I0-I0--L2-I0I0L2I0L1I0I0L3I0-I0I0-I0I0I0",
+    [HEIMDALL, TYR, FRIGG, THOR],
+  ],
 
-  // 33. Loki Tutorial
-  "-I0J1I0-I0-J1-I0--J1----J1": [LOKI],
+  // Loki Tutorial
+  32: ["-I0J1I0-I0-J1-I0--J1----J1", [LOKI]],
 
-  // 34. Loki's Tricks
-  "-----I0----J1I0---J1-I0--J1J1J1I0": [LOKI, THOR],
+  // Loki's Tricks
+  33: ["-----I0----J1I0---J1-I0--J1J1J1I0", [LOKI, THOR]],
 
-  // 35. Giant Formation
+  // Giant Formation
   // Use Tyr and Heimdall to push the giants into a contiguous block for Loki.
-  "I0J2-J2I0J2-J3-J2-K2-K2---J1--I0---I0": [LOKI, TYR, HEIMDALL],
+  34: ["I0J2-J2I0J2-J3-J2-K2-K2---J1--I0---I0", [LOKI, TYR, HEIMDALL]],
 
-  // 36. Loki & Hel
+  // Loki & Hel
   // Use Loki to power up Hel for a big hit.
-  "I0I0K8I0I0-J1-J1--J1-J1--J1J1J1": [LOKI, HEL],
+  35: ["I0I0K8I0I0-J1-J1--J1-J1--J1J1J1", [LOKI, HEL]],
 
-  // 37. Odin
-  // Introduction to using Odin to place runestones.
-  "": [HEIMDALL, THOR, TYR, FRIGG],
-
-  // 38. Odin
+  // Odin
   // TODO:
 
-  // 39. Odin
+  // Odin
   // TODO:
 
-  // 40. Ymir: The First Giant
+  // Odin
+  // TODO:
+
+  // Odin
+  // TODO:
+
+  // Ymir: The First Giant
   // The final boss is one of the hardest puzzles. Ymir creates crystals
   // whenever he attacks which means you're constantly struggling to manage
   // to find attack windows.
@@ -564,7 +599,7 @@ const LEVELS = {
   //    This can be done by using Tyr to re-trigger Odin so that Heimdall is
   //    free to recall Frigg.
   // 2. Set up a big grave and have Hel do a multihit.
-  "------------N9": [HEIMDALL, THOR, TYR, FRIGG, HEL, LOKI, ODIN],
+  40: ["------------N9", [HEIMDALL, THOR, TYR, FRIGG, HEL, LOKI, ODIN]],
 
   // [Unused puzzles]
   // Hel + Rune
@@ -572,27 +607,6 @@ const LEVELS = {
   //
   // Chaos Crossbow
   // "---J2----J1-L3--L3----J1----J1I0"
-};
-
-/**
- * @type {Record<string, [char: CardType | typeof TUTORIAL, text: string][] | undefined>}
- */
-const STORY = {
-  0: [
-    [HEIMDALL, "GIANTS TOOK THE GJALLARHORN!"],
-    [ODIN, "OH NO... HEIMDALL?\nWHAT IS A GJALLARHORN?"],
-    [HEIMDALL, "THE UNIQUE HORN THAT SUMMONS\nGODS BACK TO THE BIFROST."],
-    [ODIN, "AHH... WHAT'S THE BIFROST?"],
-    [HEIMDALL, "THE RAINBOW BRIDGE THAT\nCONNECTS US TO OTHER WORLDS!"],
-    [ODIN, "RIGHT... SOUNDS LIKE YOU\nSHOULD GET IT BACK!"],
-    [HEIMDALL, "I SHOULD DRAG MYSELF INTO\nACTION."],
-    [TUTORIAL, "CLEAR EVERY GIANT FROM THE\nBOARD TO ADVANCE"],
-  ],
-
-  1: [
-    [HEIMDALL, "WHAT CAN I DO AGAINST SUCH A\nSTRONG GIANT?"],
-    [THOR, "BIT OF A SLOW DAY IN ASGARD,\nI'LL HELP YOU!"],
-  ],
 };
 
 /**
@@ -653,7 +667,7 @@ let busy = false;
  * The player's current level/puzzle index.
  * @type {number}
  */
-let level = 0;
+let level = 1;
 
 /**
  * The player's current dialogue index.
@@ -1153,6 +1167,14 @@ async function die(card, killer) {
 }
 
 /**
+ * @returns {Dialogue[]}
+ */
+function getDialogue() {
+  let [, , ...dialogue] = LEVELS[level];
+  return dialogue;
+}
+
+/**
  * Check whether the board has been cleared of giants.
  * @returns {boolean}
  */
@@ -1176,11 +1198,11 @@ function advanceToNextLevel() {
   // and healing back to their base HP instead of just snapping to the new state.
   // Probably relies on taking a "start snapshot" instead of storing a bit of
   // starting state on each card.
-  let [state, chars] = Object.entries(LEVELS)[++level];
-  unlocks = new Set(chars);
+  let [puzzle, characters] = LEVELS[++level];
+  unlocks = new Set(characters);
   step = 0;
-  start(state);
-  location.hash = `${level + 1}`;
+  start(puzzle);
+  location.hash = `${level}`;
 }
 
 /**
@@ -1339,8 +1361,8 @@ function renderParticles() {
 }
 
 function renderDialogue() {
-  let story = STORY[level];
-  if (!story || step >= story.length) return;
+  let story = getDialogue();
+  if (!story.length || step >= story.length) return;
 
   let x = UI_DIALOGUE_X;
   let y = UI_DIALOGUE_Y;
@@ -1356,7 +1378,7 @@ function renderDialogue() {
 }
 
 function renderProgress() {
-  let label = `${level + 1}/${Object.keys(LEVELS).length}`;
+  let label = `${level}`;
   let w = label.length * 4;
   let h = 13;
   let x = UI_CENTER_X - w / 2;
@@ -1369,8 +1391,8 @@ function render() {
   ctx.clearRect(0, 0, UI_W, UI_H);
   renderBackground();
 
-  let story = STORY[level];
-  let hasDialogue = story && step < story.length;
+  let story = getDialogue();
+  let hasDialogue = story.length && step < story.length;
 
   if (!preview) {
     if (hasDialogue || hasClearedGiants()) {
@@ -1572,8 +1594,8 @@ function init() {
     state ||= "-".repeat(board.slots.length);
   }
 
-  if (parseInt(state) > 0) {
-    level = parseInt(state) - 1;
+  if (parseInt(state) >= 0) {
+    level = parseInt(state);
     state = "";
   }
 
@@ -1582,9 +1604,9 @@ function init() {
     unlocks = new Set([HEIMDALL, THOR, TYR, FRIGG, HEL, LOKI, ODIN]);
     start(state);
   } else {
-    let [state, chars] = Object.entries(LEVELS)[level];
-    unlocks = new Set(chars);
-    start(state);
+    let [puzzle, characters] = LEVELS[level];
+    unlocks = new Set(characters);
+    start(puzzle);
   }
 
   canvas.width = UI_W;
