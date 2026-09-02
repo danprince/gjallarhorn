@@ -1522,6 +1522,15 @@ function updateCards() {
       preview = card;
     }
   }
+
+  if (
+    // No previews during dialogue
+    getDialogue().length ||
+    // No god previews in first 2 levels
+    (level <= 2 && preview?.slot.zone === hand)
+  ) {
+    preview = undefined;
+  }
 }
 
 function update() {
