@@ -1207,7 +1207,9 @@ function renderBackground() {
     draw(sprites[s], x, y, p);
   }
 
-  renderCloudBand(40, PALETTE_FROST_GIANT);
+  renderCloudBand(50, 21);
+  renderCloudBand(20, 22);
+  renderCloudBand(10, 23);
 
   let spr = spritesheet.runes;
   for (let x = 0; x < UI_W; x += spr.w) {
