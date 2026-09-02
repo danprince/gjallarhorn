@@ -221,6 +221,7 @@ const POWERUP = 16;
 const TRANSIENT = 32;
 
 // [Cards]
+const TUTORIAL = 0;
 const HEIMDALL = 1;
 const ODIN = 2;
 const THOR = 3;
@@ -237,6 +238,7 @@ const YMIR = 13;
 
 /**
  * @typedef {(
+ *   | typeof TUTORIAL
  *   | typeof HEIMDALL
  *   | typeof ODIN
  *   | typeof THOR
@@ -257,6 +259,9 @@ const YMIR = 13;
  * @type {Record<CardType, CardDefinition>}
  */
 const CARDS = {
+  [TUTORIAL]: {
+    name: "TUTORIAL",
+  },
   [HEIMDALL]: {
     name: "HEIMDALL",
     description: "RECALLS ADJACENT GODS",
@@ -358,7 +363,7 @@ const CARDS = {
     name: "RUNESTONE",
     description: "ADJACENT GODS PLAY TWICE",
     tags: POWERUP,
-    sprite: 10,
+    sprite: 0,
     palette: PALETTE_RUNESTONE,
     hp: 0,
   },
@@ -570,7 +575,7 @@ const LEVELS = {
 };
 
 /**
- * @type {Record<string, [char: CardType, text: string][] | undefined>}
+ * @type {Record<string, [char: CardType | typeof TUTORIAL, text: string][] | undefined>}
  */
 const STORY = {
   0: [
@@ -581,6 +586,7 @@ const STORY = {
     [HEIMDALL, "THE RAINBOW BRIDGE THAT\nCONNECTS US TO OTHER WORLDS!"],
     [ODIN, "RIGHT... SOUNDS LIKE YOU\nSHOULD GET IT BACK!"],
     [HEIMDALL, "I SHOULD DRAG MYSELF INTO\nACTION."],
+    [TUTORIAL, "CLEAR EVERY GIANT FROM THE\nBOARD TO ADVANCE"],
   ],
 
   1: [
@@ -1342,8 +1348,9 @@ function renderDialogue() {
   let h = UI_DIALOGUE_HEIGHT;
   let [char, text] = story[step];
   let card = CARDS[char];
+  let sprite = UI_CARD_SPRITES[card.sprite ?? char];
   drawNinePatch(spritesheet.frame, x, y, w, h, card.palette ?? char);
-  draw(UI_CARD_SPRITES[char], x + 3, y + 4, card.palette ?? char);
+  draw(sprite, x + 3, y + 4, card.palette ?? char);
   write(card.name, x + UI_CARD_SIZE + 4, y + 4, 1);
   write(text, x + UI_CARD_SIZE + 4, y + 10);
 }

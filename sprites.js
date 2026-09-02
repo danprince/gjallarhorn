@@ -21,7 +21,7 @@ export const spritesheet = {
   "btn": { center: { h: 8, w: 1, x: 5, y: 2, }, h: 12, w: 11, x: 80, y: 42, },
   "btn_active": { center: { h: 8, w: 1, x: 5, y: 2, }, h: 12, w: 11, x: 80, y: 42, },
   "card": { h: 18, w: 18, x: 62, y: 36, },
-  "card_slot": { h: 18, w: 18, x: 8, y: 0, },
+  "card_slot": { h: 18, w: 18, x: 44, y: 36, },
   "cards": { h: 54, w: 72, x: 8, y: 0, },
   "cursors": { h: 10, pivot: { x: 3, y: 1, }, w: 37, x: 91, y: 44, },
   "font": { h: 20, pivot: { x: 0, y: 0, }, w: 48, x: 80, y: 0, },
