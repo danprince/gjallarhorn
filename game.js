@@ -409,115 +409,147 @@ const LEVELS = {
   // Teach the player to neutralize a larger pattern of giants.
   "------J1I0J1-J1I0-I0J1-J1I0J1------": [HEIMDALL, THOR],
 
-  // 6. Opposites
-  // Attack giants at opposite ends of the map.
-  "-I0J1I0---I0--I0---I0--I0---I0J1I0-": [HEIMDALL, THOR],
-
-  // 7. Push
+  // 6. Push
   // Teach the player to push with Tyr, pushing a giant into a spot where
   // Thor can hit two.
   "-------I0J1I0-I0-----J2-------": [THOR, TYR],
 
-  // 8. Pushing Thor
+  // 7. Pushing Thor
   // Teach the player to push Thor instead of a giant to repeat his effect.
   "-I0J1I0--J1I0J1--J1-J1--------J1--": [THOR, TYR],
 
-  // 9. Push & Reset
+  // 8. Push & Reset
   // Teach the player to use all three character effects together in a chain.
   "--J1---I0I0I0-J1I0-I0J1-I0I0I0---J1--": [HEIMDALL, THOR, TYR],
 
-  // 10. Pushing Trap
+  // 9. Pushing Trap
   // Teach the player that pushing is sometimes worse than summoning.
   "-I0J3I0--J2I0J2----------------": [HEIMDALL, THOR, TYR],
 
-  // 11. Fortress
+  // 10. Fortress
   // Use Thor to break into a fortress with pushes from Tyr.
   "I0I0J2I0I0-J2I0J2-I0I0I0I0I0I0---I0-----": [HEIMDALL, THOR, TYR],
 
-  // 12. Thortex
+  // 11. Thortex
   // Use Tyr to turn the spiral into a cross.
   "--I0-----J2-I0J2-J1I0-J3-----I0--": [HEIMDALL, THOR, TYR],
 
-  // 13. Lazarus
+  // 12. Lazarus
   // Vertical puzzle that requires retriggering Heimdall with a push.
   "-J1I0----I0J2----J1--------J1--": [HEIMDALL, THOR, TYR],
 
-  // 14. Frigg
+  // 13. Old School Runestone
+  // Learning how to use runestones to repeat effects.
+  // Need to make sure you use Tyr last, otherwise giants are out of reach.
+  "------J5-J5---M0": [HEIMDALL, THOR, TYR],
+
+  // 14. Spatial Awareness
+  // Runestone puzzle that can either be approached with Heimdall's recalls or
+  // a dual push from Tyr.
+  "--J2----I0M0-J1J1------J1": [HEIMDALL, THOR, FRIGG],
+
+  // 15. Frigg
   // Use Frigg's ability to hit on diagonals.
   "J1---I0---I0---J3---I0---I0---J1": [HEIMDALL, FRIGG],
 
-  // 15. Thin Line
+  // 16. Thin Line
   // Use Frigg and Heimdall to defeat giants in a diagonal line.
   "J1-----J1-----J3------------": [HEIMDALL, FRIGG],
 
-  // 16. Fortress II
+  // 17. Fortress II
   // Heimdall helps Thor burrow in, then Frigg finishes the job.
   "I0J1I0J1I0I0I0I0I0I0I0J2I0J2I0-I0-I0------": [HEIMDALL, THOR, FRIGG],
 
-  // 17. Overwhelming Odds
+  // 18. T-pain
+  // Clear out a T shaped level of giants using a triple push from Tyr.
+  "J1J1J1J1J1-----J1J1-J1J1-J1-J1--J1-J1": [HEIMDALL, THOR, FRIGG, TYR],
+
+  // 19. Overwhelming Odds
   // This one is hard. Frigg hits the southern diagonal, Thor hits 3 crystals
   // to the north, Heimdall summons both, Thor hits 3 giants, Frigg finishes.
   // Might be the only solution.
   "-I0J2I0I0--I0J1I0-I0J4I0I0--I0-I0J1----": [HEIMDALL, THOR, FRIGG],
 
-  // 18. Fire Giant
+  // 20. Fire Giant
   // Learn about using fire giants to hit their own neighbours.
   "-------J1---J1K2J1": [HEIMDALL, THOR, FRIGG],
 
-  // 19. Fire Giants
+  // 21. Fire Giants
   // Learn about using fire giants offensively.
   "I0J3I0-----J1-I0-K4---J1": [HEIMDALL, TYR, FRIGG],
 
-  // 20. Mr President!
+  // 22. Mr President!
   // Fire giants "defending" a big frost giant
   "-------K2---K2J4K2---K2": [HEIMDALL, TYR, FRIGG],
 
-  // 21. Welcome to Hel
+  // 23. Welcome to Hel
   // Basic introduction to Hel's multihit mechanics.
   "-J1-J1--I0-I0---J4---I0-I0--J1-J1": [HEIMDALL, THOR, HEL],
 
-  // 22. Inner Circle
+  // 24. Inner Circle
   // Punch through the ring to fill the grave before triggering Hel.
   "-I0I0I0-I0-J1-I0I0J1J1J1I0I0-K5-I0-I0I0I0": [TYR, FRIGG, HEL],
 
-  // 23. X Marks the Spot
+  // 25. X Marks the Spot
   "J1---J1-J1-J1---K7---J1-J1-J1---J1": [HEIMDALL, TYR, FRIGG, HEL],
 
-  // 24. Runestone Tutorial
-  "--J2------J2--M0------J2--J2": [HEIMDALL, TYR, FRIGG, HEL],
+  // 26. Frigg 'n Hel
+  // Use a runestone to power up Hel's hits
+  "------J4-J4---M0---J1-J1": [FRIGG, HEL],
 
-  // 25. Hel + Rune
-  "I0J1K9J1I0J1---J1J1-M0-J1": [TYR, FRIGG, HEL],
-
-  // 26. Boxing Match
+  // 27. Boxing Match
   // The giants can destroy each other if Tyr forces them to meet face to face.
   "----------I0K4-K5I0": [TYR, THOR, FRIGG, HEL],
 
-  // 27. Chaos is a Ladder
-  // Learning about Chaos Giants.
-  "--J1--------J1------L3": [TYR, HEIMDALL],
-
   // 28. Chaos is a Pit
   // Learning about Chaos Giants.
-  "------------L3-------J1J1I0": [TYR, FRIGG],
+  "": [THOR, FRIGG],
 
-  // 28. Throne Room
+  // 29. Distributed Chaos
+  // Use a Chaos Giant to get giants set up for Frigg.
+  "------------L2J1---J1": [THOR, FRIGG],
+
+  // 30. Friggblocker
+  // Use Frigg to prevent Tyr's push from cancelling out the Chaos Giant's push.
+  "------J1-J1--------L2": [FRIGG, TYR],
+
+  // 31. Throne Room
   // Long line of guards for a chaos giant.
+  // Start with Frigg next to the chaos giant and use a combination of the giant
+  // and Tyr to push her along the line of guards.
   "-----J1J1J1J1J1----L2J1J1J1J1J1": [TYR, FRIGG, THOR],
 
-  // 29. Chaos Sokoban
+  // 32. Chaos Sokoban
   // Super fun. Involves some careful deliberation about how to push the chaos
   // giants to open up enough space for Thor to clear the central crystal for
   // Frigg to take a shot.
-  "I0I0I0-I0--L2-I0I0L2I0L1I0I0L3I0-I0I0-I0I0I0": [
-    HEIMDALL,
-    TYR,
-    FRIGG,
-    THOR,
-    HEL,
-  ],
+  "I0I0I0-I0--L2-I0I0L2I0L1I0I0L3I0-I0I0-I0I0I0": [HEIMDALL, TYR, FRIGG, THOR],
 
-  // X. Ymir: The First Giant
+  // 33. Loki Tutorial
+  "-I0J1I0-I0-J1-I0--J1----J1": [LOKI],
+
+  // 34. Loki's Tricks
+  "-----I0----J1I0---J1-I0--J1J1J1I0": [LOKI, THOR],
+
+  // 35. Giant Formation
+  // Use Tyr and Heimdall to push the giants into a contiguous block for Loki.
+  "I0J2-J2I0J2-J3-J2-K2-K2---J1--I0---I0": [LOKI, TYR, HEIMDALL],
+
+  // 36. Loki & Hel
+  // Use Loki to power up Hel for a big hit.
+  "I0I0K8I0I0-J1-J1--J1-J1--J1J1J1": [LOKI, HEL],
+
+  // 37. Odin
+  // Introduction to using Odin to place runestones.
+  "": [HEIMDALL, THOR, TYR, FRIGG],
+
+  // 38. Odin
+  // TODO:
+
+  // 39. Odin
+  // TODO:
+
+  // 40. Ymir: The First Giant
   // The final boss is one of the hardest puzzles. Ymir creates crystals
   // whenever he attacks which means you're constantly struggling to manage
   // to find attack windows.
@@ -528,6 +560,13 @@ const LEVELS = {
   //    free to recall Frigg.
   // 2. Set up a big grave and have Hel do a multihit.
   "------------N9": [HEIMDALL, THOR, TYR, FRIGG, HEL, LOKI, ODIN],
+
+  // [Unused puzzles]
+  // Hel + Rune
+  // "I0J1K9J1I0J1---J1J1-M0-J1"
+  //
+  // Chaos Crossbow
+  // "---J2----J1-L3--L3----J1----J1I0"
 };
 
 /**
