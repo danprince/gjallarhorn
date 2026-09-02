@@ -1133,7 +1133,7 @@ function advanceToNextLevel() {
   unlocks = new Set(chars);
   step = 0;
   start(state);
-  location.hash = "" + level;
+  location.hash = `${level + 1}`;
 }
 
 /**
