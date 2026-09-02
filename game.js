@@ -283,7 +283,9 @@ const CARDS = {
     description: "ATTACKS FOR EACH OF THE DEAD",
     async effect(card, targets) {
       let count = grave.slots.filter(isNotEmpty).length;
-      for (let i = 0; i < count; i++) await defaultAttackEffect(card, targets);
+      for (let target of targets) {
+        for (let i = 0; i < count; i++) await attack(card, target);
+      }
     },
   },
   [TYR]: {
