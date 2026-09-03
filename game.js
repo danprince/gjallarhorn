@@ -566,8 +566,13 @@ const LEVELS = {
   // Loki Tutorial
   32: ["-I0J1I0-I0-J1-I0--J1----J1", [LOKI]],
 
-  // Loki's Tricks
-  33: ["-----I0----J1I0---J1-I0--J1J1J1I0", [LOKI, THOR]],
+  // Loki's Helbridge
+  // Use Hel as a bridge so Loki can connect both sets of giants.
+  33: [
+    "--J1----J1--------------J1",
+    [LOKI, HEL],
+    [HEL, "LOKI IS DANGEROUS. HE'LL\nATTACK OTHER GODS IF HE CAN."],
+  ],
 
   // Giant Formation
   // Use Tyr and Heimdall to push the giants into a contiguous block for Loki.
