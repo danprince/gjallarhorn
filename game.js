@@ -1403,6 +1403,42 @@ function renderProgress() {
   write(label, x, y);
 }
 
+/**
+ * @param {Rectangle} rect
+ */
+function renderTutorialPointer(rect) {
+  ctx.save();
+  ctx.globalAlpha = 0.75;
+  let cursor = CURSOR_POINTER;
+  let sprite = UI_CURSOR_SPRITES[cursor];
+  let x = rect.x + (rect.w - sprite.w) / 2;
+  let y = rect.y + rect.h + Math.sin(pt / 100) * 2;
+  draw(sprite, x, y);
+  ctx.restore();
+}
+
+function renderTutorial() {
+  ctx.save();
+  ctx.globalAlpha = 1;
+
+  if (level === 1 && actions.length === 0) {
+    let src = hand.slots[0];
+    let dst = board.slots[17];
+
+    if (step < getDialogue().length) {
+      renderTutorialPointer(nextButton);
+    } else if (drag) {
+      renderTutorialPointer(dst.hb);
+    } else if (src.card) {
+      renderTutorialPointer(src.hb);
+    } else {
+      renderTutorialPointer(nextButton);
+    }
+  }
+
+  ctx.restore();
+}
+
 function render() {
   ctx.clearRect(0, 0, UI_W, UI_H);
   renderBackground();
@@ -1438,7 +1474,7 @@ function render() {
   if (preview) renderPreview(preview);
   if (drag) renderCard(drag.card);
   renderParticles();
-
+  renderTutorial();
   renderCursor();
 }
 
