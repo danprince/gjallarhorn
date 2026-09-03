@@ -1266,24 +1266,35 @@ function renderCloudBand(jitter = 30, palette = 0) {
   }
 }
 
-function renderBackground() {
-  let rng = prng();
-  let stars = rng(200, 800);
-  let sprites = [spritesheet.star_3, spritesheet.star_4];
-  for (let i = 0; i < 30; i++)
-    sprites.push(spritesheet.star_1, spritesheet.star_2);
+let starSprites = [spritesheet.star_3];
+for (let i = 0; i < 30; i++)
+  starSprites.push(spritesheet.star_1, spritesheet.star_2);
 
-  for (let i = 0; i < stars; i++) {
+function renderStars() {
+  let rng = prng();
+  let count = rng(200, 800);
+
+  for (let i = 0; i < count; i++) {
     let x = rng(0, UI_W);
-    let y = rng(0, UI_H);
-    let s = rng(0, sprites.length) | 0;
-    let p = PALETTE_FROST_GIANT;
-    draw(sprites[s], x, y, p);
+    let y = rng(11, UI_H - 11);
+    let s = rng(0, starSprites.length) | 0;
+    let period = rng(1000, 10_000);
+    let spr = starSprites[s];
+    let palette = PALETTE_FROST_GIANT;
+    if (rng() < 0.01) palette = PALETTE_FRIGG;
+    let time = (pt % period) / period;
+    ctx.globalAlpha = Math.sin(time * Math.PI);
+    draw(spr, x, y, palette);
   }
 
+  ctx.globalAlpha = 1;
+}
+
+function renderBackground() {
   renderCloudBand(50, 21);
   renderCloudBand(20, 22);
   renderCloudBand(10, 23);
+  renderStars();
 
   let spr = spritesheet.runes;
   for (let x = 0; x < UI_W; x += spr.w) {
