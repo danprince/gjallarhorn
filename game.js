@@ -1541,7 +1541,7 @@ function updateCards() {
 
   if (
     // No previews during dialogue
-    getDialogue().length ||
+    step < getDialogue().length ||
     // No god previews in first 2 levels
     (level <= 2 && preview?.slot.zone === hand)
   ) {
