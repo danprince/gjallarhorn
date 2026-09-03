@@ -476,24 +476,24 @@ const LEVELS = {
   // Old School Runestone
   // Learning how to use runestones to repeat effects.
   // Need to make sure you use Tyr last, otherwise giants are out of reach.
-  12: ["------J5-J5---M0", [HEIMDALL, THOR, TYR]],
+  12: ["------J5-J5---M0", [HEIMDALL, THOR, TYR], [TUTORIAL, ""]],
+
+  // Frigg
+  // Use Frigg's ability to hit on diagonals.
+  13: ["J1---I0---I0---J3---I0---I0---J1", [HEIMDALL, FRIGG]],
+
+  // Thin Line
+  // Use Frigg and Heimdall to defeat giants in a diagonal line.
+  14: ["------J1-----J1-----J3", [HEIMDALL, FRIGG]],
+
+  // Fortress II
+  // Heimdall helps Thor burrow in, then Frigg finishes the job.
+  15: ["I0J1I0J1I0I0I0I0I0I0I0J2I0J2I0-I0-I0------", [HEIMDALL, THOR, FRIGG]],
 
   // Spatial Awareness
   // Runestone puzzle that can either be approached with Heimdall's recalls or
   // a dual push from Tyr.
-  13: ["--J2----I0M0-J1J1------J1", [HEIMDALL, THOR, FRIGG]],
-
-  // Frigg
-  // Use Frigg's ability to hit on diagonals.
-  14: ["J1---I0---I0---J3---I0---I0---J1", [HEIMDALL, FRIGG]],
-
-  // Thin Line
-  // Use Frigg and Heimdall to defeat giants in a diagonal line.
-  15: ["J1-----J1-----J3------------", [HEIMDALL, FRIGG]],
-
-  // Fortress II
-  // Heimdall helps Thor burrow in, then Frigg finishes the job.
-  16: ["I0J1I0J1I0I0I0I0I0I0I0J2I0J2I0-I0-I0------", [HEIMDALL, THOR, FRIGG]],
+  16: ["--J2----I0M0-J1J1------J1", [HEIMDALL, THOR, FRIGG]],
 
   // T-pain
   // Clear out a T shaped level of giants using a triple push from Tyr.
@@ -519,14 +519,14 @@ const LEVELS = {
 
   // Welcome to Hel
   // Basic introduction to Hel's multihit mechanics.
-  22: ["-J1-J1--I0-I0---J4---I0-I0--J1-J1", [HEIMDALL, THOR, HEL]],
+  22: ["--J4---------J1---J1-J1---J1", [THOR, HEL]],
 
   // Inner Circle
   // Punch through the ring to fill the grave before triggering Hel.
   23: ["-I0I0I0-I0-J1-I0I0J1J1J1I0I0-K5-I0-I0I0I0", [TYR, FRIGG, HEL]],
 
   // X Marks the Spot
-  24: ["J1---J1-J1-J1---K7---J1-J1-J1---J1", [HEIMDALL, TYR, FRIGG, HEL]],
+  24: ["J1---J1-J1-J1---K7---J1-J1-J1---J1", [HEIMDALL, THOR, TYR, FRIGG, HEL]],
 
   // Frigg 'n Hel
   // Use a runestone to power up Hel's hits
@@ -534,11 +534,11 @@ const LEVELS = {
 
   // Boxing Match
   // The giants can destroy each other if Tyr forces them to meet face to face.
-  26: ["----------I0K4-K5I0", [TYR, THOR, FRIGG, HEL]],
+  26: ["----------I0K4-K5I0", [TYR, THOR, FRIGG]],
 
-  // Chaos is a Pit
+  // Chaos is a Ladda
   // Learning about Chaos Giants.
-  27: ["", [THOR, FRIGG]],
+  27: ["-------J1----L2", [THOR, HEIMDALL]],
 
   // Distributed Chaos
   // Use a Chaos Giant to get giants set up for Frigg.
