@@ -1200,18 +1200,33 @@ function hasClearedGiants() {
  * Move to the next level.
  */
 function advanceToNextLevel() {
-  for (let card of cards) despawn(card);
+  /**
+   * @type {Partial<Record<CardType, Rectangle>>}
+   */
+  let prevPositions = {};
+
+  for (let card of cards) {
+    prevPositions[card.type] = card.hb;
+    despawn(card);
+  }
+
   cards.clear();
 
-  // TODO: Would be great to show the gods visually animating back to the hand
-  // and healing back to their base HP instead of just snapping to the new state.
-  // Probably relies on taking a "start snapshot" instead of storing a bit of
-  // starting state on each card.
   let [puzzle, characters] = LEVELS[++level];
   unlocks = new Set(characters);
   step = 0;
   start(puzzle);
   location.hash = `${level}`;
+
+  // Visually animate gods back to the hand from their previous positions
+  // on the board or in the grave etc.
+  for (let card of cards) {
+    let pos = prevPositions[card.type];
+    if (!pos || !is(card, GOD)) continue;
+    card.hb.x = pos.x;
+    card.hb.y = pos.y;
+    tween(card, card.slot);
+  }
 }
 
 /**
