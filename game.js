@@ -1420,6 +1420,8 @@ function renderTutorialPointer(rect) {
 }
 
 function renderTutorial() {
+  if (IS_EDITOR) return;
+
   ctx.save();
   ctx.globalAlpha = 1;
 
