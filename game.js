@@ -6,6 +6,7 @@ import {
   spriteToDataUrl,
   write,
 } from "./graphics.js";
+import { sfx, SFX_CLICK, SFX_SLASH, SFX_TAP } from "./audio.js";
 import { spritesheet } from "./sprites.js";
 import {
   add,
@@ -1117,6 +1118,7 @@ async function attack(card, target) {
   if (card.hp <= 0) return;
   if (target.slot.zone !== board) return;
   await tween(card, target.slot, UI_ATTACK_MS);
+  sfx(SFX_SLASH);
   target.flashTimer = UI_ATTACK_MS;
   showBloodSplatter(card, target);
   let dead = --target.hp <= 0;
@@ -1528,6 +1530,7 @@ function updateButtons() {
     b.active = !drag && hover(b);
     b.pressed = pressed && b.active;
     if (b.active) cursor = CURSOR_POINTER;
+    if (b.pressed) sfx(SFX_CLICK);
   }
 }
 
@@ -1538,6 +1541,7 @@ function updateDrag() {
 
     if (released && slot && !slot.card) {
       queue(() => play(card, slot));
+      sfx(SFX_TAP);
     } else if (released) {
       tween(card, card.slot);
     } else if (slot && !slot.card) {
@@ -1554,6 +1558,7 @@ function updateDrag() {
         if (pressed) {
           let offset = sub(pointer, card.hb);
           drag = { card, offset };
+          sfx(SFX_TAP);
         } else {
           cursor = CURSOR_GRAB;
         }
