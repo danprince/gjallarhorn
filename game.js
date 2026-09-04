@@ -525,12 +525,14 @@ const LEVELS = {
   // Punch through the ring to fill the grave before triggering Hel.
   23: ["-I0I0I0-I0-J1-I0I0J1J1J1I0I0-K5-I0-I0I0I0", [TYR, FRIGG, HEL]],
 
-  // X Marks the Spot
-  24: ["J1---J1-J1-J1---K7---J1-J1-J1---J1", [HEIMDALL, THOR, TYR, FRIGG, HEL]],
-
   // Frigg 'n Hel
   // Use a runestone to power up Hel's hits
-  25: ["------J4-J4---M0---J1-J1", [FRIGG, HEL]],
+  24: ["------J4-J4---M0---J1-J1", [FRIGG, HEL]],
+
+  // X Marks the Spot
+  // Kinda hard. Requires playing Thor and Hel on the outside edge, then using
+  // Tyr to push the fire giant to clean up the other side.
+  25: ["J1---J1-J1-J1---K7---J1-J1-J1---J1", [HEIMDALL, THOR, TYR, FRIGG, HEL]],
 
   // Boxing Match
   // The giants can destroy each other if Tyr forces them to meet face to face.
