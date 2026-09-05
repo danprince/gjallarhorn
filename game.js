@@ -290,9 +290,12 @@ const CARDS = {
   },
   [HEL]: {
     name: "HEL",
-    description: "ATTACKS FOR EACH OF THE DEAD",
+    description: "ATTACKS ONCE FOR EACH DEAD GOD",
     async effect(card, targets) {
-      let count = grave.slots.filter(isNotEmpty).length;
+      let count = grave.slots.filter(
+        ({ card }) => card && is(card, GOD),
+      ).length;
+
       for (let target of targets) {
         for (let i = 0; i < count; i++) await attack(card, target);
       }
