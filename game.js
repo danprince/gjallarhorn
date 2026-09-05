@@ -16,6 +16,7 @@ import {
   exists,
   inside,
   lerp,
+  north,
   pick,
   prng,
   random,
@@ -23,6 +24,7 @@ import {
   Rect,
   required,
   smoothstep,
+  south,
   strip,
   sub,
 } from "./utils.js";
@@ -220,7 +222,6 @@ const ALL = ~0;
 const GOD = 1;
 const GIANT = 2;
 const CRYSTAL = 4;
-const ECHO = 8;
 const POWERUP = 16;
 const TRANSIENT = 32;
 
@@ -317,13 +318,15 @@ const CARDS = {
   },
   [LOKI]: {
     name: "LOKI",
-    description: "ECHO AFTER SLAYING GODS/GIANTS",
-    targets: GIANT | GOD,
+    description: "SWAPS ADJACENT CARDS",
+    targets: GOD,
     async effect(card, targets) {
+      let slots = cardinals.map((dir) => at(board, add(card.slot, dir)));
+      let [n, e, s, w] = slots;
+      if (n && s) await swap(n, s);
+      if (e && w) await swap(e, w);
       for (let target of targets) {
-        if (target.type !== LOKI) {
-          await attack(card, target);
-        }
+        await trigger(target);
       }
     },
   },
@@ -1020,8 +1023,6 @@ async function play(card, slot) {
  */
 async function trigger(card) {
   await card.effect(card, adjacent(card, card.targets, card.adjacency));
-  // Echoes despawn immediately aftering triggering their effect.
-  if (is(card, ECHO)) despawn(card);
 }
 
 /**
@@ -1057,10 +1058,23 @@ function at({ slots, cols, rows }, { x, y }) {
  * @param {Slot} slot
  */
 function move(card, slot) {
-  card.slot.card = undefined;
+  // Clear the card's existing slot, but only if the card is still here.
+  if (card.slot.card === card) card.slot.card = undefined;
+
   card.slot = slot;
   slot.card = card;
   return tween(card, slot);
+}
+
+/**
+ * Swap the cards in two slots and retrigger if either are gods.
+ * @param {Slot} a
+ * @param {Slot} b
+ */
+async function swap(a, b) {
+  let cardA = a.card;
+  let cardB = b.card;
+  await Promise.all([cardA && move(cardA, b), cardB && move(cardB, a)]);
 }
 
 /**
@@ -1167,12 +1181,6 @@ async function die(card, killer) {
 
   let slot = grave.slots.find(isEmpty);
   slot ? await move(card, slot) : despawn(card);
-
-  // Loki's logic is simpler to implement here than in his effect.
-  if (!pos.card && killer?.type === LOKI) {
-    let clone = spawn(LOKI, pos, ECHO | TRANSIENT);
-    await trigger(clone);
-  }
 }
 
 /**
@@ -1349,7 +1357,6 @@ function renderCard(card) {
   let { x, y } = card.hb;
   let palette = card.flashTimer > 0 ? 10 : card.palette;
   let locked = isLocked(card);
-  if (is(card, ECHO)) ctx.globalAlpha = 0.5;
   draw(spritesheet.card, x, y, card.palette);
   draw(card.sprite, x, y, locked ? PALETTE_BLACK : palette);
   if (locked) {
@@ -1357,7 +1364,6 @@ function renderCard(card) {
   } else if (card.hp > 0) {
     write(`${card.hp}`, x + 8, y + 13);
   }
-  if (is(card, ECHO)) ctx.globalAlpha = 1;
 }
 
 /**
