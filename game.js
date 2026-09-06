@@ -469,7 +469,7 @@ const LEVELS = {
 
   // Pushing Trap
   // Teach the player that pushing is sometimes worse than summoning.
-  9: ["------I0J2---J3I0---I0J2", [HEIMDALL, THOR, TYR]],
+  9: ["----------------J2I0J2--I0J3I0", [HEIMDALL, THOR, TYR]],
 
   // Thortex
   // Use Tyr to turn the spiral into a cross.
@@ -479,19 +479,15 @@ const LEVELS = {
   // Vertical puzzle that requires retriggering Heimdall with a push.
   11: ["-J1I0----I0J2----J1--------J1--", [HEIMDALL, THOR, TYR]],
 
-  // Old School Runestone
-  // Learning how to use runestones to repeat effects.
-  // Need to make sure you use Tyr last, otherwise giants are out of reach.
-  // TODO: No longer works due to runestone tweaks.
-  12: ["------J5-J5---M0", [HEIMDALL, THOR, TYR]],
-
-  // Frigg
-  // Use Frigg's ability to hit on diagonals.
-  13: ["J1---I0---I0---J3---I0---I0---J1", [HEIMDALL, FRIGG]],
+  // Frigg Tutorial
+  12: ["--------J1-------J1", [FRIGG]],
 
   // Thin Line
   // Use Frigg and Heimdall to defeat giants in a diagonal line.
-  14: ["------J1-----J1-----J3", [HEIMDALL, FRIGG]],
+  13: ["------J1-----J1-----J3", [HEIMDALL, FRIGG]],
+
+  // TODO:
+  14: ["", [FRIGG]],
 
   // Fortress II
   // Heimdall helps Thor burrow in, then Frigg finishes the job.
@@ -514,7 +510,7 @@ const LEVELS = {
 
   // Fire Giant
   // Learn about using fire giants to hit their own neighbours.
-  19: ["-------J1---J1K2J1", [HEIMDALL, THOR, FRIGG]],
+  19: ["-------J1---J1K2J1", [THOR, FRIGG]],
 
   // Fire Giants
   // Learn about using fire giants offensively.
@@ -528,20 +524,17 @@ const LEVELS = {
   // Basic introduction to Hel's multihit mechanics.
   22: ["--J3---------J2---J1-J1---J1", [HEIMDALL, THOR, HEL]],
 
-  // Inner Circle
-  // Punch through the ring to fill the grave before triggering Hel.
-  // TODO: Doesn't work because it's too hard to kill Tyr and Frigg
-  23: ["-I0I0I0-I0-J1-I0I0J1J1J1I0I0-K5-I0-I0I0I0", [TYR, FRIGG, HEL]],
+  // Hel O' There
+  // Slingshot Thor in using Hel.
+  23: ["I0J1J1J1I0-I0I0I0--I0J2I0", [HEIMDALL, THOR, HEL]],
 
-  // Frigg 'n Hel
-  // Use a runestone to power up Hel's hits
-  24: ["------J4-J4---M0---J1-J1", [FRIGG, HEL]],
+  // Helhammer
+  // Use Hel to get Thor back.
+  // Kinda hard if you don't spot the trick.
+  24: ["I0J1-J1I0-J1I0J1-I0J2J2J2I0-I0-I0-I0J1-J1I0", [THOR, TYR, FRIGG, HEL]],
 
   // X Marks the Spot
-  // Kinda hard. Requires playing Thor and Hel on the outside edge, then using
-  // Tyr to push the fire giant to clean up the other side.
-  // TODO: Unsolvable
-  25: ["J1---J1-J1-J1---K7---J1-J1-J1---J1", [HEIMDALL, THOR, TYR, FRIGG, HEL]],
+  25: ["J1---J1-J1-J1---K5---J1-J1-J1---J1", [HEIMDALL, THOR, TYR, FRIGG, HEL]],
 
   // Boxing Match
   // The giants can destroy each other if Tyr forces them to meet face to face.
@@ -582,20 +575,16 @@ const LEVELS = {
     [TUTORIAL, "LOKI IS A TRICKSTER. HE\nWON'T ATTACK GIANTS."],
   ],
 
-  // Loki's Helbridge
-  // Use Hel as a bridge so Loki can connect both sets of giants.
-  // TODO: No longer works because of each god's reworks.
-  33: ["--J1----J1--------------J1", [LOKI, HEL]],
+  // Loki Slingshot
+  // Use Loki to move a crystal then swap Heimdall into hitting a giant.
+  33: ["-I0J1I0--I0I0I0-------------J1", [LOKI, HEIMDALL]],
 
-  // Giant Formation
-  // Use Tyr and Heimdall to push the giants into a contiguous block for Loki.
-  // TODO: No longer works
-  34: ["I0J2-J2I0J2-J3-J2-K2-K2---J1--I0---I0", [LOKI, TYR, HEIMDALL]],
+  // The Scorpion
+  34: ["--J1---J1J1J1--K2-K2-K2---K2-K2-K2", [LOKI, TYR, HEIMDALL, THOR]],
 
-  // Loki & Hel
-  // Use Loki to power up Hel for a big hit.
-  // TODO: No longer works
-  35: ["I0I0K8I0I0-J1-J1--J1-J1--J1J1J1", [LOKI, HEL]],
+  // Loki's Corridor
+  // Use Loki to swap Tyr into pushing Thor to finish.
+  35: ["-----J1I0J1I0J1--I0-I0J1I0J1I0J1", [LOKI, TYR, THOR]],
 
   // Odin
   // TODO:
