@@ -222,7 +222,7 @@ const ALL = ~0;
 const GOD = 1;
 const GIANT = 2;
 const CRYSTAL = 4;
-const POWERUP = 16;
+const STONE = 16;
 const TRANSIENT = 32;
 
 // [Cards]
@@ -371,11 +371,19 @@ const CARDS = {
   },
   [RUNESTONE]: {
     name: "RUNESTONE",
-    description: "ADJACENT GODS PLAY TWICE",
-    tags: POWERUP,
+    description: "PLAY ADJACENT GODS AGAIN",
+    tags: STONE,
     sprite: 0,
     palette: PALETTE_RUNESTONE,
     hp: 0,
+    targets: GOD,
+    async effect(card, targets) {
+      for (let target of targets) {
+        if (target.type !== ODIN) {
+          await trigger(target);
+        }
+      }
+    },
   },
   [YMIR]: {
     hp: 9,
