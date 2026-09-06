@@ -282,6 +282,11 @@ const CARDS = {
     name: "ODIN",
     hp: 2,
     description: "ADDS A RUNESTONE TO YOUR HAND",
+    async effect(card, targets) {
+      await defaultAttackEffect(card, targets);
+      let slot = hand.slots.find(isEmpty);
+      if (slot) spawn(RUNESTONE, slot, TRANSIENT);
+    },
   },
   [THOR]: {
     name: "THOR",
@@ -1014,18 +1019,6 @@ function despawn(card) {
 async function play(card, slot) {
   await move(card, slot);
   await trigger(card);
-
-  // Trigger again for adjacent runestones (currently the only POWERUP).
-  for (let _ of adjacent(card, POWERUP)) {
-    await trigger(card);
-  }
-
-  // Special case for Odin's effect so that playing Odin next to a
-  // runestone can't create more runestones indefinitely.
-  if (card.type === ODIN) {
-    let slot = hand.slots.find(isEmpty);
-    if (slot) spawn(RUNESTONE, slot, TRANSIENT);
-  }
 }
 
 /**
