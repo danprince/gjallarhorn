@@ -386,7 +386,6 @@ const CARDS = {
     palette: 12,
     description: "CREATES CRYSTALS IN EMPTY SLOTS",
     async effect(card, targets) {
-      await defaultAttackEffect(card, targets);
       for (let step of cardinals) {
         let slot = at(board, add(card.slot, step));
         if (slot && isEmpty(slot)) {
@@ -394,6 +393,7 @@ const CARDS = {
           crystal.tags |= TRANSIENT;
         }
       }
+      await defaultAttackEffect(card, targets);
     },
   },
 };
