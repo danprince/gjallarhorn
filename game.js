@@ -505,12 +505,11 @@ const LEVELS = {
 
   // Fortress II
   // Heimdall helps Thor burrow in, then Frigg finishes the job.
-  15: ["I0J1I0J1I0I0I0I0I0I0I0J2I0J2I0-I0-I0------", [HEIMDALL, THOR, FRIGG]],
+  15: ["-I0-I0-I0J3I0J1I0-I0I0I0-I0J3I0J1I0-I0-I0", [HEIMDALL, THOR, FRIGG]],
 
-  // Spatial Awareness
-  // Runestone puzzle that can either be approached with Heimdall's recalls or
-  // a dual push from Tyr.
-  16: ["--J2----I0M0-J1J1------J1", [HEIMDALL, THOR, FRIGG]],
+  // Standing Stones
+  // Use two runestones to tactically eliminate a ring of giants.
+  16: ["--J3---I0M0I0-J2---J2--M0----J2", [HEIMDALL, THOR, FRIGG]],
 
   // T-pain
   // Clear out a T shaped level of giants using a triple push from Tyr.
@@ -631,6 +630,10 @@ const LEVELS = {
   //
   // Chaos Crossbow
   // "---J2----J1-L3--L3----J1----J1I0"
+  //
+  // Frigg's Gambit
+  // Many solutions
+  // "----J1---J1--J1--I0---J1--J2I0J2"
 };
 
 /**
