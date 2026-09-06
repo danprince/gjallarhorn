@@ -1733,6 +1733,16 @@ function init() {
 }
 
 if (IS_EDITOR) {
+  /**
+   * @param {Slot} slot
+   */
+  function erase(slot) {
+    if (slot.card) {
+      cards.delete(slot.card);
+      slot.card = undefined;
+    }
+  }
+
   onkeydown = ({ key }) => {
     let slot = board.slots.find((s) => inside(s.bounds, pointer));
     let card = slot?.card;
@@ -1759,7 +1769,7 @@ if (IS_EDITOR) {
 
     if (!slot) return;
     else if (card && shifted.includes(key)) card.hp = shifted.indexOf(key);
-    else if (key === "x" || key === "Escape") slot.card = undefined;
+    else if (key === "x" || key === "Escape") erase(slot);
     else if (key in shortcuts) spawn(shortcuts[key], slot);
     else return;
 
