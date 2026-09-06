@@ -1737,15 +1737,22 @@ if (IS_EDITOR) {
       location.reload();
     }
 
+    /**
+     * @type {Record<string, CardType>}
+     */
+    let shortcuts = {
+      1: FROST_CRYSTAL,
+      2: FROST_GIANT,
+      3: FIRE_GIANT,
+      4: CHAOS_GIANT,
+      5: RUNESTONE,
+      6: YMIR,
+    };
+
     if (!slot) return;
     else if (card && shifted.includes(key)) card.hp = shifted.indexOf(key);
     else if (key === "x" || key === "Escape") slot.card = undefined;
-    else if (key === "1") spawn(FROST_CRYSTAL, slot);
-    else if (key === "2") spawn(FROST_GIANT, slot);
-    else if (key === "3") spawn(FIRE_GIANT, slot);
-    else if (key === "4") spawn(CHAOS_GIANT, slot);
-    else if (key === "5") spawn(RUNESTONE, slot);
-    else if (key === "6") spawn(YMIR, slot);
+    else if (key in shortcuts) spawn(shortcuts[key], slot);
     else return;
 
     location.hash = save();
