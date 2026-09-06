@@ -290,8 +290,8 @@ const CARDS = {
   },
   [THOR]: {
     name: "THOR",
-    targets: GIANT | CRYSTAL,
-    description: "ATTACKS CRYSTALS",
+    targets: GIANT | CRYSTAL | STONE,
+    description: "DESTROYS CRYSTALS & STONES",
   },
   [HEL]: {
     name: "HEL",
