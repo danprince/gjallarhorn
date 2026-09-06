@@ -16,7 +16,6 @@ import {
   exists,
   inside,
   lerp,
-  north,
   pick,
   prng,
   random,
@@ -24,7 +23,6 @@ import {
   Rect,
   required,
   smoothstep,
-  south,
   strip,
   sub,
 } from "./utils.js";
@@ -467,7 +465,7 @@ const LEVELS = {
   6: [
     "-I0J1I0--J1I0J1--J1-J1--------J1--",
     [THOR, TYR],
-    [TUTORIAL, "GODS USE THEIR POWER AGAIN\nAFTER THEY ARE PUSHED"],
+    [TUTORIAL, "GODS PLAY AGAIN AFTER THEY\nARE PUSHED."],
   ],
 
   // Push & Reset
@@ -493,6 +491,7 @@ const LEVELS = {
   // Old School Runestone
   // Learning how to use runestones to repeat effects.
   // Need to make sure you use Tyr last, otherwise giants are out of reach.
+  // TODO: No longer works due to runestone tweaks.
   12: ["------J5-J5---M0", [HEIMDALL, THOR, TYR]],
 
   // Frigg
@@ -509,6 +508,7 @@ const LEVELS = {
 
   // Standing Stones
   // Use two runestones to tactically eliminate a ring of giants.
+  // TODO: Runestones
   16: ["--J3---I0M0I0-J2---J2--M0----J2", [HEIMDALL, THOR, FRIGG]],
 
   // T-pain
@@ -535,10 +535,11 @@ const LEVELS = {
 
   // Welcome to Hel
   // Basic introduction to Hel's multihit mechanics.
-  22: ["--J4---------J1---J1-J1---J1", [THOR, HEL]],
+  22: ["--J3---------J2---J1-J1---J1", [HEIMDALL, THOR, HEL]],
 
   // Inner Circle
   // Punch through the ring to fill the grave before triggering Hel.
+  // TODO: Doesn't work because it's too hard to kill Tyr and Frigg
   23: ["-I0I0I0-I0-J1-I0I0J1J1J1I0I0-K5-I0-I0I0I0", [TYR, FRIGG, HEL]],
 
   // Frigg 'n Hel
@@ -548,6 +549,7 @@ const LEVELS = {
   // X Marks the Spot
   // Kinda hard. Requires playing Thor and Hel on the outside edge, then using
   // Tyr to push the fire giant to clean up the other side.
+  // TODO: Unsolvable
   25: ["J1---J1-J1-J1---K7---J1-J1-J1---J1", [HEIMDALL, THOR, TYR, FRIGG, HEL]],
 
   // Boxing Match
@@ -556,7 +558,7 @@ const LEVELS = {
 
   // Chaos is a Ladda
   // Learning about Chaos Giants.
-  27: ["-------J1----L2", [THOR, HEIMDALL]],
+  27: ["-------J1----L2--------J1-J1", [THOR, HEIMDALL]],
 
   // Distributed Chaos
   // Use a Chaos Giant to get giants set up for Frigg.
@@ -564,6 +566,7 @@ const LEVELS = {
 
   // Friggblocker
   // Use Frigg to prevent Tyr's push from cancelling out the Chaos Giant's push.
+  // TODO: I don't know how this ever worked but the idea is cool.
   29: ["------J1-J1--------L2", [FRIGG, TYR]],
 
   // Throne Room
@@ -582,22 +585,25 @@ const LEVELS = {
   ],
 
   // Loki Tutorial
-  32: ["-I0J1I0-I0-J1-I0--J1----J1", [LOKI]],
+  32: [
+    "------J1---J1-I0-J1-J1",
+    [LOKI, THOR],
+    [TUTORIAL, "LOKI IS A TRICKSTER. HE\nWON'T ATTACK GIANTS."],
+  ],
 
   // Loki's Helbridge
   // Use Hel as a bridge so Loki can connect both sets of giants.
-  33: [
-    "--J1----J1--------------J1",
-    [LOKI, HEL],
-    [HEL, "LOKI IS DANGEROUS. HE'LL\nATTACK OTHER GODS IF HE CAN."],
-  ],
+  // TODO: No longer works because of each god's reworks.
+  33: ["--J1----J1--------------J1", [LOKI, HEL]],
 
   // Giant Formation
   // Use Tyr and Heimdall to push the giants into a contiguous block for Loki.
+  // TODO: No longer works
   34: ["I0J2-J2I0J2-J3-J2-K2-K2---J1--I0---I0", [LOKI, TYR, HEIMDALL]],
 
   // Loki & Hel
   // Use Loki to power up Hel for a big hit.
+  // TODO: No longer works
   35: ["I0I0K8I0I0-J1-J1--J1-J1--J1J1J1", [LOKI, HEL]],
 
   // Odin
@@ -622,6 +628,8 @@ const LEVELS = {
   //    This can be done by using Tyr to re-trigger Odin so that Heimdall is
   //    free to recall Frigg.
   // 2. Set up a big grave and have Hel do a multihit.
+  //
+  // TODO: Since the rework this has become a bit too easy.
   40: ["------------N9", [HEIMDALL, THOR, TYR, FRIGG, HEL, LOKI, ODIN]],
 
   // [Unused puzzles]
