@@ -293,16 +293,7 @@ const CARDS = {
   },
   [HEL]: {
     name: "HEL",
-    description: "ATTACKS ONCE FOR EACH DEAD GOD",
-    async effect(card, targets) {
-      let count = grave.slots.filter(
-        ({ card }) => card && is(card, GOD),
-      ).length;
-
-      for (let target of targets) {
-        for (let i = 0; i < count; i++) await attack(card, target);
-      }
-    },
+    description: "SLAYING GIANTS RESURRECTS GODS",
   },
   [TYR]: {
     name: "TYR",
@@ -1148,7 +1139,7 @@ async function attack(card, target) {
   target.flashTimer = UI_ATTACK_MS;
   showBloodSplatter(card, target);
   let dead = --target.hp <= 0;
-  if (dead) die(target, card);
+  if (dead) card.type === HEL ? bury(target) : die(target, card);
   await tween(card, card.slot, UI_ATTACK_MS);
   // Giants retaliate after being attacked.
   if (is(target, GIANT)) queue(() => trigger(target));
@@ -1193,6 +1184,20 @@ async function die(card, killer) {
 
   let slot = grave.slots.find(isEmpty);
   slot ? await move(card, slot) : despawn(card);
+}
+
+/**
+ * @param {Card} card
+ */
+async function bury(card) {
+  let boardSlot = card.slot;
+  let graveSlot = grave.slots.findLast(({ card }) => card && is(card, GOD));
+  if (!graveSlot) return die(card);
+  await swap(graveSlot, boardSlot);
+  if (boardSlot.card) {
+    boardSlot.card.hp ||= 1;
+    await trigger(boardSlot.card);
+  }
 }
 
 /**
