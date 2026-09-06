@@ -435,8 +435,8 @@ const LEVELS = {
   2: [
     "------------J2",
     [HEIMDALL, THOR],
-    [HEIMDALL, "WHAT CAN I DO AGAINST SUCH A\nSTRONG GIANT?"],
     [THOR, "BIT OF A SLOW DAY IN ASGARD,\nI'LL HELP YOU!"],
+    [TUTORIAL, "GIANTS RETALIATE WHEN THEY\nARE ATTACKED."],
   ],
 
   // Prisoner
@@ -464,26 +464,23 @@ const LEVELS = {
 
   // Pushing Thor
   // Teach the player to push Thor instead of a giant to repeat his effect.
-  6: ["-I0J1I0--J1I0J1--J1-J1--------J1--", [THOR, TYR]],
+  6: [
+    "-I0J1I0--J1I0J1--J1-J1--------J1--",
+    [THOR, TYR],
+    [TUTORIAL, "GODS USE THEIR POWER AGAIN\nAFTER THEY ARE PUSHED"],
+  ],
 
   // Push & Reset
   // Teach the player to use all three character effects together in a chain.
   7: ["--J1---I0I0I0-J1I0-I0J1-I0I0I0---J1--", [HEIMDALL, THOR, TYR]],
 
-  // Pushing Trap
-  // Teach the player that pushing is sometimes worse than summoning.
-  8: [
-    "-I0J3I0--J2I0J2----------------",
-    [HEIMDALL, THOR, TYR],
-    [TYR, "THE GIANTS HAVE DEVISED A\nCRAFTY DEFENSE..."],
-    [FROST_GIANT, 'THIS FOOL THINKS STANDING\nBEHIND A CRYSTAL IS "CRAFTY"'],
-    [TYR, "HEY! YOU'RE NOT SUPPOSED TO\nHAVE DIALOGUE!"],
-    [TUTORIAL, "JUST REMEMBER IT'S OKAY TO\nRESET AND TRY AGAIN"],
-  ],
-
   // Fortress
   // Use Thor to break into a fortress with pushes from Tyr.
-  9: ["I0I0J2I0I0-J2I0J2-I0I0I0I0I0I0---I0-----", [HEIMDALL, THOR, TYR]],
+  8: ["I0I0J2I0I0-J2I0J2-I0I0I0I0I0I0---I0-----", [HEIMDALL, THOR, TYR]],
+
+  // Pushing Trap
+  // Teach the player that pushing is sometimes worse than summoning.
+  9: ["------I0J2---J3I0---I0J2", [HEIMDALL, THOR, TYR]],
 
   // Thortex
   // Use Tyr to turn the spiral into a cross.
@@ -496,7 +493,7 @@ const LEVELS = {
   // Old School Runestone
   // Learning how to use runestones to repeat effects.
   // Need to make sure you use Tyr last, otherwise giants are out of reach.
-  12: ["------J5-J5---M0", [HEIMDALL, THOR, TYR], [TUTORIAL, ""]],
+  12: ["------J5-J5---M0", [HEIMDALL, THOR, TYR]],
 
   // Frigg
   // Use Frigg's ability to hit on diagonals.
