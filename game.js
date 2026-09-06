@@ -1613,7 +1613,7 @@ function updateCards() {
     // No previews during dialogue
     step < getDialogue().length ||
     // No god previews in first 2 levels
-    (level <= 2 && preview?.slot.zone === hand)
+    (level <= 2 && preview?.slot.zone === hand && !IS_EDITOR)
   ) {
     preview = undefined;
   }
