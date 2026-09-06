@@ -35,7 +35,7 @@ import {
 /**
  * @typedef {object} Zone
  * @prop {Slot[]} slots
- * @prop {Rectangle} hb
+ * @prop {Rectangle} bounds
  * @prop {number} cols
  * @prop {number} rows
  *
@@ -44,7 +44,7 @@ import {
  * @prop {number} x
  * @prop {number} y
  * @prop {number} palette
- * @prop {Rectangle} hb
+ * @prop {Rectangle} bounds
  * @prop {Card} [card]
  *
  * @typedef {object} Card
@@ -56,7 +56,7 @@ import {
  * @prop {Sprite} sprite
  * @prop {number} palette
  * @prop {number} paletteDamage
- * @prop {Rectangle} hb
+ * @prop {Rectangle} bounds
  * @prop {Slot} slot
  * @prop {number} targets
  * @prop {Vector[]} adjacency
@@ -756,7 +756,7 @@ let banished = {
   zone: grave,
   x: -1,
   y: -1,
-  hb: Rect(0, 0, 0, 0),
+  bounds: Rect(0, 0, 0, 0),
   palette: 0,
 };
 
@@ -851,17 +851,17 @@ function Button(x, y, label, palette = PALETTE_BTN_PRIMARY) {
  */
 function Zone(x, y, cols, rows, palette = 12) {
   let s = UI_CELL_SIZE;
-  let hb = Rect(x, y, cols * s, rows * s);
+  let bounds = Rect(x, y, cols * s, rows * s);
 
   /**
    * @type {Zone}
    */
-  let zone = { slots: [], hb, cols, rows };
+  let zone = { slots: [], bounds, cols, rows };
 
   for (let row = 0; row < rows; row++) {
     for (let col = 0; col < cols; col++) {
-      let hb = Rect(x + col * s, y + row * s, s, s);
-      zone.slots.push({ zone, x: col, y: row, hb, palette });
+      let bounds = Rect(x + col * s, y + row * s, s, s);
+      zone.slots.push({ zone, x: col, y: row, bounds, palette });
     }
   }
 
@@ -994,7 +994,7 @@ function spawn(type, slot, tags = NONE, hp) {
     palette: def.palette ?? type,
     paletteDamage: def.paletteDamage ?? PALETTE_DAMAGE,
     slot,
-    hb: Rect(slot.hb.x, slot.hb.y, sprite.w, sprite.h),
+    bounds: Rect(slot.bounds.x, slot.bounds.y, sprite.w, sprite.h),
     flashTimer: 0,
     hp,
     tags: (def.tags ?? GOD) | tags,
@@ -1095,13 +1095,13 @@ async function swap(a, b) {
  * @param {Slot} slot
  */
 function tween(card, slot, ms = UI_CARD_ANIMATION_MS) {
-  let { x: x0, y: y0 } = card.hb;
-  let { x: x1, y: y1 } = slot.hb;
+  let { x: x0, y: y0 } = card.bounds;
+  let { x: x1, y: y1 } = slot.bounds;
 
   return timer(ms, (t) => {
     let k = smoothstep(t * t);
-    card.hb.x = lerp(x0, x1, k);
-    card.hb.y = lerp(y0, y1, k);
+    card.bounds.x = lerp(x0, x1, k);
+    card.bounds.y = lerp(y0, y1, k);
   });
 }
 
@@ -1226,7 +1226,7 @@ function advanceToNextLevel() {
   let prevPositions = {};
 
   for (let card of cards) {
-    prevPositions[card.type] = card.hb;
+    prevPositions[card.type] = card.bounds;
     despawn(card);
   }
 
@@ -1243,8 +1243,8 @@ function advanceToNextLevel() {
   for (let card of cards) {
     let pos = prevPositions[card.type];
     if (!pos || !is(card, GOD)) continue;
-    card.hb.x = pos.x;
-    card.hb.y = pos.y;
+    card.bounds.x = pos.x;
+    card.bounds.y = pos.y;
     tween(card, card.slot);
   }
 }
@@ -1254,10 +1254,10 @@ function advanceToNextLevel() {
  * @param {Card} target
  */
 function showBloodSplatter(card, target) {
-  let dir = sub(target.slot.hb, card.slot.hb);
+  let dir = sub(target.slot.bounds, card.slot.bounds);
   let count = random(3, 10);
   for (let i = 0; i < count; i++) {
-    let { x, y } = anchor(target.slot.hb, random(), random());
+    let { x, y } = anchor(target.slot.bounds, random(), random());
     let angle = Math.atan2(dir.x, dir.y) + random(-0.5, 0.5);
     let speed = random(10, 60);
     let vx = Math.sin(angle) * speed;
@@ -1273,7 +1273,7 @@ function showBloodSplatter(card, target) {
 function showBoneTumble(slot) {
   let count = random(3, 6);
   for (let i = 0; i < count; i++) {
-    let { x, y } = anchor(slot.hb, 0.5, 0.5);
+    let { x, y } = anchor(slot.bounds, 0.5, 0.5);
     let angle = random(0, -DEG_180);
     let speed = random(10, 60);
     let vx = Math.sin(angle) * speed;
@@ -1347,7 +1347,7 @@ function renderBackground() {
  */
 function renderZoneSlots(zone) {
   for (let slot of zone.slots) {
-    draw(spritesheet.card_slot, slot.hb.x, slot.hb.y, slot.palette);
+    draw(spritesheet.card_slot, slot.bounds.x, slot.bounds.y, slot.palette);
   }
 }
 
@@ -1366,7 +1366,7 @@ function renderZoneCards(zone) {
  * @param {Card} card
  */
 function renderCard(card) {
-  let { x, y } = card.hb;
+  let { x, y } = card.bounds;
   let palette = card.flashTimer > 0 ? 10 : card.palette;
   let locked = isLocked(card);
   draw(spritesheet.card, x, y, card.palette);
@@ -1467,9 +1467,9 @@ function renderTutorial() {
     if (step < getDialogue().length) {
       renderTutorialPointer(nextButton);
     } else if (drag) {
-      renderTutorialPointer(dst.hb);
+      renderTutorialPointer(dst.bounds);
     } else if (src.card) {
-      renderTutorialPointer(src.hb);
+      renderTutorialPointer(src.bounds);
     } else {
       renderTutorialPointer(nextButton);
     }
@@ -1570,7 +1570,7 @@ function updateButtons() {
 function updateDrag() {
   if (drag) {
     let { card, offset } = drag;
-    let slot = board.slots.find((s) => hover(s.hb));
+    let slot = board.slots.find((s) => hover(s.bounds));
 
     if (released && slot && !slot.card) {
       queue(() => play(card, slot));
@@ -1579,17 +1579,17 @@ function updateDrag() {
       tween(card, card.slot);
     } else if (slot && !slot.card) {
       // Snap to slot
-      card.hb.x = slot.hb.x;
-      card.hb.y = slot.hb.y;
+      card.bounds.x = slot.bounds.x;
+      card.bounds.y = slot.bounds.y;
     } else {
-      card.hb.x = pointer.x - offset.x;
-      card.hb.y = pointer.y - offset.y;
+      card.bounds.x = pointer.x - offset.x;
+      card.bounds.y = pointer.y - offset.y;
     }
   } else {
     for (let { card } of hand.slots) {
-      if (card && hover(card.hb) && !isLocked(card)) {
+      if (card && hover(card.bounds) && !isLocked(card)) {
         if (pressed) {
-          let offset = sub(pointer, card.hb);
+          let offset = sub(pointer, card.bounds);
           drag = { card, offset };
           sfx(SFX_TAP);
         } else {
@@ -1612,7 +1612,7 @@ function updateCards() {
       refresh = true;
     }
 
-    if (hover(card.hb) && !isLocked(card)) {
+    if (hover(card.bounds) && !isLocked(card)) {
       preview = card;
     }
   }
@@ -1734,7 +1734,7 @@ function init() {
 
 if (IS_EDITOR) {
   onkeydown = ({ key }) => {
-    let slot = board.slots.find((s) => inside(s.hb, pointer));
+    let slot = board.slots.find((s) => inside(s.bounds, pointer));
     let card = slot?.card;
 
     // shift + number keys set health for the card under the cursor.
