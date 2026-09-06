@@ -306,7 +306,7 @@ const CARDS = {
   },
   [TYR]: {
     name: "TYR",
-    hp: 3,
+    hp: 2,
     targets: GOD | GIANT,
     description: "PUSHES GODS AND GIANTS",
     async effect(card, targets) {
@@ -318,7 +318,7 @@ const CARDS = {
   },
   [FRIGG]: {
     name: "FRIGG",
-    hp: 2,
+    hp: 1,
     adjacency: diagonals,
     description: "ATTACKS ON DIAGONALS",
   },
