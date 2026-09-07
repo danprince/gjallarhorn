@@ -542,7 +542,7 @@ const LEVELS = {
 
   // Welcome to Hel
   // Basic introduction to Hel's multihit mechanics.
-  22: ["--J3---------J2---J1-J1---J1", [HEIMDALL, THOR, HEL]],
+  22: ["--J4---------J1---J1-J1---J1", [THOR, HEL]],
 
   // Hel O' There
   // Slingshot Thor in using Hel.
