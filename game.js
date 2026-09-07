@@ -243,6 +243,7 @@ const FIRE_GIANT = 10;
 const CHAOS_GIANT = 11;
 const RUNESTONE = 12;
 const YMIR = 13;
+const BLAST_CRYSTAL = 14;
 
 /**
  * @typedef {(
@@ -260,6 +261,7 @@ const YMIR = 13;
  *   | typeof CHAOS_GIANT
  *   | typeof RUNESTONE
  *   | typeof YMIR
+ *   | typeof BLAST_CRYSTAL
  * )} CardType
  */
 
@@ -410,6 +412,14 @@ const CARDS = {
       }
       await defaultAttackEffect(card, targets);
     },
+  },
+  [BLAST_CRYSTAL]: {
+    name: "BLAST CRYSTAL",
+    description: "PUSHES ADJACENT CARDS IF DESTROYED",
+    tags: CRYSTAL,
+    sprite: 8,
+    palette: 18,
+    hp: 0,
   },
 };
 
@@ -1151,7 +1161,7 @@ async function attack(card, target) {
   target.flashTimer = UI_ATTACK_MS;
   showBloodSplatter(card, target);
   let dead = --target.hp <= 0;
-  if (dead) die(target, card);
+  if (dead) await die(target, card);
   await tween(card, card.slot, UI_ATTACK_MS);
   // Giants retaliate after being attacked.
   if (is(target, GIANT)) queue(() => trigger(target));
@@ -1173,9 +1183,10 @@ async function summon(card) {
  * Push a target away from card, retriggering its effect if necessary.
  * @param {Card} card
  * @param {Card} target
+ * @param {boolean} [force]
  */
-async function push(card, target) {
-  if (card.hp <= 0 || target.hp <= 0) return;
+async function push(card, target, force = false) {
+  if (!force && (card.hp <= 0 || target.hp <= 0)) return;
   let dir = sub(target.slot, card.slot);
   let slot = at(board, add(target.slot, dir));
   if (slot?.card) return;
@@ -1183,19 +1194,25 @@ async function push(card, target) {
 }
 
 /**
- * Die and attempt to move to the
+ * Die and attempt to move to the grave.
  * @param {Card} card
  * @param {Card} [killer]
  */
 async function die(card, killer) {
-  let pos = card.slot;
   if (card.slot.zone !== board) return;
-  if (is(card, CRYSTAL)) return despawn(card);
+
+  if (card.type === BLAST_CRYSTAL) {
+    for (let target of adjacent(card)) {
+      await push(card, target, true);
+    }
+  }
+
+  if (!is(card, GOD | GIANT)) return despawn(card);
 
   showBoneTumble(card.slot);
 
   let slot = grave.slots.find(isEmpty);
-  slot ? await move(card, slot) : despawn(card);
+  slot ? move(card, slot) : despawn(card);
 }
 
 /**
@@ -1782,6 +1799,7 @@ if (IS_EDITOR) {
       4: CHAOS_GIANT,
       5: RUNESTONE,
       6: YMIR,
+      7: BLAST_CRYSTAL,
     };
 
     if (!slot) return;
