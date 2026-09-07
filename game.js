@@ -168,6 +168,11 @@ const UI_TIP_W = UI_HAND_W;
 const UI_TIP_X = UI_HAND_X;
 const UI_TIP_Y = UI_HAND_Y + UI_HAND_H + 2;
 
+const UI_PROGRESS_H = 13;
+const UI_PROGRESS_W = 8;
+const UI_PROGRESS_X = UI_CENTER_X - UI_PROGRESS_W / 2;
+const UI_PROGRESS_Y = UI_GRAVE_Y - UI_PROGRESS_H - 5;
+
 const DEG_90 = Math.PI / 2;
 const DEG_180 = DEG_90 * 2;
 const DEG_270 = DEG_90 * 3;
@@ -727,6 +732,16 @@ let resetButton = Button(
 let nextButton = Button(UI_BUTTON_ANCHOR_X, UI_BUTTON_ANCHOR_Y, "NEXT");
 
 /**
+ * The next level button takes you to the next level.
+ */
+let nextLevelButton = Button(UI_PROGRESS_X + 20, UI_PROGRESS_Y - 3, ">");
+
+/**
+ * The prev level button takes you to the previous level.
+ */
+let prevLevelButton = Button(UI_PROGRESS_X - 14, UI_PROGRESS_Y - 3, "<");
+
+/**
  * Banished is a special hidden slot that cards can go to when the grave is
  * full. There can be multiple cards here so don't trust the `card` property
  * for anything important.
@@ -1211,9 +1226,12 @@ function hasClearedGiants() {
 }
 
 /**
- * Move to the next level.
+ * @param {number} n
  */
-function advanceToNextLevel() {
+function loadLevel(n) {
+  if (!(n in LEVELS)) return;
+  level = n;
+
   /**
    * @type {Partial<Record<CardType, Rectangle>>}
    */
@@ -1226,7 +1244,7 @@ function advanceToNextLevel() {
 
   cards.clear();
 
-  let [puzzle, characters] = LEVELS[++level];
+  let [puzzle, characters] = LEVELS[level];
   unlocks = new Set(characters);
   step = 0;
   start(puzzle);
@@ -1241,6 +1259,13 @@ function advanceToNextLevel() {
     card.bounds.y = pos.y;
     tween(card, card.slot);
   }
+}
+
+/**
+ * Move to the next level.
+ */
+function advanceToNextLevel() {
+  loadLevel(level + 1);
 }
 
 /**
@@ -1427,9 +1452,9 @@ function renderDialogue() {
 function renderProgress() {
   let label = `${level}`;
   let w = label.length * 4;
-  let h = 13;
+  let h = UI_PROGRESS_H;
   let x = UI_CENTER_X - w / 2;
-  let y = UI_GRAVE_Y - h - 5;
+  let y = UI_PROGRESS_Y;
   drawNinePatch(spritesheet.frame, x - 4, y - 4, w + 7, h, PALETTE_FROST_GIANT);
   write(label, x, y);
 }
@@ -1488,6 +1513,8 @@ function render() {
   }
 
   renderProgress();
+  renderButton(nextLevelButton);
+  renderButton(prevLevelButton);
 
   drawNinePatch(
     spritesheet.frame,
@@ -1631,6 +1658,8 @@ function update() {
   updateCards();
   if (nextButton.pressed) next();
   if (resetButton.pressed) reset();
+  if (nextLevelButton.pressed) loadLevel(level + 1);
+  if (prevLevelButton.pressed) loadLevel(level - 1);
   if (busy) preview = undefined;
 }
 
