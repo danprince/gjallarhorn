@@ -337,9 +337,6 @@ const CARDS = {
       let [n, e, s, w] = slots;
       if (n && s) await swap(n, s);
       if (e && w) await swap(e, w);
-      for (let target of targets) {
-        await trigger(target);
-      }
     },
   },
   [FROST_CRYSTAL]: {
@@ -1100,6 +1097,8 @@ async function swap(a, b) {
   let cardA = a.card;
   let cardB = b.card;
   await Promise.all([cardA && move(cardA, b), cardB && move(cardB, a)]);
+  if (cardA && is(cardA, GOD)) await trigger(cardA);
+  if (cardB && is(cardB, GOD)) await trigger(cardB);
 }
 
 /**
