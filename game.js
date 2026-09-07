@@ -749,12 +749,22 @@ let nextButton = Button(UI_BUTTON_ANCHOR_X, UI_BUTTON_ANCHOR_Y, "NEXT");
 /**
  * The next level button takes you to the next level.
  */
-let nextLevelButton = Button(UI_PROGRESS_X + 20, UI_PROGRESS_Y - 3, ">");
+let nextLevelButton = Button(
+  UI_PROGRESS_X + 20,
+  UI_PROGRESS_Y - 3,
+  ">",
+  PALETTE_BTN_SECONDARY,
+);
 
 /**
  * The prev level button takes you to the previous level.
  */
-let prevLevelButton = Button(UI_PROGRESS_X - 14, UI_PROGRESS_Y - 3, "<");
+let prevLevelButton = Button(
+  UI_PROGRESS_X - 14,
+  UI_PROGRESS_Y - 3,
+  "<",
+  PALETTE_BTN_SECONDARY,
+);
 
 /**
  * Banished is a special hidden slot that cards can go to when the grave is
