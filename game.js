@@ -603,7 +603,7 @@ const LEVELS = {
   // TODO:
 
   // Odin
-  // TODO:
+  37: ["-----J3-J3-J3-----J3-J3-J3", [HEIMDALL, FRIGG, LOKI, ODIN]],
 
   // Odin
   // TODO:
