@@ -507,17 +507,17 @@ const LEVELS = {
   // Use Frigg and Heimdall to defeat giants in a diagonal line.
   13: ["------J1-----J1-----J3", [HEIMDALL, FRIGG]],
 
-  // TODO:
-  14: ["", [FRIGG]],
+  // Frigger
+  // Use Tyr to arrange a triple shot before recalling carefully so that
+  // Heimdall doesn't block the finale.
+  14: ["-----J1J2---I0--J3J1J1J2", [HEIMDALL, TYR, FRIGG]],
 
   // Fortress II
   // Heimdall helps Thor burrow in, then Frigg finishes the job.
   15: ["-I0-I0-I0J3I0J1I0-I0I0I0-I0J3I0J1I0-I0-I0", [HEIMDALL, THOR, FRIGG]],
 
-  // Standing Stones
-  // Use two runestones to tactically eliminate a ring of giants.
-  // TODO: Runestones
-  16: ["--J3---I0M0I0-J2---J2--M0----J2", [HEIMDALL, THOR, FRIGG]],
+  // Blast Crystal
+  16: ["------J1J1J1--J1O0---J1J1J1", [HEIMDALL, THOR, FRIGG]],
 
   // T-pain
   // Clear out a T shaped level of giants using a triple push from Tyr.
@@ -545,14 +545,12 @@ const LEVELS = {
   // Basic introduction to Hel's multihit mechanics.
   22: ["--J4---------J1---J1-J1---J1", [THOR, HEL]],
 
-  // Hel O' There
-  // Slingshot Thor in using Hel.
-  23: ["I0J1J1J1I0-I0I0I0--I0J2I0", [HEIMDALL, THOR, HEL]],
-
-  // Helhammer
-  // Use Hel to get Thor back.
-  // Kinda hard if you don't spot the trick.
+  // Hel 2
   24: ["I0J1-J1I0-J1I0J1-I0J2J2J2I0-I0-I0-I0J1-J1I0", [THOR, TYR, FRIGG, HEL]],
+
+  // Helicate Balance
+  // Use Hel's multihit before killing too many giants.
+  23: ["-----J3----K4-J2-J1J3------J2-J1", [HEIMDALL, FRIGG, HEL]],
 
   // X Marks the Spot
   25: ["J1---J1-J1-J1---K5---J1-J1-J1---J1", [HEIMDALL, THOR, TYR, FRIGG, HEL]],
@@ -569,10 +567,9 @@ const LEVELS = {
   // Use a Chaos Giant to get giants set up for Frigg.
   28: ["------------L2J1---J1", [THOR, FRIGG]],
 
-  // Friggblocker
-  // Use Frigg to prevent Tyr's push from cancelling out the Chaos Giant's push.
-  // TODO: I don't know how this ever worked but the idea is cool.
-  29: ["------J1-J1--------L2", [FRIGG, TYR]],
+  // Blocker
+  // Be careful not to play Tyr first otherwise the board becomes unwinnable.
+  29: ["------J1-J1--J1-J1--I0L2I0", [THOR, TYR]],
 
   // Throne Room
   // Long line of guards for a chaos giant.
