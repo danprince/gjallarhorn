@@ -20,12 +20,12 @@
 export const spritesheet = {
   "btn": { center: { h: 8, w: 1, x: 5, y: 2, }, h: 12, w: 11, x: 80, y: 42, },
   "card": { h: 18, w: 18, x: 62, y: 36, },
-  "card_slot": { h: 18, w: 18, x: 44, y: 36, },
+  "card_slot": { h: 18, w: 18, x: 128, y: 0, },
   "cards": { h: 54, w: 72, x: 8, y: 0, },
   "cursors": { h: 10, pivot: { x: 3, y: 1, }, w: 37, x: 91, y: 44, },
   "font": { h: 20, pivot: { x: 0, y: 0, }, w: 48, x: 80, y: 0, },
   "frame": { center: { h: 1, w: 1, x: 7, y: 7, }, h: 15, w: 15, x: 113, y: 29, },
-  "gas_1": { h: 7, w: 6, x: 91, y: 37, },
+  "gas_1": { h: 7, w: 6, x: 93, y: 37, },
   "gas_2": { h: 10, w: 11, x: 100, y: 34, },
   "gas_3": { h: 4, w: 4, x: 94, y: 33, },
   "lock": { h: 8, w: 7, x: 80, y: 34, },
@@ -36,5 +36,6 @@ export const spritesheet = {
   "star_1": { h: 1, w: 1, x: 88, y: 40, },
   "star_2": { h: 1, w: 1, x: 87, y: 40, },
   "star_3": { h: 3, w: 3, x: 87, y: 37, },
+  "star_4": { h: 3, w: 3, x: 90, y: 37, },
   "swaps": { h: 25, w: 8, x: 0, y: 0, },
 };

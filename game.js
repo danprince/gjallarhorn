@@ -241,7 +241,7 @@ const FROST_CRYSTAL = 8;
 const FROST_GIANT = 9;
 const FIRE_GIANT = 10;
 const CHAOS_GIANT = 11;
-const RUNESTONE = 12;
+const GJALLARHORN = 12;
 const YMIR = 13;
 const BLAST_CRYSTAL = 14;
 
@@ -259,7 +259,7 @@ const BLAST_CRYSTAL = 14;
  *   | typeof FROST_GIANT
  *   | typeof FIRE_GIANT
  *   | typeof CHAOS_GIANT
- *   | typeof RUNESTONE
+ *   | typeof GJALLARHORN
  *   | typeof YMIR
  *   | typeof BLAST_CRYSTAL
  * )} CardType
@@ -286,11 +286,11 @@ const CARDS = {
   [ODIN]: {
     name: "ODIN",
     hp: 2,
-    description: "ADDS A RUNESTONE TO YOUR HAND",
+    description: "ADDS A GJALLARHORN TO HAND",
     async effect(card, targets) {
       await defaultAttackEffect(card, targets);
       let slot = hand.slots.find(isEmpty);
-      if (slot) spawn(RUNESTONE, slot, TRANSIENT);
+      if (slot) spawn(GJALLARHORN, slot, TRANSIENT);
     },
   },
   [THOR]: {
@@ -375,12 +375,12 @@ const CARDS = {
       }
     },
   },
-  [RUNESTONE]: {
-    name: "RUNESTONE",
+  [GJALLARHORN]: {
+    name: "GJALLARHORN",
     description: "PLAY ADJACENT GODS AGAIN",
-    tags: STONE,
-    sprite: 0,
-    palette: PALETTE_RUNESTONE,
+    tags: TRANSIENT,
+    sprite: 10,
+    palette: 2,
     hp: 0,
     targets: GOD,
     async effect(card, targets) {
@@ -389,6 +389,7 @@ const CARDS = {
           await trigger(target);
         }
       }
+      despawn(card);
     },
   },
   [YMIR]: {
@@ -1656,6 +1657,17 @@ function updateCards() {
     if (hover(card.bounds) && !isLocked(card)) {
       preview = card;
     }
+
+    if (card.type === GJALLARHORN) {
+      if (random() < 0.1) {
+        let b = card.bounds;
+        let x = b.x + random(b.w);
+        let y = b.y + random(b.h);
+        let sprite = pick([spritesheet.star_2, spritesheet.star_4]);
+        let palette = pick([PALETTE_ODIN, PALETTE_WHITE]);
+        emit({ x, y, sprite, palette, mass: -0.2 });
+      }
+    }
   }
 
   if (
@@ -1806,7 +1818,7 @@ if (IS_EDITOR) {
       2: FROST_GIANT,
       3: FIRE_GIANT,
       4: CHAOS_GIANT,
-      5: RUNESTONE,
+      5: GJALLARHORN,
       6: YMIR,
       7: BLAST_CRYSTAL,
     };
