@@ -1785,7 +1785,10 @@ if (IS_EDITOR) {
     }
   }
 
-  onkeydown = ({ key }) => {
+  onkeydown = ({ key, metaKey }) => {
+    // Ignore system shortcuts
+    if (metaKey) return;
+
     let slot = board.slots.find((s) => inside(s.bounds, pointer));
     let card = slot?.card;
 
