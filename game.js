@@ -290,7 +290,7 @@ const CARDS = {
     async effect(card, targets) {
       await defaultAttackEffect(card, targets);
       let slot = hand.slots.find(isEmpty);
-      if (slot) spawn(GJALLARHORN, slot, TRANSIENT);
+      if (slot) spawn(GJALLARHORN, slot);
     },
   },
   [THOR]: {
