@@ -433,8 +433,10 @@ const LEVELS = {
     [HEIMDALL],
     [HEIMDALL, "GIANTS TOOK THE GJALLARHORN!"],
     [ODIN, "OH NO... HEIMDALL?\nWHAT IS A GJALLARHORN?"],
-    [HEIMDALL, "THE UNIQUE HORN THAT SUMMONS\nGODS BACK TO THE BIFROST."],
-    [ODIN, "AHH... WHAT'S THE BIFROST?"],
+    [HEIMDALL, "THE HORN THAT SUMMONS GODS\nBACK TO THE BIFROST!"],
+    [ODIN, "A UNIQUE HORN?"],
+    [HEIMDALL, "YES! A UNIQUE HORN!"],
+    [ODIN, "AND YOU SAID SOMETHING ABOUT\nA BIFROST?"],
     [HEIMDALL, "THE RAINBOW BRIDGE THAT\nCONNECTS US TO OTHER WORLDS!"],
     [ODIN, "RIGHT... SOUNDS LIKE YOU\nSHOULD GET IT BACK!"],
     [TUTORIAL, "CLEAR EVERY GIANT FROM THE\nBOARD TO ADVANCE"],
@@ -477,7 +479,7 @@ const LEVELS = {
   6: [
     "-I0J1I0--J1I0J1--J1-J1--------J1--",
     [THOR, TYR],
-    [TUTORIAL, "GODS PLAY AGAIN AFTER THEY\nARE PUSHED."],
+    [TUTORIAL, "PUSHING A GOD PLAYS THEM\nAGAIN."],
   ],
 
   // Push & Reset
@@ -590,7 +592,7 @@ const LEVELS = {
   32: [
     "------J1---J1-I0-J1-J1",
     [LOKI, THOR],
-    [TUTORIAL, "LOKI IS A TRICKSTER. HE\nWON'T ATTACK GIANTS."],
+    [THOR, "LOKI IS A TRICKSTER. HE\nWON'T ATTACK GIANTS."],
   ],
 
   // Loki Slingshot
@@ -605,30 +607,18 @@ const LEVELS = {
   35: ["-----J1I0J1I0J1--I0-I0J1I0J1I0J1", [LOKI, TYR, THOR]],
 
   // Odin
-  // TODO:
-
-  // Odin
-  37: ["-----J3-J3-J3-----J3-J3-J3", [HEIMDALL, FRIGG, LOKI, ODIN]],
-
-  // Odin
-  // TODO:
-
-  // Odin
-  // TODO:
-
-  // Ymir: The First Giant
-  // The final boss is one of the hardest puzzles. Ymir creates crystals
-  // whenever he attacks which means you're constantly struggling to manage
-  // to find attack windows.
-  //
-  // There are at least two viable solutions:
-  // 1. Set up a big runestone corner for Frigg to multihit from diagonals.
-  //    This can be done by using Tyr to re-trigger Odin so that Heimdall is
-  //    free to recall Frigg.
-  // 2. Set up a big grave and have Hel do a multihit.
-  //
-  // TODO: Since the rework this has become a bit too easy.
-  40: ["------------N9", [HEIMDALL, THOR, TYR, FRIGG, HEL, LOKI, ODIN]],
+  36: [
+    "------------N9",
+    [HEIMDALL, THOR, TYR, FRIGG, HEL, LOKI, ODIN],
+    [HEIMDALL, "STILL NO SIGN OF THE\nGJALLARHORN!"],
+    [ODIN, "WHAT'S IT LIKE?"],
+    [HEIMDALL, "WELL IT'S GOLD AND IT MAKES\nA SOUND LIKE $$-$$$-$!"],
+    [ODIN, "A BIT LIKE THIS?"],
+    [GJALLARHORN, "$$-$$$-$"],
+    [HEIMDALL, "YES ODIN... EXACTLY LIKE\nTHAT..."],
+    // TODO: Why did Odin take/have the horn?
+    [ODIN, "LET'S SEE IF WE CAN'T\nPUT IT TO GOOD USE!"],
+  ],
 
   // [Unused puzzles]
   // Hel + Rune
