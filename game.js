@@ -606,8 +606,23 @@ const LEVELS = {
   // Use Loki to swap Tyr into pushing Thor to finish.
   35: ["-----J1I0J1I0J1--I0-I0J1I0J1I0J1", [LOKI, TYR, THOR]],
 
+  // Blast Corridor
+  // Use the blast crystal to retrigger Heimdall in order to play Frigg 3 times.
+  36: ["-J1-J1--J1----J2-J2----J1--O0-J2", [HEIMDALL, THOR, FRIGG]],
+
+  // Lines in the Ice
+  // Use Loki to swap Heimdall and Thor into the action and Frigg + Hel to clean up.
+  37: [
+    "--I0---J1I0J1-I0I0K7I0I0-J1I0J1---I0",
+    [HEIMDALL, THOR, FRIGG, HEL, LOKI],
+  ],
+
+  // The Wall
+  // Sacrifice Thor on the chaos side of the wall for Hel.
+  38: ["------J1I0K5---I0---J1I0", [THOR, FRIGG, HEL]],
+
   // Odin
-  36: [
+  40: [
     "------------N9",
     [HEIMDALL, THOR, TYR, FRIGG, HEL, LOKI, ODIN],
     [HEIMDALL, "STILL NO SIGN OF THE\nGJALLARHORN!"],
