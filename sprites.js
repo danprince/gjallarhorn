@@ -37,5 +37,6 @@ export const spritesheet = {
   "star_2": { h: 1, w: 1, x: 87, y: 40, },
   "star_3": { h: 3, w: 3, x: 87, y: 37, },
   "star_4": { h: 3, w: 3, x: 90, y: 37, },
-  "swaps": { h: 26, w: 8, x: 0, y: 0, },
+  "swaps": { h: 25, w: 8, x: 0, y: 0, },
+  "target": { h: 18, w: 18, x: 128, y: 18, },
 };

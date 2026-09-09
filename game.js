@@ -1419,8 +1419,8 @@ function renderCard(card) {
   let locked = isLocked(card);
   let targeted = targets.has(card);
   draw(spritesheet.card, x, y, card.palette);
+  if (targeted) draw(spritesheet.target, x, y, card.palette);
   draw(card.sprite, x, y, locked ? PALETTE_BLACK : palette);
-  if (targeted) draw(card.sprite, card.bounds.x, card.bounds.y, 25);
   if (locked) {
     draw(spritesheet.lock, x + 6, y + 10, card.palette);
   } else if (card.hp > 0) {
