@@ -663,6 +663,12 @@ let particles = new Set();
 let cards = new Set();
 
 /**
+ * The cards that are currently being targeted.
+ * @type {Set<Card>}
+ */
+let targets = new Set();
+
+/**
  * The drag state for dragging cards.
  * @type {Drag | undefined}
  */
@@ -1396,8 +1402,10 @@ function renderCard(card) {
   let { x, y } = card.bounds;
   let palette = card.flashTimer > 0 ? 10 : card.palette;
   let locked = isLocked(card);
+  let targeted = targets.has(card);
   draw(spritesheet.card, x, y, card.palette);
   draw(card.sprite, x, y, locked ? PALETTE_BLACK : palette);
+  if (targeted) draw(card.sprite, card.bounds.x, card.bounds.y, 25);
   if (locked) {
     draw(spritesheet.lock, x + 6, y + 10, card.palette);
   } else if (card.hp > 0) {
@@ -1632,6 +1640,19 @@ function updateDrag() {
   if (drag) cursor = CURSOR_GRABBING;
 }
 
+function updateTargets() {
+  targets.clear();
+
+  let card = drag?.card;
+  let slot = board.slots.find((s) => hover(s.bounds));
+  if (!card || !slot || slot.card) return;
+
+  for (let dir of card.adjacency) {
+    let target = at(board, add(slot, dir))?.card;
+    if (target && is(target, card.targets)) targets.add(target);
+  }
+}
+
 function updateCards() {
   preview = undefined;
 
@@ -1673,6 +1694,7 @@ function update() {
   updateTimers();
   updateParticles();
   updateDrag();
+  updateTargets();
   updateButtons();
   updateCards();
   if (nextButton.pressed) next();

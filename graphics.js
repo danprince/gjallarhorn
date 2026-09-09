@@ -41,7 +41,7 @@ function buildPalettes() {
       out.data[i] = swaps.data[j];
       out.data[i + 1] = swaps.data[j + 1];
       out.data[i + 2] = swaps.data[j + 2];
-      out.data[i + 3] = src.data[i + 3];
+      out.data[i + 3] = src.data[i + 3] * swaps.data[j + 3];
     }
 
     let c = new OffscreenCanvas(w, h);
