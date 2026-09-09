@@ -1471,7 +1471,7 @@ function renderProgress() {
   let h = UI_PROGRESS_H;
   let x = UI_CENTER_X - w / 2;
   let y = UI_PROGRESS_Y;
-  drawNinePatch(spritesheet.frame, x - 4, y - 4, w + 7, h, PALETTE_FROST_GIANT);
+  //drawNinePatch(spritesheet.frame, x - 4, y - 4, w + 7, h, PALETTE_FROST_GIANT);
   write(label, x, y);
 }
 
@@ -1529,8 +1529,11 @@ function render() {
   }
 
   renderProgress();
-  renderButton(nextLevelButton);
-  renderButton(prevLevelButton);
+
+  if (pointer.y < UI_PROGRESS_Y + 10 || IS_MOBILE) {
+    renderButton(nextLevelButton);
+    renderButton(prevLevelButton);
+  }
 
   drawNinePatch(
     spritesheet.frame,
