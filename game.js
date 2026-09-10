@@ -1542,7 +1542,7 @@ function renderDialogue() {
 }
 
 function renderProgress() {
-  let label = `${level}`;
+  let label = IS_EDITOR ? `EDIT` : `${level}`;
   let w = label.length * 4;
   let h = UI_PROGRESS_H;
   let x = UI_CENTER_X - w / 2;
