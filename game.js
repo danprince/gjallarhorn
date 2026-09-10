@@ -432,13 +432,13 @@ const LEVELS = {
     "-------I0---I0J1I0--I0-I0------",
     [HEIMDALL],
     [HEIMDALL, "GIANTS TOOK THE GJALLARHORN!"],
-    [ODIN, "OH NO... HEIMDALL?\nWHAT IS A GJALLARHORN?"],
+    [ODIN, "OH NO...\nWHAT'S A GJALLARHORN?"],
     [HEIMDALL, "THE HORN THAT SUMMONS GODS\nBACK TO THE BIFROST!"],
     [ODIN, "A UNIQUE HORN?"],
     [HEIMDALL, "YES! A UNIQUE HORN!"],
     [ODIN, "AND YOU SAID SOMETHING ABOUT\nA BIFROST?"],
     [HEIMDALL, "THE RAINBOW BRIDGE THAT\nCONNECTS US TO OTHER WORLDS!"],
-    [ODIN, "RIGHT... SOUNDS LIKE YOU\nSHOULD GET IT BACK!"],
+    [ODIN, "WELL, WHAT ARE YOU WAITING\nFOR? AFTER THEM!"],
     [TUTORIAL, "CLEAR EVERY GIANT FROM THE\nBOARD TO ADVANCE"],
   ],
 
@@ -447,8 +447,8 @@ const LEVELS = {
   2: [
     "------------J2",
     [HEIMDALL, THOR],
-    [THOR, "BIT OF A SLOW DAY IN ASGARD,\nI'LL HELP YOU!"],
-    [TUTORIAL, "GIANTS RETALIATE WHEN THEY\nARE ATTACKED."],
+    [THOR, "I HEARD THERE WERE GIANTS TO\nSLAY!"],
+    [TUTORIAL, "GIANTS RETALIATE WHEN THEY\nARE ATTACKED"],
   ],
 
   // Prisoner
@@ -457,8 +457,8 @@ const LEVELS = {
   3: [
     "------I0I0I0--I0J2I0--I0I0I0------",
     [HEIMDALL, THOR],
-    [TUTORIAL, "EACH GOD HAS A POWER THEY\nUSE AFTER ATTACKING."],
-    [TUTORIAL, "CHOOSE THE ORDER YOU PLAY\nTHE GODS IN WISELY."],
+    [TUTORIAL, "EACH GOD HAS A POWER THEY\nUSE AFTER ATTACKING"],
+    [TUTORIAL, "CHOOSE THE ORDER THEY PLAY\nWISELY"],
   ],
 
   // Prison Break
@@ -471,7 +471,7 @@ const LEVELS = {
   5: [
     "-------I0J1I0-I0-----J2-------",
     [THOR, TYR],
-    [TYR, "LOOKS LIKE YOU MIGHT NEED\nSOME HELP!"],
+    [TYR, "LOOKS LIKE YOU MIGHT NEED\nSOME HELP WITH THIS ONE!"],
   ],
 
   // Pushing Thor
@@ -479,7 +479,7 @@ const LEVELS = {
   6: [
     "-I0J1I0--J1I0J1--J1-J1--------J1--",
     [THOR, TYR],
-    [TUTORIAL, "PUSHING A GOD PLAYS THEM\nAGAIN."],
+    [TUTORIAL, "PUSHING A GOD PLAYS THEM\nAGAIN"],
   ],
 
   // Push & Reset
@@ -503,7 +503,14 @@ const LEVELS = {
   11: ["-J1I0----I0J2----J1--------J1--", [HEIMDALL, THOR, TYR]],
 
   // Frigg Tutorial
-  12: ["--------J1-------J1", [FRIGG]],
+  12: [
+    "--------J1-------J1",
+    [FRIGG],
+    [FRIGG, "WHAT'S ALL THIS NOISE?"],
+    [HEIMDALL, "GIANTS HAVE TAKEN THE\nGJALLARHORN!"],
+    [FRIGG, "AH YES. ODIN MENTIONED\nSOMETHING LIKE THAT."],
+    [FRIGG, "SADLY, HIS MEMORY IS NOT\nWHAT IT USED TO BE..."],
+  ],
 
   // Thin Line
   // Use Frigg and Heimdall to defeat giants in a diagonal line.
@@ -533,7 +540,13 @@ const LEVELS = {
 
   // Fire Giant
   // Learn about using fire giants to hit their own neighbours.
-  19: ["-------J1---J1K2J1", [THOR, FRIGG]],
+  19: [
+    "-------J1---J1K2J1",
+    [THOR, FRIGG],
+    [HEIMDALL, "WHERE'S THE GJALLARHORN?"],
+    [FIRE_GIANT, "WHAT'S A GJALLARHORN?"],
+    [HEIMDALL, "IT'S A... NEVER MIND."],
+  ],
 
   // Fire Giants
   // Learn about using fire giants offensively.
@@ -545,7 +558,12 @@ const LEVELS = {
 
   // Welcome to Hel
   // Basic introduction to Hel's multihit mechanics.
-  22: ["--J4---------J1---J1-J1---J1", [THOR, HEL]],
+  22: [
+    "--J4---------J1---J1-J1---J1",
+    [THOR, HEL],
+    [THOR, "ANY CHANCE OF A HAND, HEL?"],
+    [HEL, "FEED ME THEIR SOULS..."],
+  ],
 
   // Hel 2
   24: ["I0J1-J1I0-J1I0J1-I0J2J2J2I0-I0-I0-I0J1-J1I0", [THOR, TYR, FRIGG, HEL]],
@@ -592,48 +610,64 @@ const LEVELS = {
   32: [
     "------J1---J1-I0-J1-J1",
     [LOKI, THOR],
-    [THOR, "LOKI IS A TRICKSTER. HE\nWON'T ATTACK GIANTS."],
+    [LOKI, "WHAT'S ALL THIS I HEAR\nABOUT SLAYING GIANTS?"],
+    [HEIMDALL, "THEY TOOK THE GJALLARHORN!"],
+    [LOKI, "BUT DID YOU ACTUALLY SEE A\nGIANT TAKE IT?"],
+    [HEIMDALL, "NOT EXACTLY, BUT WHO ELSE\nWOULD?"],
+    [LOKI, "MAYBE YOU SHOULDN'T JUMP\nTO CONCLUSIONS."],
+    [THOR, "DON'T TRUST LOKI. HE WON'T\nHURT THE GIANTS."],
   ],
 
   // Loki Slingshot
   // Use Loki to move a crystal then swap Heimdall into hitting a giant.
   33: ["-I0J1I0--I0I0I0-------------J1", [LOKI, HEIMDALL]],
 
+  // The Piggyback
+  // Use Loki to piggyback Heimdall from one corner to the other.
+  34: ["J1-----------------------J1", [LOKI, HEIMDALL]],
+
   // The Scorpion
-  34: ["--J1---J1J1J1--K2-K2-K2---K2-K2-K2", [LOKI, TYR, HEIMDALL, THOR]],
+  35: ["--J1---J1J1J1--K2-K2-K2---K2-K2-K2", [LOKI, TYR, HEIMDALL, THOR]],
 
   // Loki's Corridor
   // Use Loki to swap Tyr into pushing Thor to finish.
-  35: ["-----J1I0J1I0J1--I0-I0J1I0J1I0J1", [LOKI, TYR, THOR]],
+  36: ["-----J1I0J1I0J1--I0-I0J1I0J1I0J1", [LOKI, TYR, THOR]],
 
   // Blast Corridor
   // Use the blast crystal to retrigger Heimdall in order to play Frigg 3 times.
-  36: ["-J1-J1--J1----J2-J2----J1--O0-J2", [HEIMDALL, THOR, FRIGG]],
+  37: ["-J1-J1--J1----J2-J2----J1--O0-J2", [HEIMDALL, THOR, FRIGG]],
 
   // Lines in the Ice
   // Use Loki to swap Heimdall and Thor into the action and Frigg + Hel to clean up.
-  37: [
+  38: [
     "--I0---J1I0J1-I0I0K7I0I0-J1I0J1---I0",
     [HEIMDALL, THOR, FRIGG, HEL, LOKI],
   ],
 
   // The Wall
   // Sacrifice Thor on the chaos side of the wall for Hel.
-  38: ["------J1I0K5---I0---J1I0", [THOR, FRIGG, HEL]],
+  39: ["------J1I0K5---I0---J1I0", [THOR, FRIGG, HEL]],
 
   // Odin
   40: [
     "------------N9",
     [HEIMDALL, THOR, TYR, FRIGG, HEL, LOKI, ODIN],
     [HEIMDALL, "STILL NO SIGN OF THE\nGJALLARHORN!"],
-    [ODIN, "WHAT'S IT LIKE?"],
-    [HEIMDALL, "WELL IT'S GOLD AND IT MAKES\nA SOUND LIKE $$-$$$-$!"],
-    [ODIN, "A BIT LIKE THIS?"],
+    [ODIN, "TELL ME WHAT IT'S LIKE,\nHEIMDALL."],
+    [HEIMDALL, "IT'S GOLD AND IT MAKES A\nSOUND LIKE $$-$$$-$!"],
+    [ODIN, "LIKE THIS?"],
     [GJALLARHORN, "$$-$$$-$"],
-    [HEIMDALL, "YES ODIN... EXACTLY LIKE\nTHAT..."],
-    // TODO: Why did Odin take/have the horn?
-    [ODIN, "LET'S SEE IF WE CAN'T\nPUT IT TO GOOD USE!"],
+    [HEIMDALL, "YES...\nEXACTLY LIKE THAT..."],
+    [TYR, "ODIN, WHAT'S GOING ON?"],
+    [ODIN, "I TOOK THE HORN."],
+    [FRIGG, "YOU TRICKED US?"],
+    [ODIN, "I UNITED US, BROUGHT US\nTOGETHER AGAINST THE GIANTS."],
+    [LOKI, "WHAT DID I SAY?"],
+    [YMIR, "RARRGHHH!"],
+    [ODIN, "LET'S SEE WHAT THIS HORN CAN\nDO!"],
   ],
+
+  41: ["", [], [TUTORIAL, "THE END"]],
 
   // [Unused puzzles]
   // Hel + Rune
