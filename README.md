@@ -13,8 +13,8 @@ You can play the game in a browser at [gjallarhorn.danprince.me](https://gjallar
 The game includes a built-in level editor, just add `?edit` to the URL (before the `#` fragment) then you can use the keyboard to add cards to the board:
 
 - <kbd>esc</kbd> or <kbd>x</kbd> to erase the card under the cursor.
-- <kbd>1</kbd>-<kbd>9</kbd> to add cards.
-- <kbd>shift+1</kbd>-<kbd>+9</kbd> to set the health.
+- <kbd>1-9</kbd> to set the card under the cursor.
+- <kbd>shift</kbd>+<kbd>1-9</kbd> to set the health of a card.
 
 Whilst editing, the state of the level is saved in the URL so that you can share your puzzles. It's not currently possible to control either dialogue or character unlocks through the level editor.
 
