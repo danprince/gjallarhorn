@@ -1341,15 +1341,15 @@ function renderCloudBand(jitter = 30, palette = 0) {
   let amplitude = -50;
 
   for (let i = 0; i < count; i++) {
-    let x = (rng(0, UI_W) + speed) % UI_W;
+    let s = sprites[Math.floor(rng(0, sprites.length))];
+    let x = ((rng(0, UI_W) + speed) % UI_W) - s.w / 2;
     let step = x / UI_W;
     let y =
       UI_H / 2 +
       50 +
       Math.sin(step * Math.PI * freq) * amplitude +
       rng() * rng(-jitter, jitter);
-    let s = rng(0, sprites.length) | 0;
-    draw(sprites[s], x, y, palette);
+    draw(s, x, y, palette);
   }
 }
 
@@ -1358,7 +1358,7 @@ for (let i = 0; i < 30; i++)
   starSprites.push(spritesheet.star_1, spritesheet.star_2);
 
 function renderStars() {
-  let rng = prng();
+  let rng = prng(23);
   let count = rng(200, 800);
 
   for (let i = 0; i < count; i++) {
@@ -1377,6 +1377,26 @@ function renderStars() {
   ctx.globalAlpha = 1;
 }
 
+function renderRainbowArcs() {
+  ctx.save();
+  ctx.globalAlpha =
+    0 + Math.max(0, Math.sin(((pt % 3000) / 3000) * Math.PI * 2)) * 0.2;
+  ctx.globalCompositeOperation = "source-atop";
+  ctx.fillStyle = `hsl(${0}, 50%, 50%)`;
+  ctx.fillRect(0, 0, UI_W, UI_H);
+  let band = 10;
+  let hues = [0, 30, 60, 120, 240, 275, 300];
+  for (let hue of hues) {
+    let i = hues.indexOf(hue);
+    ctx.beginPath();
+    ctx.arc(UI_CENTER_X, 500 + i * band, 400, DEG_180, 0);
+    ctx.lineWidth = band;
+    ctx.strokeStyle = `hsl(${hue}, 50%, 50%)`;
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
 function renderBackground() {
   renderCloudBand(50, 21);
   renderCloudBand(20, 22);
@@ -1388,6 +1408,7 @@ function renderBackground() {
     draw(spr, x, 1);
     draw(spr, x, UI_H - spr.h - 1);
   }
+  if (hasClearedGiants()) renderRainbowArcs();
 }
 
 /**
