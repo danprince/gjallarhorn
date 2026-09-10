@@ -1082,6 +1082,9 @@ function spawn(type, slot, tags = NONE, hp) {
 function despawn(card) {
   card.slot.card = undefined;
   card.slot = banished;
+  if (is(card, TRANSIENT)) {
+    cards.delete(card);
+  }
 }
 
 /**
