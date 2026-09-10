@@ -566,6 +566,7 @@ const LEVELS = {
   ],
 
   // Hel 2
+  // Play in a column: Thor, Tyr, Hel, Frigg.
   24: ["I0J1-J1I0-J1I0J1-I0J2J2J2I0-I0-I0-I0J1-J1I0", [THOR, TYR, FRIGG, HEL]],
 
   // Helicate Balance
@@ -573,6 +574,8 @@ const LEVELS = {
   23: ["-----J3----K4-J2-J1J3------J2-J1", [HEIMDALL, FRIGG, HEL]],
 
   // X Marks the Spot
+  // Counter-intuitive. You have to start by playing Thor in the corner so that
+  // you can summon Tyr, Hel, and Thor back together.
   25: ["J1---J1-J1-J1---K5---J1-J1-J1---J1", [HEIMDALL, THOR, TYR, FRIGG, HEL]],
 
   // Boxing Match
@@ -627,7 +630,7 @@ const LEVELS = {
   34: ["J1-----------------------J1", [LOKI, HEIMDALL]],
 
   // The Scorpion
-  35: ["--J1---J1J1J1--K2-K2-K2---K2-K2-K2", [LOKI, TYR, HEIMDALL, THOR]],
+  35: ["--J1---J1J1J1--K2-K2-K2---K2-K2-K2", [LOKI, TYR, HEIMDALL]],
 
   // Loki's Corridor
   // Use Loki to swap Tyr into pushing Thor to finish.
