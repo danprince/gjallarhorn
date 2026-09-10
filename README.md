@@ -10,7 +10,7 @@ You can play the game in a browser at [gjallarhorn.danprince.me](https://gjallar
 
 ## Editor
 
-The game includes a built-in level editor, just add `?edit` to the URL (before the `#` fragment) then you can use the keyboard to add cards to the board:
+The game includes a [built-in level editor](https://gjallarhorn.danprince.me?edit); add `?edit` to the URL (before the `#` fragment) then you can use the keyboard to add cards to the board:
 
 - <kbd>esc</kbd> or <kbd>x</kbd> to erase the card under the cursor.
 - <kbd>1-9</kbd> to set the card under the cursor.
