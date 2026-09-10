@@ -10,9 +10,9 @@ dist.zip: dist/index.html dist/sprites.png
 	cd dist && zip -9 ../dist.zip -r *
 	advzip -z -4 -i dist.zip
 
-dist/index.html: *.js *.html
+dist/index.html: game/*.js game/*.html
 	pnpm vite build
 
-dist/sprites.png: sprites.png
+dist/sprites.png: game/sprites.png
 	mkdir -p dist
-	oxipng -o max --strip all --alpha sprites.png --out dist/sprites.png
+	oxipng -o max --strip all --alpha game/sprites.png --out dist/sprites.png

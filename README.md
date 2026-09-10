@@ -23,7 +23,7 @@ Whilst editing, the state of the level is saved in the URL so that you can share
 The game runs in any browser without installing any dependencies or running a build step, so you can also just point your HTTP server of choice towards `index.html`.
 
 ```sh
-python -m http.server
+python -m http.server game
 ```
 
 Alternative for live reloads, you can start the game with Vite after installing dependencies with pnpm.

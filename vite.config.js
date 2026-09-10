@@ -5,6 +5,7 @@ import { ok as assert } from "node:assert";
 
 export default defineConfig({
   base: "./",
+  root: "game",
   plugins: [singleFile()],
   define: {
     "import.meta.url": `"."`,
