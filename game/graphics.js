@@ -87,6 +87,12 @@ export function blit(sx, sy, sw, sh, dx, dy, dw, dh, palette = -1) {
 }
 
 /**
+ * A map of escape codes to palette numbers.
+ * @type {Record<string, number>}
+ */
+let tfx = { "*": 10, "+": 24, "%": 14 };
+
+/**
  * @param {string} text
  * @param {number} x
  * @param {number} y
@@ -104,12 +110,16 @@ export function write(text, x, y, palette = 17) {
   let dy = y; // destination y
   let g = Rect(0, 0, gw, gh);
   let outline = 16; // black palette
+  let p = palette;
 
   for (let i = 0; i < text.length; i++) {
     let c = text.charCodeAt(i) - start;
+    let ch = text[i];
     let newline = c < 0; // c === (10-start)
 
-    if (newline) {
+    if (ch in tfx) {
+      p = p === palette ? tfx[ch] : palette;
+    } else if (newline) {
       dx = x;
       dy += lh;
     } else {
@@ -119,7 +129,7 @@ export function write(text, x, y, palette = 17) {
       draw(g, dx - 1, dy, outline);
       draw(g, dx, dy + 1, outline);
       draw(g, dx, dy - 1, outline);
-      draw(g, dx, dy, palette);
+      draw(g, dx, dy, p);
       dx += ls;
     }
   }
