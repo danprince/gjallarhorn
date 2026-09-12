@@ -69,7 +69,12 @@ export function sfx(type, time = ctx.currentTime) {
   playDrum(time, type);
 }
 
-let midi = await fetch("ragnarok.mid").then((r) => r.bytes());
+let midi = await fetch("ragnarok.mid")
+  // For some reason this doesn't work in JS13K's headless chromium.
+  // .then(r => r.bytes())
+  .then((r) => r.arrayBuffer())
+  .then((b) => new Uint8Array(b));
+
 let i = 0;
 let u8 = () => midi[i++];
 let u16 = () => (u8() << 8) | u8();
