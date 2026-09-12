@@ -525,8 +525,8 @@ const LEVELS = {
   // Heimdall helps Thor burrow in, then Frigg finishes the job.
   15: ["-I0-I0-I0J3I0J1I0-I0I0I0-I0J3I0J1I0-I0-I0", [HEIMDALL, THOR, FRIGG]],
 
-  // Blast Crystal
-  16: ["------J1J1J1--J1O0---J1J1J1", [HEIMDALL, THOR, FRIGG]],
+  // Frigg's Arrow
+  16: ["I0---I0-I0--J1--I0-J1---I0J1J1J1J1J1I0", [THOR, TYR, FRIGG]],
 
   // T-pain
   // Clear out a T shaped level of giants using a triple push from Tyr.
@@ -631,16 +631,16 @@ const LEVELS = {
   // Use Loki to piggyback Heimdall from one corner to the other.
   34: ["J1-----------------------J1", [LOKI, HEIMDALL]],
 
-  // The Scorpion
-  35: ["--J1---J1J1J1--K2-K2-K2---K2-K2-K2", [LOKI, TYR, HEIMDALL]],
+  // Blood Diamond
+  35: ["--K2---K2-K2-K2-J6-K2-K2-K2---K2", [LOKI, TYR, HEIMDALL, FRIGG, HEL]],
 
   // Loki's Corridor
   // Use Loki to swap Tyr into pushing Thor to finish.
   36: ["-----J1I0J1I0J1--I0-I0J1I0J1I0J1", [LOKI, TYR, THOR]],
 
-  // Blast Corridor
-  // Use the blast crystal to retrigger Heimdall in order to play Frigg 3 times.
-  37: ["-J1-J1--J1----J2-J2----J1--O0-J2", [HEIMDALL, THOR, FRIGG]],
+  // Frigghammer
+  // Use Tyr to push Heimdall to recall Frigg.
+  37: ["J1I0-I0J1I0---I0-----J1---I0J1---I0", [HEIMDALL, FRIGG, TYR]],
 
   // Lines in the Ice
   // Use Loki to swap Heimdall and Thor into the action and Frigg + Hel to clean up.
@@ -679,11 +679,8 @@ const LEVELS = {
   // "I0J1K9J1I0J1---J1J1-M0-J1"
   //
   // Chaos Crossbow
-  // "---J2----J1-L3--L3----J1----J1I0"
   //
-  // Frigg's Gambit
   // Many solutions
-  // "----J1---J1--J1--I0---J1--J2I0J2"
 };
 
 /**
