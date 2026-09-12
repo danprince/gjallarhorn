@@ -5,10 +5,13 @@ BUDGET := 13312
 measure: dist.zip
 	@wc -c < dist.zip | awk -v BUDGET=$(BUDGET) '{SIZE=$$1; printf "%d/%dB (%.1f%%)\n", SIZE, BUDGET, SIZE/BUDGET*100}'
 
-dist.zip: dist/index.html dist/sprites.png
+dist.zip: dist/index.html dist/sprites.png dist/ragnarok.mid
 	rm -f dist.zip
 	cd dist && zip -9 ../dist.zip -r *
 	advzip -z -4 -i dist.zip
+
+dist/ragnarok.mid: game/ragnarok.mid
+	cp game/ragnarok.mid dist/ragnarok.mid
 
 dist/index.html: game/*.js game/*.html
 	pnpm vite build
