@@ -251,8 +251,8 @@ let voices = range(0, 16).map(() => {
 function playVocal(time = ctx.currentTime, note = 36, velocity = 1) {
   for (let voice of voices) {
     let frequency = hz(note);
-    voice.osc.frequency.exponentialRampToValueAtTime(frequency, time);
-    voice.sub.frequency.exponentialRampToValueAtTime(frequency / 2, time);
+    voice.osc.frequency.setTargetAtTime(frequency, time, 0.02);
+    voice.sub.frequency.setTargetAtTime(frequency / 2, time, 0.02);
   }
 }
 
