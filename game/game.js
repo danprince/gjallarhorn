@@ -1593,7 +1593,7 @@ function render() {
   renderBackground();
 
   let story = getDialogue();
-  let hasDialogue = story.length && step < story.length;
+  let hasDialogue = step < story.length;
 
   if (!preview) {
     if (hasDialogue || hasClearedGiants()) {
