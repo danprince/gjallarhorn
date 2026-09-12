@@ -11,6 +11,8 @@ export default defineConfig({
     "import.meta.url": `"."`,
   },
   build: {
+    outDir: "../dist",
+    emptyOutDir: true,
     target: "esnext",
     minify: "terser",
     sourcemap: false,
