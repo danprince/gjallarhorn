@@ -294,7 +294,7 @@ function pluck(time, note, velocity, smoothing = 0.8) {
   }
 
   let source = Source({ buffer });
-  let gain = Gain({ gain: 0.2 });
+  let gain = Gain({ gain: 0.1 });
   source.start(time);
   source.stop(time + duration);
   source.connect(gain).connect(master);
