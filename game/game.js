@@ -399,6 +399,10 @@ const CARDS = {
     palette: 12,
     description: "CREATES CRYSTALS IN EMPTY SLOTS",
     async effect(card, targets) {
+      // TODO: This should probably be a global check in trigger.
+      // Too late to test that out now though!
+      if (card.hp === 0) return;
+
       for (let step of cardinals) {
         let slot = at(board, add(card.slot, step));
         if (slot && isEmpty(slot)) {
