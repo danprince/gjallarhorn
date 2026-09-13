@@ -19,7 +19,6 @@ import {
   pick,
   prng,
   random,
-  range,
   Rect,
   required,
   smoothstep,
@@ -116,11 +115,11 @@ import {
  * @typedef {() => void | Promise<void>} Action
  */
 
-const IS_MOBILE = innerWidth < innerHeight;
+const IS_MOBILE = matchMedia("(pointer: coarse)").matches;
 const IS_EDITOR = location.search === "?edit";
 
-const UI_W = IS_MOBILE ? 160 : 420;
-const UI_H = 242;
+const UI_H = 240;
+const UI_W = UI_H * (innerWidth / innerHeight);
 const UI_CENTER_X = UI_W / 2;
 const UI_CENTER_Y = UI_H / 2;
 const UI_CARD_SIZE = 18;
