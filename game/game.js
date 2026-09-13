@@ -118,8 +118,11 @@ import {
 const IS_MOBILE = matchMedia("(pointer: coarse)").matches;
 const IS_EDITOR = location.search === "?edit";
 
-const UI_H = 240;
-const UI_W = UI_H * (innerWidth / innerHeight);
+const UI_MIN_H = 240;
+const UI_MIN_W = 150;
+const UI_SCALE = Math.min(innerWidth / UI_MIN_W, innerHeight / UI_MIN_H);
+const UI_H = innerHeight / UI_SCALE;
+const UI_W = innerWidth / UI_SCALE;
 const UI_CENTER_X = UI_W / 2;
 const UI_CENTER_Y = UI_H / 2;
 const UI_CARD_SIZE = 18;
