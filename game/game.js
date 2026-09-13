@@ -6,7 +6,7 @@ import {
   spriteToDataUrl,
   write,
 } from "./graphics.js";
-import { sfx, SFX_CLICK, SFX_SLASH, SFX_TAP } from "./audio.js";
+import { mute, sfx, SFX_CLICK, SFX_SLASH, SFX_TAP } from "./audio.js";
 import { spritesheet } from "./sprites.js";
 import {
   add,
@@ -791,6 +791,11 @@ let nextButton = Button(UI_BUTTON_ANCHOR_X, UI_BUTTON_ANCHOR_Y, "NEXT");
  * The play button begins the game.
  */
 let playButton = Button(UI_BUTTON_ANCHOR_X, UI_CENTER_Y + 20, "PLAY");
+
+/**
+ * The mute button controls the audio.
+ */
+let muteButton = Button(11, 12, "$$", PALETTE_BTN_SECONDARY);
 
 /**
  * The next level button takes you to the next level.
@@ -1612,6 +1617,8 @@ function renderGame() {
     renderButton(prevLevelButton);
   }
 
+  renderButton(muteButton);
+
   drawNinePatch(
     spritesheet.frame,
     UI_BOARD_X - 4,
@@ -1796,6 +1803,7 @@ function update() {
   updateTargets();
   updateButtons();
   updateCards();
+  if (muteButton.pressed) mute();
   if (nextButton.pressed) next();
   if (resetButton.pressed) reset();
   if (nextLevelButton.pressed) loadLevel(level + 1);

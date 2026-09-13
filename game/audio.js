@@ -370,5 +370,13 @@ function play() {
   looper.onended = () => play();
 }
 
+export function mute() {
+  if (ctx.state === "suspended") {
+    ctx.resume();
+  } else {
+    ctx.suspend();
+  }
+}
+
 // Audio start must come from a user interaction.
 addEventListener("click", play, { once: true });
