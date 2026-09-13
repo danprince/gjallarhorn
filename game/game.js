@@ -448,7 +448,7 @@ const LEVELS = {
     "------I0I0I0--I0J2I0--I0I0I0------",
     [HEIMDALL, THOR],
     [TUTORIAL, "EACH GOD HAS A POWER THEY\nUSE AFTER ATTACKING"],
-    [TUTORIAL, "CHOOSE THE ORDER THEY PLAY\nIN WISELY"],
+    [TUTORIAL, "CHOOSE THE ORDER OF PLAY\nWISELY"],
   ],
 
   // Prison Break
@@ -478,7 +478,11 @@ const LEVELS = {
 
   // Pushing Trap
   // Teach the player that pushing is sometimes worse than summoning.
-  8: ["----------------J2I0J2--I0J3I0", [HEIMDALL, THOR, TYR]],
+  8: [
+    "----------------J2I0J2--I0J3I0",
+    [HEIMDALL, THOR, TYR],
+    [TUTORIAL, "FOR THE GJALLARHORN,\nSACRIFICES MUST BE MADE"],
+  ],
 
   // Thortex
   // Use Tyr to turn the spiral into a cross.
@@ -562,8 +566,12 @@ const LEVELS = {
     [HEIMDALL, TYR, FRIGG, THOR],
   ],
 
+  // Frigghammer
+  // Use Tyr to push Heimdall to recall Frigg.
+  23: ["J1I0-I0J1I0---I0-----J1---I0J1---I0", [HEIMDALL, FRIGG, TYR]],
+
   // Loki Tutorial
-  23: [
+  24: [
     "------J1---J1-I0-J1-J1",
     [LOKI, THOR],
     [LOKI, "WHAT'S ALL THIS I HEAR\nABOUT SLAYING GIANTS?"],
@@ -574,23 +582,12 @@ const LEVELS = {
     [THOR, "DON'T TRUST LOKI. HE WON'T\nHURT THE GIANTS."],
   ],
 
-  // The Piggyback
-  // Use Loki to piggyback Heimdall from one corner to the other.
-  24: ["J1-----------------------J1", [LOKI, HEIMDALL]],
-
-  // Blood Diamond
-  25: ["--K2---K2-K2-K2-J6-K2-K2-K2---K2", [LOKI, TYR, HEIMDALL, FRIGG, HEL]],
-
   // Loki's Corridor
   // Use Loki to swap Tyr into pushing Thor to finish.
-  26: ["-J1-J1--I0-I0--J1I0J1--I0-I0--J1-J1", [LOKI, TYR, THOR]],
-
-  // Frigghammer
-  // Use Tyr to push Heimdall to recall Frigg.
-  27: ["J1I0-I0J1I0---I0-----J1---I0J1---I0", [HEIMDALL, FRIGG, TYR]],
+  25: ["-J1-J1--I0-I0--J1I0J1--I0-I0--J1-J1", [LOKI, TYR, THOR]],
 
   // Odin
-  29: [
+  26: [
     "------------N9",
     [HEIMDALL, THOR, TYR, FRIGG, HEL, LOKI, ODIN],
     [HEIMDALL, "STILL NO SIGN OF THE\n*GJALLARHORN*!"],
@@ -608,7 +605,7 @@ const LEVELS = {
     [ODIN, "LET'S SEE WHAT THIS HORN CAN\nDO!"],
   ],
 
-  30: ["", [], [TUTORIAL, "THE END"]],
+  27: ["", [], [TUTORIAL, "THE END"]],
 
   // [Unused puzzles]
 
@@ -667,6 +664,13 @@ const LEVELS = {
   //   "--I0---J1I0J1-I0I0K7I0I0-J1I0J1---I0",
   //   [HEIMDALL, THOR, FRIGG, HEL, LOKI],
   // ],
+
+  // The Piggyback
+  // Use Loki to piggyback Heimdall from one corner to the other.
+  // 24: ["J1-----------------------J1", [LOKI, HEIMDALL]],
+
+  // Blood Diamond
+  // 26: ["--K2---K2-K2-K2-J6-K2-K2-K2---K2", [LOKI, TYR, HEIMDALL, FRIGG, HEL]],
 };
 
 /**
