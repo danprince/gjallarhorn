@@ -163,8 +163,6 @@ const UI_DIALOGUE_HEIGHT = 25;
 const UI_DIALOGUE_X = UI_CENTER_X - UI_DIALOGUE_WIDTH / 2;
 const UI_DIALOGUE_Y = UI_HAND_Y - 3;
 
-const UI_TIP_H = 24;
-const UI_TIP_W = UI_HAND_W;
 const UI_TIP_X = UI_HAND_X;
 const UI_TIP_Y = UI_HAND_Y + UI_HAND_H + 2;
 
