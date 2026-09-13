@@ -612,72 +612,62 @@ const LEVELS = {
     [HEIMDALL, "USE THE HORN!"],
   ],
 
-  27: ["", [], [TUTORIAL, "CONGRATULATIONS!\nYOU REACHED THE END!"]],
-
-  // [Unused puzzles]
-
-  // Hel + Rune
-  // "I0J1K9J1I0J1---J1J1-M0-J1"
-
   // Fortress
   // Use Thor to break into a fortress with pushes from Tyr.
-  // ["I0I0J2I0I0-J2I0J2-I0I0I0I0I0I0---I0-----", [HEIMDALL, THOR, TYR]],
+  27: [
+    "I0I0J2I0I0-J2I0J2-I0I0I0I0I0I0---I0-----",
+    [HEIMDALL, THOR, TYR],
+    [TUTORIAL, "WELL DONE! YOU\nCOMPLETED THE STORY."],
+    [TUTORIAL, "THE REMAINING PUZZLES ARE\nJUST FOR FUN"],
+  ],
 
   // Lazarus
   // Vertical puzzle that requires retriggering Heimdall with a push.
-  // ["-J1I0----I0J2----J1--------J1--", [HEIMDALL, THOR, TYR]],
+  28: ["-J1I0----I0J2----J1--------J1--", [HEIMDALL, THOR, TYR]],
 
   // Frigger
   // Use Tyr to arrange a triple shot before recalling carefully so that
   // Heimdall doesn't block the finale.
-  // ["-----J1J2---I0--J3-J1J2", [HEIMDALL, TYR, FRIGG]],
+  29: ["-----J1J2---I0--J3-J1J2", [HEIMDALL, TYR, FRIGG]],
 
   // Fortress II
   // Heimdall helps Thor burrow in, then Frigg finishes the job.
-  // ["-I0-I0-I0J3I0J1I0-I0I0I0-I0J3I0J1I0-I0-I0", [HEIMDALL, THOR, FRIGG]],
+  30: ["-I0-I0-I0J3I0J1I0-I0I0I0-I0J3I0J1I0-I0-I0", [HEIMDALL, THOR, FRIGG]],
 
   // Frigg's Arrow
-  // ["I0---I0-I0--J1--I0-J1---I0J1J1J1J1J1I0", [THOR, TYR, FRIGG]],
+  31: ["I0---I0-I0--J1--I0-J1---I0J1J1J1J1J1I0", [THOR, TYR, FRIGG]],
 
   // Overwhelming Odds
   // This one is hard. Frigg hits the southern diagonal, Thor hits 3 crystals
   // to the north, Heimdall summons both, Thor hits 3 giants, Frigg finishes.
   // Might be the only solution.
-  // ["-I0J2I0I0--I0J1I0-I0J4I0I0--I0-I0J1----", [HEIMDALL, THOR, FRIGG]],
+  32: ["-I0J2I0I0--I0J1I0-I0J4I0I0--I0-I0J1----", [HEIMDALL, THOR, FRIGG]],
 
   // Fire Giants
   // Learn about using fire giants offensively.
-  // 14: ["I0J3I0-----J1-I0-K4---J1", [HEIMDALL, TYR, FRIGG]],
+  33: ["I0J3I0-----J1-I0-K4---J1", [HEIMDALL, TYR, FRIGG]],
 
   // Hel 2
   // Play in a column: Thor, Tyr, Hel, Frigg.
-  // 17: ["I0J1-J1I0-J1I0J1-I0J2J2J2I0-I0-I0-I0J1-J1I0", [THOR, TYR, FRIGG, HEL]],
+  34: ["I0J1-J1I0-J1I0J1-I0J2J2J2I0-I0-I0-I0J1-J1I0", [THOR, TYR, FRIGG, HEL]],
 
   // Helicate Balance
   // Use Hel's multihit before killing too many giants.
-  // 17: ["-----J3----K4-J2-J1J3------J2-J1", [HEIMDALL, FRIGG, HEL]],
-
-  // Chaos is a Ladda
-  // Learning about Chaos Giants.
-  //18: ["-------J1----L2--------J1-J1", [THOR, HEIMDALL]],
-
-  // Loki Slingshot
-  // Use Loki to move a crystal then swap Heimdall into hitting a giant.
-  // 23: ["-I0J1I0--I0I0I0-------------J1", [LOKI, HEIMDALL]],
+  35: ["-----J3----K4-J2-J1J3------J2-J1", [HEIMDALL, FRIGG, HEL]],
 
   // Lines in the Ice
   // Use Loki to swap Heimdall and Thor into the action and Frigg + Hel to clean up.
-  // 27: [
-  //   "--I0---J1I0J1-I0I0K7I0I0-J1I0J1---I0",
-  //   [HEIMDALL, THOR, FRIGG, HEL, LOKI],
-  // ],
+  36: [
+    "--I0---J1I0J1-I0I0K7I0I0-J1I0J1---I0",
+    [HEIMDALL, THOR, FRIGG, HEL, LOKI],
+  ],
 
   // The Piggyback
   // Use Loki to piggyback Heimdall from one corner to the other.
-  // 24: ["J1-----------------------J1", [LOKI, HEIMDALL]],
+  37: ["J1-----------------------J1", [LOKI, HEIMDALL]],
 
   // Blood Diamond
-  // 26: ["--K2---K2-K2-K2-J6-K2-K2-K2---K2", [LOKI, TYR, HEIMDALL, FRIGG, HEL]],
+  38: ["--K2---K2-K2-K2-J6-K2-K2-K2---K2", [LOKI, TYR, HEIMDALL, FRIGG, HEL]],
 };
 
 /**
