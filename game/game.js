@@ -183,6 +183,9 @@ const CURSOR_POINTER = 1;
 const CURSOR_GRAB = 2;
 const CURSOR_GRABBING = 3;
 
+const SCREEN_TITLE = 0;
+const SCREEN_GAME = 1;
+
 // Each palette index here refers to one row within the "swaps" section of
 // the sprite atlas.
 const PALETTE_GREYSCALE = 0;
@@ -734,6 +737,11 @@ let actions = [];
 let busy = false;
 
 /**
+ * The screen that's currently active.
+ */
+let screen = SCREEN_TITLE;
+
+/**
  * The player's current level/puzzle index.
  * @type {number}
  */
@@ -780,6 +788,11 @@ let resetButton = Button(
  * The next button advances through dialogue and moves to the next level.
  */
 let nextButton = Button(UI_BUTTON_ANCHOR_X, UI_BUTTON_ANCHOR_Y, "NEXT");
+
+/**
+ * The play button begins the game.
+ */
+let playButton = Button(UI_BUTTON_ANCHOR_X, UI_CENTER_Y + 20, "PLAY");
 
 /**
  * The next level button takes you to the next level.
@@ -1569,10 +1582,20 @@ function renderTutorial() {
   ctx.restore();
 }
 
-function render() {
-  ctx.clearRect(0, 0, UI_W, UI_H);
-  renderBackground();
+function renderTitle() {
+  let { title } = spritesheet;
+  let bob = Math.sin(pt / 1000) * 2;
+  let x = UI_CENTER_X - title.w / 2;
+  let y = UI_CENTER_Y - title.h / 2;
+  draw(title, x, y - bob + 1, PALETTE_BLACK);
+  draw(title, x + 1, y - bob, PALETTE_BLACK);
+  draw(title, x, y - bob);
+  write("PRESS ANYWHERE TO START $", UI_CENTER_X - 48, UI_H - 20, 23);
+  renderButton(playButton);
+  renderCursor();
+}
 
+function renderGame() {
   let story = getDialogue();
   let hasDialogue = step < story.length;
 
@@ -1611,6 +1634,17 @@ function render() {
   renderParticles();
   renderTutorial();
   renderCursor();
+}
+
+function render() {
+  ctx.clearRect(0, 0, UI_W, UI_H);
+  renderBackground();
+
+  if (screen === SCREEN_TITLE) {
+    renderTitle();
+  } else {
+    renderGame();
+  }
 }
 
 async function updateActions() {
@@ -1747,8 +1781,16 @@ function updateCards() {
   }
 }
 
+function updateTitle() {
+  updateButtons();
+  if (playButton.pressed) {
+    screen = SCREEN_GAME;
+  }
+}
+
 function update() {
   cursor = CURSOR_DEFAULT;
+  if (screen === SCREEN_TITLE) return updateTitle();
   updateActions();
   updateTimers();
   updateParticles();
@@ -1797,6 +1839,8 @@ function start(state) {
 
 function init() {
   let state = location.hash.slice(1);
+
+  if (state) screen = SCREEN_GAME;
 
   if (IS_EDITOR) {
     state ||= "-".repeat(board.slots.length);
