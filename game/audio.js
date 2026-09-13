@@ -21,7 +21,7 @@ let ctx = new AudioContext();
 let sampleRate = ctx.sampleRate;
 let started = false;
 let reverb = Reverb();
-let bypass = Gain({ gain: 1 });
+let bypass = Gain({ gain: 2 });
 let master = Gain({ gain: 0.5 });
 let masterLowPass = Filter({ frequency: 0 });
 master.connect(masterLowPass).connect(reverb).connect(ctx.destination);
