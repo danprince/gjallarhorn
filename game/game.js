@@ -1800,19 +1800,6 @@ function loop(now = pt) {
   _down = down;
 }
 
-function generateLevel() {
-  return range(0, board.slots.length)
-    .map(() => {
-      if (Math.random() < 0.3) return "-";
-      if (Math.random() < 0.6) return "I0";
-      let hp = Math.floor(Math.random() * Math.random() * 6);
-      let char = Math.random() < 0.7 ? "J" : "K";
-      if (Math.random() < 0.1) char = "L";
-      return char + hp;
-    })
-    .join("");
-}
-
 /**
  * @param {string} state
  */
@@ -1829,11 +1816,6 @@ function start(state) {
 
 function init() {
   let state = location.hash.slice(1);
-
-  if (state === "random") {
-    state = generateLevel();
-    location.hash = state;
-  }
 
   if (IS_EDITOR) {
     state ||= "-".repeat(board.slots.length);
@@ -1894,11 +1876,6 @@ if (IS_EDITOR) {
 
     // shift + number keys set health for the card under the cursor.
     let shifted = ")!@£$%^&*()";
-
-    if (key === "R") {
-      location.hash = "#random";
-      location.reload();
-    }
 
     /**
      * @type {Record<string, CardType>}
