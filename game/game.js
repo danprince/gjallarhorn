@@ -243,7 +243,6 @@ const FIRE_GIANT = 10;
 const CHAOS_GIANT = 11;
 const GJALLARHORN = 12;
 const YMIR = 13;
-const BLAST_CRYSTAL = 14;
 
 /**
  * @typedef {(
@@ -261,7 +260,6 @@ const BLAST_CRYSTAL = 14;
  *   | typeof CHAOS_GIANT
  *   | typeof GJALLARHORN
  *   | typeof YMIR
- *   | typeof BLAST_CRYSTAL
  * )} CardType
  */
 
@@ -410,14 +408,6 @@ const CARDS = {
       }
       await defaultAttackEffect(card, targets);
     },
-  },
-  [BLAST_CRYSTAL]: {
-    name: "BLAST CRYSTAL",
-    description: "PUSHES ADJACENT CARDS IF DESTROYED",
-    tags: CRYSTAL,
-    sprite: 8,
-    palette: 18,
-    hp: 0,
   },
 };
 
@@ -1218,7 +1208,7 @@ async function attack(card, target) {
   target.flashTimer = UI_ATTACK_MS;
   showBloodSplatter(card, target);
   let dead = --target.hp <= 0;
-  if (dead) await die(target, card);
+  if (dead) await die(target);
   await tween(card, card.slot, UI_ATTACK_MS);
   // Giants retaliate after being attacked.
   if (is(target, GIANT)) queue(() => trigger(target));
@@ -1253,21 +1243,11 @@ async function push(card, target, force = false) {
 /**
  * Die and attempt to move to the grave.
  * @param {Card} card
- * @param {Card} [killer]
  */
-async function die(card, killer) {
+async function die(card) {
   if (card.slot.zone !== board) return;
-
-  if (card.type === BLAST_CRYSTAL) {
-    for (let target of adjacent(card)) {
-      await push(card, target, true);
-    }
-  }
-
   if (!is(card, GOD | GIANT)) return despawn(card);
-
   showBoneTumble(card.slot);
-
   let slot = grave.slots.find(isEmpty);
   slot ? move(card, slot) : despawn(card);
 }
@@ -1887,7 +1867,6 @@ if (IS_EDITOR) {
       4: CHAOS_GIANT,
       5: GJALLARHORN,
       6: YMIR,
-      7: BLAST_CRYSTAL,
     };
 
     if (!slot) return;
