@@ -851,7 +851,7 @@ function timer(ms, callback) {
  */
 function resize() {
   let s = Math.min(innerWidth / UI_W, innerHeight / UI_H);
-  canvas.style.cssText = `position:fixed;inset:0;image-rendering:pixelated;width:${UI_W * s}px;height:${UI_H * s}px`;
+  canvas.style.cssText = `position:fixed;inset:0;margin:auto;image-rendering:pixelated;width:${UI_W * s}px;height:${UI_H * s}px`;
 }
 
 /**
@@ -859,9 +859,10 @@ function resize() {
  * @param {PointerEvent} event
  */
 function onPointerEvent({ buttons, clientX: x, clientY: y }) {
+  let rect = canvas.getBoundingClientRect();
   let scale = canvas.width / canvas.clientWidth;
-  pointer.x = (x * scale) | 0;
-  pointer.y = (y * scale) | 0;
+  pointer.x = ((x - rect.x) * scale) | 0;
+  pointer.y = ((y - rect.y) * scale) | 0;
   down = buttons === BUTTON_LMB;
   pressed = down && !_down;
   released = _down && !down;
