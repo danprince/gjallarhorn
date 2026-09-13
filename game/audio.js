@@ -21,10 +21,15 @@ let ctx = new AudioContext();
 let sampleRate = ctx.sampleRate;
 let started = false;
 let reverb = Reverb();
-let bypass = Gain({ gain: 2 });
+let bypass = Gain({ gain: 3 });
 let master = Gain({ gain: 0.5 });
 let masterLowPass = Filter({ frequency: 0 });
-master.connect(masterLowPass).connect(reverb).connect(ctx.destination);
+let masterHighPass = Filter({ type: "highpass", frequency: 40 });
+master
+  .connect(masterHighPass)
+  .connect(masterLowPass)
+  .connect(reverb)
+  .connect(ctx.destination);
 bypass.connect(ctx.destination);
 
 /**
@@ -239,7 +244,7 @@ let voices = range(0, 16).map(() => {
   let vibGain = Gain({ gain: 3.5 });
   vib.connect(vibGain).connect(osc.detune);
 
-  let mix = Gain({ gain: 1 / 8 });
+  let mix = Gain({ gain: 1 / 6 });
   osc.connect(mix);
   subGain.connect(mix);
 
@@ -272,7 +277,7 @@ let karplusStrongCache = {};
  * @param {number} note Midi note
  * @param {number} velocity Velocity (0-1)
  */
-function pluck(time, note, velocity, smoothing = 0.8) {
+function pluck(time, note, velocity, smoothing = 0.9) {
   if (velocity === 0) return;
   let buffer = karplusStrongCache[note];
   let duration = 2;
