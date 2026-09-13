@@ -1,4 +1,4 @@
-import { random, range } from "./utils.js";
+import { pick, random, range } from "./utils.js";
 
 const MIDI_META = 0xff;
 const MIDI_META_TEMPO = 0x51;
@@ -21,9 +21,11 @@ let ctx = new AudioContext();
 let sampleRate = ctx.sampleRate;
 let started = false;
 let reverb = Reverb();
+let bypass = Gain({ gain: 1 });
 let master = Gain({ gain: 0.5 });
 let masterLowPass = Filter({ frequency: 0 });
 master.connect(masterLowPass).connect(reverb).connect(ctx.destination);
+bypass.connect(ctx.destination);
 
 /**
  * @typedef {object} DrumParams
@@ -59,6 +61,7 @@ const INSTRUMENTS = {
   0: playDrum,
   1: pluck,
   2: playVocal,
+  3: pluck,
 };
 
 /**
@@ -66,7 +69,7 @@ const INSTRUMENTS = {
  * @param {number} [time]
  */
 export function sfx(type, time = ctx.currentTime) {
-  playDrum(time, type);
+  playNoise(time, 0.05, 200, 3.5, bypass);
 }
 
 let midi = await fetch("ragnarok.mid")
@@ -180,6 +183,7 @@ function playNoise(time, duration, frequency, Q, dest = master) {
   filter.frequency.setValueAtTime(frequency, time);
   source.connect(filter).connect(gain).connect(dest);
   source.start(time);
+  source.stop(time + duration);
 }
 
 /**
