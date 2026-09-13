@@ -1,12 +1,12 @@
-<img width="825" height="340" alt="banner" src="https://github.com/user-attachments/assets/a25fe471-fb7b-4d84-9fc6-025d9bc2841e" />
+<img height="190" alt="title" src="title.png" />
 
-# Gjallarhorn
-
-A puzzle game built for [JS13K 2026](https://js13kgames.com/2026/).
+A puzzle game built in less than 13KB for [JS13K 2026](https://js13kgames.com/2026/).
 
 Command a rabble of Norse gods through a series of giant puzzles in order to retrieve the [Gjallarhorn](https://en.wikipedia.org/wiki/Gjallarhorn) and bring balance back to the [Bifröst](https://en.wikipedia.org/wiki/Bifr%C3%B6st).
 
-You can play the game in a browser at [gjallarhorn.danprince.me](https://gjallarhorn.danprince.me).
+You can play the game in a browser [here](https://gjallarhorn.danprince.me) or [here on the JS13K site](https://js13kgames.com/2026/games/gjallarhorn).
+
+<img height="300" alt="preview" src="preview.gif" />
 
 ## Editor
 
@@ -44,4 +44,4 @@ The game uses a mixture of JS tooling for bundling and native tooling for compre
 After they are installed:
 
 - Run `pnpm install` to install the JS dependencies.
-- Run `make` to compile, compress the game into `dist.zip`.
+- Run `make` to compile and compress the game into `dist.zip`.
