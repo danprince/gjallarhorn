@@ -514,12 +514,12 @@ const LEVELS = {
 
   // Thin Line
   // Use Frigg and Heimdall to defeat giants in a diagonal line.
-  13: ["------J1-----J1-----J3", [HEIMDALL, FRIGG]],
+  13: ["I0I0---I0J1-----J1-----J3I0---I0I0", [HEIMDALL, FRIGG]],
 
   // Frigger
   // Use Tyr to arrange a triple shot before recalling carefully so that
   // Heimdall doesn't block the finale.
-  14: ["-----J1J2---I0--J3J1J1J2", [HEIMDALL, TYR, FRIGG]],
+  14: ["-----J1J2---I0--J3-J1J2", [HEIMDALL, TYR, FRIGG]],
 
   // Fortress II
   // Heimdall helps Thor burrow in, then Frigg finishes the job.
