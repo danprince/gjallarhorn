@@ -393,7 +393,7 @@ const CARDS = {
   [YMIR]: {
     hp: 9,
     tags: GIANT,
-    name: "YMIR",
+    name: "YMIR (THE FIRST GIANT)",
     targets: GOD,
     sprite: FROST_GIANT,
     palette: 12,
@@ -422,10 +422,11 @@ const LEVELS = {
     "-------I0---I0J1I0--I0-I0------",
     [HEIMDALL],
     [HEIMDALL, "GIANTS TOOK THE *GJALLARHORN*!"],
-    [ODIN, "OH NO...\nWHAT'S A *GJALLARHORN*?"],
-    [HEIMDALL, "THE HORN THAT SUMMONS GODS\nBACK TO THE +BIFR#ST+!"],
-    [ODIN, "A UNIQUE HORN?"],
-    [HEIMDALL, "YES! A *UNIQUE HORN*!"],
+    [ODIN, "GIANTS?! WHERE?"],
+    [HEIMDALL, "THEY MUST HAVE STOLEN IT\nWHEN I LEFT HIMINBJ#RG."],
+    [ODIN, "OH...\nWHAT IS A GJALLARHORN THEN?"],
+    [HEIMDALL, "THE ONLY HORN THAT CAN\nSUMMON GODS TO THE +BIFR#ST+!"],
+    [ODIN, "AHH, A *UNIQUE HORN*..."],
     [ODIN, "AND YOU SAID SOMETHING ABOUT\nA +BIFR#ST+?"],
     [HEIMDALL, "THE +RAINBOW BRIDGE+ THAT\nCONNECTS US TO OTHER WORLDS!"],
     [ODIN, "WELL, WHAT ARE YOU WAITING\nFOR? AFTER THEM!"],
@@ -437,8 +438,8 @@ const LEVELS = {
   2: [
     "------------J2",
     [HEIMDALL, THOR],
-    [THOR, "I HEARD THERE WERE GIANTS TO\nSLAY!"],
-    [TUTORIAL, "GIANTS %RETALIATE% IF THEY\nSURVIVE YOUR ATTACKS"],
+    [THOR, "HEY! LEAVE SOME GIANTS FOR\nTHE REST OF US!"],
+    [TUTORIAL, "IF A GIANT SURVIVES AN\nATTACK, IT WILL +RETALIATE+"],
   ],
 
   // Prisoner
@@ -461,7 +462,7 @@ const LEVELS = {
   5: [
     "-------I0J1I0-I0-----J2-------",
     [THOR, TYR],
-    [TYR, "LOOKS LIKE YOU MIGHT NEED\nSOME HELP WITH THIS ONE!"],
+    [TYR, "NEED A HAND? I STILL HAVE\nONE TO SPARE."],
   ],
 
   // Pushing Thor
@@ -469,7 +470,7 @@ const LEVELS = {
   6: [
     "-I0J1I0--J1I0J1--J1-J1--------J1--",
     [THOR, TYR],
-    [TUTORIAL, "+PUSHING+ A GOD PLAYS THEM\nAGAIN"],
+    [TUTORIAL, "IF A GOD IS +MOVED+, THEY PLAY\n+AGAIN+"],
   ],
 
   // Push & Reset
@@ -481,7 +482,7 @@ const LEVELS = {
   8: [
     "----------------J2I0J2--I0J3I0",
     [HEIMDALL, THOR, TYR],
-    [TUTORIAL, "FOR THE GJALLARHORN,\nSACRIFICES MUST BE MADE"],
+    [TUTORIAL, "FOR THE GJALLARHORN,\n+SACRIFICES+ MUST BE MADE"],
   ],
 
   // Thortex
@@ -492,10 +493,11 @@ const LEVELS = {
   10: [
     "--------J1-------J1",
     [FRIGG],
-    [FRIGG, "WHAT'S ALL THIS NOISE?"],
+    [FRIGG, "HEIMDALL? WHAT ARE YOU\nDOING HERE?"],
     [HEIMDALL, "GIANTS HAVE TAKEN THE\n*GJALLARHORN*!"],
     [FRIGG, "AH YES. ODIN MENTIONED\nSOMETHING LIKE THAT."],
-    [FRIGG, "SADLY, HIS MEMORY IS NOT\nWHAT IT USED TO BE..."],
+    [HEIMDALL, "CARE TO HELP US SLAY SOME\nGIANTS?"],
+    [FRIGG, "WATCH AND LEARN."],
   ],
 
   // Thin Line
@@ -511,9 +513,11 @@ const LEVELS = {
   13: [
     "-------J1---J1K2J1",
     [THOR, FRIGG],
+    [HEIMDALL, "YOU!"],
+    [FIRE_GIANT, "ME?"],
     [HEIMDALL, "WHERE'S THE *GJALLARHORN*?"],
     [FIRE_GIANT, "WHAT'S A *GJALLARHORN*?"],
-    [HEIMDALL, "IT'S A UNIQUE... NEVER MIND."],
+    [HEIMDALL, "IT'S A UNIQUE...\nOH, NEVER MIND."],
   ],
 
   // Tough Guy
@@ -534,14 +538,14 @@ const LEVELS = {
     [HEL, "%FEED...%"],
   ],
 
+  // The Wall
+  // Sacrifice Thor on the other side of the wall for Hel.
+  17: ["------J1I0K5---I0---J1I0", [THOR, FRIGG, HEL]],
+
   // X Marks the Spot
   // Counter-intuitive. You have to start by playing Thor in the corner so that
   // you can summon Tyr, Hel, and Thor back together.
-  17: ["J1---J1-J1-J1---K5---J1-J1-J1---J1", [HEIMDALL, THOR, TYR, HEL]],
-
-  // The Wall
-  // Sacrifice Thor on the chaos side of the wall for Hel.
-  18: ["------J1I0K5---I0---J1I0", [THOR, FRIGG, HEL]],
+  18: ["J1---J1-J1-J1---K5---J1-J1-J1---J1", [HEIMDALL, THOR, TYR, HEL]],
 
   // Distributed Chaos
   // Use a Chaos Giant to get giants set up for Frigg.
@@ -557,55 +561,58 @@ const LEVELS = {
   // and Tyr to push her along the line of guards.
   21: ["-----J1J1J1J1J1----L2J1J1J1J1J1", [TYR, FRIGG, THOR]],
 
-  // Chaos Sokoban
-  // Super fun. Involves some careful deliberation about how to push the chaos
-  // giants to open up enough space for Thor to clear the central crystal for
-  // Frigg to take a shot.
-  22: [
-    "I0I0I0-I0--L2-I0I0L2I0L1I0I0L3I0-I0I0-I0I0I0",
-    [HEIMDALL, TYR, FRIGG, THOR],
-  ],
-
-  // Frigghammer
-  // Use Tyr to push Heimdall to recall Frigg.
-  23: ["J1I0-I0J1I0---I0-----J1---I0J1---I0", [HEIMDALL, FRIGG, TYR]],
-
   // Loki Tutorial
-  24: [
+  22: [
     "------J1---J1-I0-J1-J1",
     [LOKI, THOR],
     [LOKI, "WHAT'S ALL THIS I HEAR\nABOUT SLAYING GIANTS?"],
     [HEIMDALL, "THEY TOOK THE *GJALLARHORN*!"],
-    [LOKI, "BUT DID YOU ACTUALLY SEE A\nGIANT TAKE IT?"],
-    [HEIMDALL, "NOT EXACTLY, BUT WHO ELSE\nWOULD?"],
-    [LOKI, "MAYBE YOU SHOULDN'T JUMP\nTO CONCLUSIONS."],
+    [LOKI, "AND YOU SAW A GIANT TAKE IT?"],
+    [LOKI, "IS IT POSSIBLE THAT YOU JUST\nLOST THE HORN?"],
+    [HEIMDALL, "THE WATCHER OF THE REALMS,\nLOSING HIS HORN?"],
+    [HEIMDALL, "DON'T BE RIDICULOUS."],
     [THOR, "DON'T TRUST LOKI. HE WON'T\nHURT THE GIANTS."],
   ],
 
   // Loki's Corridor
   // Use Loki to swap Tyr into pushing Thor to finish.
-  25: ["-J1-J1--I0-I0--J1I0J1--I0-I0--J1-J1", [LOKI, TYR, THOR]],
+  23: ["-J1-J1--I0-I0--J1I0J1--I0-I0--J1-J1", [LOKI, TYR, THOR]],
+
+  // Frigghammer
+  // Use Tyr to push Heimdall to recall Frigg.
+  24: ["J1I0-I0J1I0---I0-----J1---I0J1---I0", [HEIMDALL, FRIGG, TYR]],
+
+  // Chaos Sokoban
+  // Super fun. Involves some careful deliberation about how to push the chaos
+  // giants to open up enough space for Thor to clear the central crystal for
+  // Frigg to take a shot.
+  25: [
+    "I0I0I0-I0--L2-I0I0L2I0L1I0I0L3I0-I0I0-I0I0I0",
+    [HEIMDALL, TYR, FRIGG, THOR],
+  ],
 
   // Odin
   26: [
     "------------N9",
     [HEIMDALL, THOR, TYR, FRIGG, HEL, LOKI, ODIN],
-    [HEIMDALL, "STILL NO SIGN OF THE\n*GJALLARHORN*!"],
-    [ODIN, "WHAT'S IT LIKE, HEIMDALL?"],
-    [HEIMDALL, "IT'S GOLD AND IT MAKES A\nSOUND LIKE *$$*-*$$$*-*$*!"],
+    [ODIN, "WHAT'S THIS HORN LIKE,\nHEIMDALL?"],
+    [HEIMDALL, "IT'S GOLDEN AND IT MAKES A\nSOUND LIKE *$$*-*$$$*-*$*!"],
     [ODIN, "LIKE THIS?"],
-    [GJALLARHORN, "*$$*-*$$$*-*$*"],
-    [HEIMDALL, "YES...\nEXACTLY LIKE THAT..."],
-    [TYR, "ODIN, WHAT'S GOING ON?"],
-    [ODIN, "I TOOK THE HORN."],
-    [FRIGG, "YOU TRICKED US?"],
-    [ODIN, "I UNITED US, BROUGHT US\nTOGETHER AGAINST THE GIANTS."],
-    [LOKI, "WHAT DID I SAY?"],
-    [YMIR, "%RARRGHHH!% THAT'S ENOUGH\nDIALOGUE!"],
-    [ODIN, "LET'S SEE WHAT THIS HORN CAN\nDO!"],
+    [GJALLARHORN, "*$$*-*$$$*-*$*!"],
+    [FRIGG, "ODIN, WHAT'S GOING ON?"],
+    [ODIN, "I'VE BEEN LOOKING AFTER\nHEIMDALL'S HORN."],
+    [THOR, "YOU TRICKED US?"],
+    [ODIN, "TRICKED? MAYBE, BUT NOT\nWITHOUT CAUSE."],
+    [LOKI, "AND YOU FOOLS JUST\nFOLLOWED ALONG..."],
+    [TYR, "THIS BETTER BE..."],
+    [HEL, "%GOOD...%"],
+    [ODIN, "I NEEDED US ALL HERE, \nTOGETHER."],
+    [TYR, "BUT WHY?"],
+    [YMIR, "%RARRGHHH!%"],
+    [HEIMDALL, "USE THE HORN!"],
   ],
 
-  27: ["", [], [TUTORIAL, "THE END"]],
+  27: ["", [], [TUTORIAL, "CONGRATULATIONS!\nYOU REACHED THE END!"]],
 
   // [Unused puzzles]
 
@@ -1417,7 +1424,7 @@ function renderRainbowArcs() {
   ctx.globalAlpha =
     0 + Math.max(0, Math.sin(((pt % 3000) / 3000) * Math.PI * 2)) * 0.2;
   ctx.globalCompositeOperation = "source-atop";
-  ctx.fillStyle = `hsl(${0}, 50%, 50%)`;
+  ctx.fillStyle = `hsl(0, 80%, 40%)`;
   ctx.fillRect(0, 0, UI_W, UI_H);
   let band = 10;
   let hues = [0, 30, 60, 120, 240, 275, 300];
@@ -1426,7 +1433,7 @@ function renderRainbowArcs() {
     ctx.beginPath();
     ctx.arc(UI_CENTER_X, 500 + i * band, 400, DEG_180, 0);
     ctx.lineWidth = band;
-    ctx.strokeStyle = `hsl(${hue}, 50%, 50%)`;
+    ctx.strokeStyle = `hsl(${hue}, 80%, 40%)`;
     ctx.stroke();
   }
   ctx.restore();
