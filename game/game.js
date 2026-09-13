@@ -1375,7 +1375,7 @@ function renderCloudBand(jitter = 30, palette = 0) {
 
   for (let i = 0; i < count; i++) {
     let s = sprites[Math.floor(rng(0, sprites.length))];
-    let x = ((rng(0, UI_W) + speed) % UI_W) - s.w / 2;
+    let x = ((rng(0, UI_W + 40) + speed) % (UI_W + 40)) - 20;
     let step = x / UI_W;
     let y =
       UI_H / 2 +
