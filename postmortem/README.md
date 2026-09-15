@@ -335,14 +335,12 @@ I have some mixed feelings about [roadroller](https://github.com/lifthrasiir/roa
 
 And last but not least, I decide to track the size of my game alongside every commit I made throughout the month, using `git notes`. Hands up if you didn't know `git notes` were a thing! The rationale here was that it would make it much easier for me to identify the features that actually added the most bloat to the code by looking for the heavy commits. A neat side effect is that now I can visualise exactly how the game grew throughout the month.
 
+![](build-sizes-chart.png)
+
 My repository has a post commit hook that builds and measures the source, then attaches the measurement to the most recent commit with a git note. This was easy enough to set up, but I tend to build big then commit surgically, and having untracked files as part of the build means that the measurements don't accurately reflect the state of the repository at the time of the commit. I tried working around this with `git stash -u` but that caused its own headaches and I ended up using `git archive` (who knew?) to create a separate copy of the repo where I could safely measure the build in isolation.
 
 <details>
-<summary>
-
-Here are the commits that changed the size of the zip by at least 100 bytes in chronological order, with the worst offenders highlighted in bold.
-
-</summary>
+<summary>Here are the commits that changed the size of the zip by at least 100 bytes in chronological order, with the worst offenders highlighted in bold.</summary>
 
 | Commit                                                                                                                 |       Delta |
 | ---------------------------------------------------------------------------------------------------------------------- | ----------: |
