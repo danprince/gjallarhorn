@@ -317,21 +317,32 @@ If you check out the repo, you can point any web server at the `game` directory 
 
 Here are the byte counts for the files in that directory in their unminified and uncompressed form.
 
-```
- 9776 audio.js
-47336 game.js
- 5382 graphics.js
-   46 index.html
- 7022 ragnarok.mid
- 2719 sprites.js
- 2631 sprites.png
- 4228 utils.js
-79140 total
-```
+|     Bytes | File         |
+| --------: | ------------ |
+|     47336 | game.js      |
+|      9776 | audio.js     |
+|      7022 | ragnarok.mid |
+|      5382 | graphics.js  |
+|      4228 | utils.js     |
+|      2719 | sprites.js   |
+|      2631 | sprites.png  |
+|        46 | index.html   |
+| **79140** | (total)      |
 
 80KB! That's an 83% compression rate by the time it's zipped. Minification does some heavy lifting, but I think I managed to pack a lot more into this year's game than ever before because I just have a better understanding of how the compression algorithms work, than I did in the past. I also have a much better understanding of what Terser can optimise away, what it can mangle, and how to write code that's going to be eliminated or constant folded.
 
-I have some mixed feelings about [roadroller](https://github.com/lifthrasiir/roadroller/) and despite seeing some overall savings, I decided not to use it as part of my build tooling. I love pulling up the minified source of a game and looking for patterns and tell-tale signs of various web APIs, or bitwise wizardry, or otherwise unconventional programming styles. I know the source has to be available as part of JS13K, but roadrolling your code kinda just makes it that bit more closed and opaque.
+For the sake of comparison, here's the bundled and minified source before zip.
+
+|     Bytes | File              |
+| --------: | ----------------- |
+|     22280 | dist/index.html   |
+|      7022 | dist/ragnarok.mid |
+|      2105 | dist/sprites.png  |
+| **31407** | (total)           |
+
+Honestly, pretty interesting! Together, Vite and Terser remove over 60% of the bytes, then zip and advzip compress that directory down by a further ~60% to arrive at the final submission size of 13288 bytes.
+
+I have some mixed feelings about [roadroller](https://github.com/lifthrasiir/roadroller/) and despite seeing some overall savings when I tried it out, I decided not to use it as part of my build tooling. I love pulling up the minified source of a game and looking for patterns and tell-tale signs of various web APIs, or bitwise wizardry, or otherwise unconventional programming styles. I know the source has to be available as part of JS13K, but roadrolling your code just makes it that bit more closed and opaque.
 
 And last but not least, I decide to track the size of my game alongside every commit I made throughout the month, using `git notes`. Hands up if you didn't know `git notes` were a thing! The rationale here was that it would make it much easier for me to identify the features that actually added the most bloat to the code by looking for the heavy commits. A neat side effect is that now I can visualise exactly how the game grew throughout the month.
 
