@@ -1,5 +1,5 @@
 ---
-# See github.com/js13kGames/hello-world for supported frontmatter
+post: https://github.com/danprince/gjallarhorn/blob/main/postmortem/README.md
 ---
 
 <img style="image-rendering: pixelated" alt="Gjallarhorn" height="200" src="https://raw.githubusercontent.com/danprince/gjallarhorn/bbb79e0d94bf785b3d70de36bc585d846e37e20b/title.png" />
