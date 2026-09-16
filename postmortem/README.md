@@ -42,7 +42,7 @@ Although this prototype is close to mechanically complete, it lacks all of the s
 
 ## Graphics
 
-I have [aphantasia](https://en.wikipedia.org/wiki/Aphantasia) which means that I can't visualise things in my head. That's a unique challenge for the design, because it means that I never really have a "vision" for a game. Each step of the way involves starting with jsomething that looks bad and tweaking it until one of the tweaked versions looks better, and so on. Over time, my intuition for _what_ to tweak has improved a lot, but I still spend a lot of time stumbling around in the figurative darkness.
+I have [aphantasia](https://en.wikipedia.org/wiki/Aphantasia) which means that I can't visualise things in my head. That's a unique challenge for the design, because it means that I never really have a "vision" for a game. Each step of the way involves starting with something that looks bad and tweaking it until one of the tweaked versions looks better, and so on. Over time, my intuition for _what_ to tweak has improved a lot, but I still spend a lot of time stumbling around in the figurative darkness.
 
 Pixel art may be the ideal medium for us aphantasics, because the tiny resolutions make it possible to dramatically alter the look and feel of a picture with two or three clicks. I'm still stumbling around, but I feel like I'm stumbling very efficiently. Pixel art is also a great medium for JS13K because it's the only raster graphics format that has any hope of fitting within the game's overall budget.
 
@@ -117,11 +117,11 @@ Different styles of buttons? Buttons that light up on hover? Colored text? Palet
 
 I've rambled about pixel fonts in the past so I'll try not to detour too hard here, but the jumble of white shapes in top right corner is a 3x5 pixel font with no padding. I have strong feelings about not ruining low resolution aesthetics with vector fonts, so raster fonts are the only real option.
 
-I did end up down a bit of a rabbit hole when I tried to shrink the font down even further by packing the separate glyphs into the different RGB channels, but every version of the decoder ended up costing more bytes than I saved from the packing. I suppose that the PNG's own DEFLATE pass is much better at finding and reusing common sequences with the 1-bit version.
+I did end up down a bit of a rabbit hole when I tried to shrink the font down even further by packing the separate glyphs into the different RGB channels, but every version of the decoder ended up costing more bytes than I saved from the packing. I suppose that the PNG's own compression pass is much better at finding and reusing common sequences with the 1-bit version.
 
 ![](font-packing.png)
 
-The final spritesheet is 2045 bytes, which [`optipng`](https://github.com/oxipng/oxipng) manages to trim down to 1925, saving a non-negligible 120 bytes. Interestingly, because the PNG format already performs a DEFLATE compression pass, there's a 0% reduction in file size when the PNG is added to the final zip file, so the spritesheet ends up taking up exactly 14.46% of the overall 13KB budget. I was able to save a few more bytes with [pngquant](https://pngquant.org/) but this ended up messing with my palette swapping, so I had to remove it.
+The final spritesheet is 2045 bytes, which [`oxipng`](https://github.com/oxipng/oxipng) manages to trim down to 1925, saving a non-negligible 120 bytes. Because PNG's use the same internal compression algorithm, there's a 0% reduction in file size when the PNG is added to the final zip file, so the spritesheet ends up taking up exactly 14.46% of the overall 13KB budget. I was able to save a few more bytes with [pngquant](https://pngquant.org/) but this ended up messing with my palette swapping, so I had to remove it.
 
 ## Puzzles
 
@@ -155,9 +155,9 @@ This design is problematically exploitable because of the way it interacts with 
 
 As the final character reveal, Odin also took a lot of work to get right. Earlier iterations of the game included runestones as part of the level designs (now you know why the tutorial sprite is a runestone) and the first interesting version of Odin added a runestone to your hand. After having seen them throughout the game, it felt particularly impactful to suddenly be able to create them. Unfortunately, it also creates another logical loophole. Play Odin to create a runestone, play the runestone next to Odin to create another runestone, recall him with Heimdall, and repeat until you have as many runestones as you need. I don't really mind there being exploits so long as they are difficult to find and hard to pull off, but these just trivialised the late game puzzles.
 
-He pivoted again into simply replaying adjacent when he was played, which felt great until I played him next to Loki and watched the game get stuck in an infinite series of swaps and replays. Ultimately I decided to remove runestones in favour of bringing the Gjallarhorn to its rightful place in the finale, and just deciding to make a hidden exception so that Odin can't be replayed via the Gjallarhorn.
+He pivoted again into simply replaying adjacent gods when he was played, which felt great until I played him next to Loki and watched the game get stuck in an infinite series of swaps and replays. Ultimately I decided to remove runestones in favour of bringing the Gjallarhorn to its rightful place in the finale, and just deciding to make a hidden exception so that Odin can't be replayed via the Gjallarhorn.
 
-I imagine these many of these puzzling woes are largely rookie mistakes that I would grow out of making with more of these kinds of games under my belt, but boy, this was a frustrating chapter of the game! So many of the balancing changes broke existing puzzles in unexpected ways. Looking back, I probably should have built some kind of automatic solution verification tests, to catch these kinds of regressions.
+I imagine that many of these puzzling woes are largely rookie mistakes that I would grow out of making with more of these kinds of games under my belt, but boy, this was a frustrating chapter of the game! So many of the balancing changes broke existing puzzles in unexpected ways. Looking back, I probably should have built some kind of automatic solution verification tests, to catch these kinds of regressions.
 
 One of the best decisions I made all month was the decision to build a puzzle editor into the game directly and to ensure that any puzzle could be shared via a URL. When you are in the editor mode (add `?edit` to the game's URL) you can spawn and modify cards in the slot below the cursor using keyboard shortcuts, these edits sync back to state within the URL itself, so you can begin designing a puzzle, play through it, hit reset, make a change in your text editor, reload the game, and carry on designing from the point where you last made an edit. I don't really even want to think about the amount of time I saved like this, compared to a version where I edited the levels in text files.
 
@@ -175,7 +175,7 @@ The URL encoding for levels is the same as the encoding I use within the game's 
 ],
 ```
 
-Each cell of the 5x5 board is encoded into one or two characters. If the cell is empty, it encodes as `-`, if there's a card in it, it encodes the card's ID as a character of the alphabet. Finally, trailing `-` are stripped.
+Each cell of the 5x5 board is encoded into one or two characters. If the cell is empty, it encodes as `-`, if there's a card in it, it encodes the card's ID as a character of the alphabet plus the amount of HP the card has. Finally, trailing `-` are stripped.
 
 If I add some line breaks and space based padding, then the encoded level above becomes much easier to visualise.
 
@@ -307,7 +307,7 @@ Video games have an incredible ability to tell stories, but "The giants took the
 
 There's a lot of "juice" sprinkled (splattered?) throughout the game, which also helps with creating that sense of polish. When a card attacks, there's a bump animation, a red flash to indicate damage and some blood particle effects that fire out in the direction of attack. If the target dies, then they animate to the grave pile, leaving behind a small burst of bouncing bone particles. If you hover over a button, it highlights. If you press down, it depresses by one pixel.
 
-Heck, I even had enough space left at the end to in a the game's logo to the spritesheet and build a title screen! That's a level detail that even my most polished games rarely see!
+Heck, I even had enough space left at the end to add the game's logo to the spritesheet and build a title screen! That's a level of detail that even my most polished games rarely see!
 
 ## Odds and Ends
 
