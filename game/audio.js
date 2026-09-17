@@ -1,5 +1,7 @@
 import { pick, random, range } from "./utils.js";
 
+const AUDIO_SCHEDULING_CHUNK_SECONDS = 5;
+
 const MIDI_META = 0xff;
 const MIDI_META_TEMPO = 0x51;
 const MIDI_NOTE_OFF = 0x80;
@@ -309,6 +311,9 @@ function pluck(time, note, velocity, smoothing = 0.9) {
   source.connect(gain).connect(master);
 }
 
+let chunkStartTime = 0;
+let anchorTime = 0;
+
 function play() {
   i = 10; // skip midi header
 
@@ -316,7 +321,10 @@ function play() {
   let division = u16();
   let tempo = 500_000;
   let now = ctx.currentTime;
-  let last = now;
+
+  anchorTime ||= now - chunkStartTime;
+  let chunkEndTime = chunkStartTime + AUDIO_SCHEDULING_CHUNK_SECONDS;
+  let lastScheduled = chunkStartTime;
 
   for (let n = 0; n < tracks; n++) {
     i += 4; // skip track header
@@ -343,11 +351,17 @@ function play() {
         if (event === MIDI_NOTE_ON || event === MIDI_NOTE_OFF) {
           let note = u8();
           let pressure = u8();
-          let seconds = now + ticks * (tempo / division / 1_000_000);
+          let seconds = ticks * (tempo / division / 1_000_000);
           let velocity = pressure / 127;
           let instr = INSTRUMENTS[n - 1];
-          instr(seconds, note, event === MIDI_NOTE_ON ? velocity : 0);
-          if (seconds > last) last = seconds;
+          if (seconds >= chunkStartTime && seconds < chunkEndTime) {
+            instr(
+              anchorTime + seconds,
+              note,
+              event === MIDI_NOTE_ON ? velocity : 0,
+            );
+            if (seconds > lastScheduled) lastScheduled = seconds;
+          }
         } else {
           throw event;
         }
@@ -369,9 +383,14 @@ function play() {
     }
   }
 
+  let finished = lastScheduled === chunkStartTime;
+  let stopAt = anchorTime + (finished ? lastScheduled : chunkEndTime);
+  chunkStartTime = finished ? 0 : chunkEndTime;
+  if (finished) anchorTime = 0;
+
   let looper = new OscillatorNode(ctx);
   looper.start(now);
-  looper.stop(last);
+  looper.stop(stopAt);
   looper.onended = () => play();
 }
 
